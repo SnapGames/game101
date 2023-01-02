@@ -7,6 +7,13 @@ package fr.snapgames.demo.core;
  * @since 0.0.1
  */
 public interface Game {
+    /**
+     * Retrieve the name of the application.
+     *
+     * @return
+     */
+    String getAppName();
+
 
     /**
      * Initialize the application according to CLI parameters.
@@ -17,10 +24,8 @@ public interface Game {
 
     /**
      * Create all the required entity to be managed by the game.
-     *
-     * @param g the parent Game instance.
      */
-    void create(Game g);
+    void create();
 
     /**
      * Manage all the device input status to update keyboard and mouse, and more..
@@ -56,7 +61,8 @@ public interface Game {
         double previousTime = System.currentTimeMillis();
         double currentTime = System.currentTimeMillis();
         double elapsed = currentTime - previousTime;
-        create(this);
+        create();
+
         while (!isExitRequested()) {
             currentTime = System.currentTimeMillis();
             input(this);

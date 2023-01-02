@@ -4,15 +4,31 @@
 package fr.snapgames.demo.gdemoapp;
 
 import fr.snapgames.demo.core.Game;
+import fr.snapgames.demo.core.configuration.Configuration;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The main class for our application extending the Game interface.
+ * Define a common Game interface with some default implementation for main core function.
+ * <p>
+ * Basically the Game is started by a call to the run() method, and :
+ * <ul>
+ *     <li>run first execute the {@link Game#initialize(String[])},</li>
+ *     <li>and if initialization is ok (=0), call {@link Game#create()},</li>
+ *     <li>then call the {@link Game#loop()}, until a {@link Game#isExitRequested()} become true</li>
+ *     <li>and finally call the #{@link Game#dispose()} to free all reserved resources.</li>
+ * </ul>
+
  *
  * @author Frédéric Delorme
  * @since 0.0.1
  */
 public class App implements Game {
 
+    // Configuration attributes
+    Configuration config = new Configuration(ConfigAttribute.values());
 
     /**
      * Internal loop counter
@@ -22,6 +38,16 @@ public class App implements Game {
      * the target exit value for loop counter in test mode.
      */
     private long exitValueTestCounter = -1;
+
+    /**
+<<<<<<< HEAD
+     * internal time tracking counter.
+     */
+    private long appStartTime = 0;
+    /**
+     * Configuration attributes map.
+     */
+    private Map<ConfigAttribute, Object> configurationValues = new ConcurrentHashMap<>();
 
     /**
      * exit required if true
@@ -42,42 +68,94 @@ public class App implements Game {
      */
     private int targetFPS = 60;
 
-    @Override
-    public void initialize(String[] args) {
-        System.out.printf("Start%n- initialize thing%n");
-        parseArgs(args);
+    /**
+     * Displayed application title on the screen/window.
+     */
+    private String appTitle = "GDemoApp";
+
+    /**
+     * Default application constructor.
+     */
+    public App() {
+        config.setConfigurationFile("/config.properties");
     }
 
     /**
-     * parse all CLI arguments to compare values and activate corresponding options.
+     * a specific constructor for test  and debug mode.
      *
-     * @param args list of arguments from CLI.
+     * @param configFile the configuration file to be loaded.
      */
-    private void parseArgs(String[] args) {
-        for (String arg : args) {
-            String[] kv = arg.split("=");
-            switch (kv[0]) {
-                case "debugMode" -> {
-                    debugMode = Integer.valueOf(kv[1]);
-                }
-                case "testCounter" -> {
-                    updateTestCounter = 0;
-                    exitValueTestCounter = Long.valueOf(kv[1]);
-                }
-            }
-
-        }
+    public App(String configFile) {
+        config.setConfigurationFile(configFile);
     }
 
     @Override
-    public void create(Game g) {
-        System.out.printf("- create thing%n");
+    public String getAppName() {
+        return appTitle;
+    }
 
+    @Override
+    public int initialize(String[] args) {
+        System.out.printf("Start %s%n- initializing...%n", getAppName());
+
+        appStartTime = System.currentTimeMillis();
+
+        int initStatus = config.parseConfigFile();
+        if (initStatus == 0) {
+            extractConfigurationValues();
+            initStatus = config.parseArgs(args);
+            if (initStatus == 0) {
+                extractConfigurationValues();
+            }
+        }
+        return initStatus;
+    }
+
+    /**
+     * from loaded file, extract configuration values ad set corresponding internal App attributes.
+     */
+    private void extractConfigurationValues() {
+        appTitle = (String) config.get(ConfigAttribute.APP_TITLE);
+        debugMode = (int) config.get(ConfigAttribute.DEBUG_MODE);
+        exitValueTestCounter = (int) config.get(ConfigAttribute.EXIT_TEST_COUNT_FRAME);
+        targetFPS = (int) config.get(ConfigAttribute.RENDER_FPS);
+        updateTestCounter = 0;
+    }
+
+    /**
+     * Display an error message if argument unknownAttributeName is unknown.
+     *
+     * @param unknownAttributeName the unknown argument.
+     * @param attributeValue       the value for this unknown argument.
+     */
+    private void displayHelpMessage(String unknownAttributeName, String attributeValue) {
+        System.out.printf("The argument %s=%s is unknown %n", unknownAttributeName, attributeValue);
+        displayHelpMessage();
+    }
+
+    /**
+     * Display CLI argument help message based on values from the {@link ConfigAttribute} enum.
+     */
+    private void displayHelpMessage() {
+        System.out.printf("Here is the list of possible arguments:%n--%n");
+        Arrays.stream(ConfigAttribute.values()).forEach(ca -> {
+            System.out.printf("- %s : %s (default value is %s)%n",
+                    ca.getAttrName(),
+                    ca.getAttrDescription(),
+                    ca.getDefaultValue().toString());
+        });
+        System.out.printf("%n--%n%n");
+    }
+
+    @Override
+    public void create() {
+        System.out.printf("- create stuff for %s%n", getAppName());
     }
 
     @Override
     public void input(Game g) {
-        System.out.printf("- handle input%n");
+        System.out.printf("- Loop %d:%n  - handle input%n", updateTestCounter);
+
     }
 
     @Override
@@ -98,8 +176,13 @@ public class App implements Game {
 
     @Override
     public void dispose() {
-        System.out.printf("exexuted %d times%n", updateTestCounter);
-        System.out.printf("End%n");
+        if (debugMode > 0) {
+            System.out.printf("debugMode=%d: Main game loop executed %d times (as required %d).%n",
+                    debugMode,
+                    updateTestCounter,
+                    exitValueTestCounter);
+        }
+        System.out.printf("End of %s%n", getAppName());
     }
 
     @Override
@@ -140,6 +223,18 @@ public class App implements Game {
     }
 
     /**
+<<<<<<< HEAD
+     * Retrieve the time elapsed since initialization start.
+     *
+     * @return
+     */
+    public long getInternalTime() {
+        return System.currentTimeMillis() - appStartTime;
+    }
+
+    /**
+=======
+>>>>>>> develop
      * The main entry for our application.
      *
      * @param args the list of args communicated by CLI

@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *     <li>then call the {@link Game#loop()}, until a {@link Game#isExitRequested()} become true</li>
  *     <li>and finally call the #{@link Game#dispose()} to free all reserved resources.</li>
  * </ul>
+
  *
  * @author Frédéric Delorme
  * @since 0.0.1
@@ -28,6 +29,7 @@ public class App implements Game {
 
     // Configuration attributes
     Configuration config = new Configuration(ConfigAttribute.values());
+
     /**
      * Internal loop counter
      */
@@ -38,6 +40,7 @@ public class App implements Game {
     private long exitValueTestCounter = -1;
 
     /**
+<<<<<<< HEAD
      * internal time tracking counter.
      */
     private long appStartTime = 0;
@@ -152,6 +155,7 @@ public class App implements Game {
     @Override
     public void input(Game g) {
         System.out.printf("- Loop %d:%n  - handle input%n", updateTestCounter);
+
     }
 
     @Override
@@ -219,6 +223,7 @@ public class App implements Game {
     }
 
     /**
+<<<<<<< HEAD
      * Retrieve the time elapsed since initialization start.
      *
      * @return
@@ -228,6 +233,8 @@ public class App implements Game {
     }
 
     /**
+=======
+>>>>>>> develop
      * The main entry for our application.
      *
      * @param args the list of args communicated by CLI

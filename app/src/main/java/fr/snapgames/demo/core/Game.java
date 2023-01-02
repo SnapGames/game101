@@ -14,13 +14,13 @@ public interface Game {
      */
     String getAppName();
 
+
     /**
      * Initialize the application according to CLI parameters.
      *
      * @param args list of arguments from CLI.
-     * @return 0 if ok, -1 if error.
      */
-    int initialize(String[] args);
+    void initialize(String[] args);
 
     /**
      * Create all the required entity to be managed by the game.
@@ -62,6 +62,7 @@ public interface Game {
         double currentTime = System.currentTimeMillis();
         double elapsed = currentTime - previousTime;
         create();
+
         while (!isExitRequested()) {
             currentTime = System.currentTimeMillis();
             input(this);

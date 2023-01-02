@@ -37,4 +37,5 @@ application {
     mainClass.set("com.merckgroup.demo.gdemoapp.App")
 
 }
+
 version = "0.0.2"

@@ -14,7 +14,7 @@ The basic Game class will support the famous "triptic" of the game loop: manage 
 everything on screen!
 But do you know why this is the basic default pattern for a game ?
 
-## A bit of video game history
+## A bit of video game history
 
 Why the game loop exists ? This is a very good question and the reason why is a historically based answer. Everything
 starts from the first ever video game: PONG.
@@ -48,14 +48,14 @@ So capturing input, moving things and displaying things must be done in 16ms. An
 
 So the main process is a LOOP. that's why we talk about a Game Loop:
 
-![The basic Game loop explained with a pencil: the method to keep a fixed frame rate !](illustrations/figure-game-loop.jpg "the basic Game loop explained with a pencil: the method to keep a fixed frame rate ! (c) myself with my own hands !")
+![The basic Game loop explained with a pencil: the method to keep a fixed frame rate !](illustrations/figure-game-loop.jpg "the basic Game loop explained with a pencil: the method to keep a fixed frame rate ! (c) myself with my own hands !")
 
 _figure 3 - The basic Game loop explained with a pencil: the method to keep a fixed frame rate !_
 
 There is also some advanced version of the Game Loop, where multiple update can be performed between each rendering
 phase, the timer is around the update methods only:
 
-![The advanced method to keep a fixed update rate](illustrations/figure-game-loop-fixed.jpg "The advanced method to keep a fixed update rate (c) myself with my own hands !")
+![The advanced method to keep a fixed update rate](illustrations/figure-game-loop-fixed.jpg "The advanced method to keep a fixed update rate (c) myself with my own hands !")
 
 _figure 4 - The advanced method to keep a fixed update rate_
 
@@ -65,7 +65,7 @@ I can only invite you to read the fantastic book from Robert Nystrom for details
 
 Anyway, I need to implement my own. As a good diagram is better than word:
 
-![A good diagram explaining the Game class and its usage](http://www.plantuml.com/plantuml/png/NOqngiCm341tdq9_-nrwWGmbMyyXOj4ARDdO4YazVULG2l4IulUafxKhDhMSmfy-AHFKX2mX-mUkDxXZfWM4zZ3-VeI5bJ7nc_ulN-FgM5hWCTui7fQDJYMNpUISsXgXKaYbL31HJa0lrW0m7QocVWi0au8KXOhMAJgO9gr6xnsZ977kD6VKt4vyHnxviN7YaNijVUHMTvRJ1m00 "figure 5 - A good diagram explaining the Game class and its usage")
+![A good diagram explaining the Game class and its usage](http://www.plantuml.com/plantuml/png/NOqngiCm341tdq9_-nrwWGmbMyyXOj4ARDdO4YazVULG2l4IulUafxKhDhMSmfy-AHFKX2mX-mUkDxXZfWM4zZ3-VeI5bJ7nc_ulN-FgM5hWCTui7fQDJYMNpUISsXgXKaYbL31HJa0lrW0m7QocVWi0au8KXOhMAJgO9gr6xnsZ977kD6VKt4vyHnxviN7YaNijVUHMTvRJ1m00 "figure 5 - A good diagram explaining the Game class and its usage")
 
 _figure 5 - A good diagram explaining the Game class and its usage_
 

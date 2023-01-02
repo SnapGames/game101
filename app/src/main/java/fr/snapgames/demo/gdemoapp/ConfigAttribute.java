@@ -50,7 +50,36 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.render.fps",
             "set the frame per second for the render engine",
             60,
-            v -> Integer.valueOf(v));
+            v -> Integer.valueOf(v)),
+    /**
+     * the width of our game's window
+     */
+    WINDOW_WIDTH(
+            "windowWidth",
+            "app.window.width",
+            "Set the Display Window width",
+            640,
+            Integer::valueOf),
+    /**
+     * the height of our game's window
+     */
+    WINDOW_HEIGHT(
+            "windowHeight",
+            "app.window.height",
+            "Set the Display Window height",
+            400,
+            Integer::valueOf),
+    /**
+     * flag indicates if game's window is on full screen.
+     */
+
+    WINDOW_FULL_SCREEN(
+            "windowFullscreen",
+            "app.window.fullscreen",
+            "Switch the Window to full screen",
+            false,
+            Boolean::valueOf);
+
     private final String attrName;
     private final String attrDescription;
     private final Object attrDefaultValue;

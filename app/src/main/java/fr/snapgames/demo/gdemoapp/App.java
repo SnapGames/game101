@@ -6,6 +6,7 @@ package fr.snapgames.demo.gdemoapp;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
+import fr.snapgames.demo.core.gfx.Window;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -84,6 +85,11 @@ public class App implements Game {
     private int targetFPS = 60;
 
     /**
+     * Window to display our game app.
+     */
+    private Window window;
+
+    /**
      * Displayed application title on the screen/window.
      */
     private String appTitle = "GDemoApp";
@@ -125,6 +131,12 @@ public class App implements Game {
                 extractConfigurationValues();
             }
         }
+        // initialize your system and services from here
+        window = new Window(
+                (String) config.get(ConfigAttribute.APP_TITLE),
+                (int) config.get(ConfigAttribute.WINDOW_WIDTH),
+                (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
+
         logger.log(Level.INFO, "- initialization done.");
         return initStatus;
     }

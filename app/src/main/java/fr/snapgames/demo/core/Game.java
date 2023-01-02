@@ -1,5 +1,7 @@
 package fr.snapgames.demo.core;
 
+import fr.snapgames.demo.core.configuration.Configuration;
+
 /**
  * THe Game Interface defining the right Game API for our game application framework.
  *
@@ -150,4 +152,10 @@ public interface Game {
      */
     boolean isExitRequested();
 
+    /**
+     * Retrieve configuration required by sub services.
+     *
+     * @return the Configuration instance required for sub services.
+     */
+    Configuration getConfiguration();
 }

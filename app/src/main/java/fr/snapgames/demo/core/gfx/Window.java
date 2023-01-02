@@ -15,8 +15,6 @@ import java.util.Optional;
 public class Window extends JPanel {
 
     public String title;
-    public int width;
-    public int height;
     private JFrame frame;
     private boolean fullScreenMode;
 
@@ -30,8 +28,7 @@ public class Window extends JPanel {
      */
     public Window(String title, int width, int height, boolean bFullScreenMode) {
         this.title = title;
-        this.height = height;
-        this.width = width;
+        this.setSize(width, height);
         this.fullScreenMode = bFullScreenMode;
 
         createPanel(title, width, height, fullScreenMode);
@@ -60,7 +57,7 @@ public class Window extends JPanel {
             frame.setVisible(false);
             frame.dispose();
         }
-        createPanel(this.title, this.width, this.height, bFullScreen);
+        createPanel(this.title, this.getWidth(), this.getHeight(), bFullScreen);
     }
 
     /**
@@ -81,9 +78,11 @@ public class Window extends JPanel {
             frame = null;
         }
         frame = new JFrame(title);
-        frame.setPreferredSize(dim);
-        frame.setSize(dim);
+        this.setSize(dim);
+        this.setPreferredSize(dim);
+        this.setMaximumSize(dim);
         frame.setContentPane(this);
+
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         frame.setLocationRelativeTo(null);
         if (fullScreenMode) {
@@ -96,17 +95,14 @@ public class Window extends JPanel {
         frame.pack();
         frame.setVisible(true);
         frame.requestFocus();
-        if (!fullScreenMode) {
-            frame.addComponentListener(new ComponentAdapter() {
-                @Override
-                public void componentResized(ComponentEvent componentEvent) {
-                    if (!isFullScreen()) {
-                        setHeight(frame.getHeight());
-                        setWidth(frame.getWidth());
-                    }
+        frame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent componentEvent) {
+                if (!isFullScreen()) {
+                    setSize(frame.getWidth(), frame.getHeight());
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -115,24 +111,6 @@ public class Window extends JPanel {
     public void close() {
         frame.setVisible(false);
         frame.dispose();
-    }
-
-    /**
-     * Set the width of this window.
-     *
-     * @param width the horizontal size of the window
-     */
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    /**
-     * Set the height of this window.
-     *
-     * @param height the vertical size of the window to create
-     */
-    public void setHeight(int height) {
-        this.height = height;
     }
 
     /**
@@ -145,11 +123,21 @@ public class Window extends JPanel {
     }
 
     /**
-     * Retrieve the initialized frame for that window.
+     * Retrieve the initialized frame for that {@link Window}.
      *
-     * @return a JFrame instance for this window.
+     * @return a JFrame instance for this {@link Window}.
      */
     public JFrame getFrame() {
         return this.frame;
+    }
+
+
+    /**
+     * Retrieve the {@link Graphics2D} API to draw in the {@link Window}.
+     *
+     * @return the {@link Graphics2D} instance to be used to draw on {@link Window}.
+     */
+    public Graphics2D getGraphics2D() {
+        return (Graphics2D) frame.getGraphics();
     }
 }

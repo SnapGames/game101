@@ -4,20 +4,30 @@
 package fr.snapgames.demo.gdemoapp;
 
 import fr.snapgames.demo.core.Game;
+import fr.snapgames.demo.core.configuration.Configuration;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The main class for our application extending the Game interface.
+ * Define a common Game interface with some default implementation for main core function.
+ * <p>
+ * Basically the Game is started by a call to the run() method, and :
+ * <ul>
+ *     <li>run first execute the {@link Game#initialize(String[])},</li>
+ *     <li>and if initialization is ok (=0), call {@link Game#create()},</li>
+ *     <li>then call the {@link Game#loop()}, until a {@link Game#isExitRequested()} become true</li>
+ *     <li>and finally call the #{@link Game#dispose()} to free all reserved resources.</li>
+ * </ul>
  *
  * @author Frédéric Delorme
  * @since 0.0.1
  */
 public class App implements Game {
 
-
+    // Configuration attributes
+    Configuration config = new Configuration(ConfigAttribute.values());
     /**
      * Internal loop counter
      */
@@ -27,6 +37,10 @@ public class App implements Game {
      */
     private long exitValueTestCounter = -1;
 
+    /**
+     * internal time tracking counter.
+     */
+    private long appStartTime = 0;
     /**
      * Configuration attributes map.
      */
@@ -51,57 +65,58 @@ public class App implements Game {
      */
     private int targetFPS = 60;
 
+    /**
+     * Displayed application title on the screen/window.
+     */
+    private String appTitle = "GDemoApp";
+
+    /**
+     * Default application constructor.
+     */
+    public App() {
+        config.setConfigurationFile("/config.properties");
+    }
+
+    /**
+     * a specific constructor for test  and debug mode.
+     *
+     * @param configFile the configuration file to be loaded.
+     */
+    public App(String configFile) {
+        config.setConfigurationFile(configFile);
+    }
+
     @Override
     public String getAppName() {
-        return "GDemoApp";
+        return appTitle;
     }
 
     @Override
     public int initialize(String[] args) {
         System.out.printf("Start %s%n- initializing...%n", getAppName());
-        if (parseArgs(args) == 0) {
-            debugMode = (int) configurationValues.get(ConfigAttribute.DEBUG_MODE);
-            exitValueTestCounter = (int) configurationValues.get(ConfigAttribute.EXIT_TEST_COUNT_FRAME);
-            updateTestCounter = 0;
-            return 0;
+
+        appStartTime = System.currentTimeMillis();
+
+        int initStatus = config.parseConfigFile();
+        if (initStatus == 0) {
+            extractConfigurationValues();
+            initStatus = config.parseArgs(args);
+            if (initStatus == 0) {
+                extractConfigurationValues();
+            }
         }
-        return -1;
+        return initStatus;
     }
 
     /**
-     * Parse All CLI arguments to capture configuration with help of {@link ConfigAttribute}.
-     *
-     * @param args list of command line arguments from Java call.
-     * @return 0 if all is ok, else -1.
+     * from loaded file, extract configuration values ad set corresponding internal App attributes.
      */
-    private int parseArgs(String[] args) {
-        boolean displayHelpMessage = false;
-        // initialize all default values.
-        Arrays.stream(ConfigAttribute.values()).forEach(ca -> {
-            configurationValues.put(ca, ca.getDefaultValue());
-        });
-        for (String arg : args) {
-            String[] kv = arg.split("=");
-            if (!isArgumentFound(kv)) {
-                displayHelpMessage(kv[0], kv[1]);
-                return -1;
-            }
-        }
-        if (displayHelpMessage) {
-            displayHelpMessage();
-        }
-        return 0;
-    }
-
-    private boolean isArgumentFound(String[] kv) {
-        boolean found = false;
-        for (ConfigAttribute ca : ConfigAttribute.values()) {
-            if (ca.getAttrName().equals(kv[0])) {
-                configurationValues.put(ca, ca.getAttrParser().apply(kv[1]));
-                found = true;
-            }
-        }
-        return found;
+    private void extractConfigurationValues() {
+        appTitle = (String) config.get(ConfigAttribute.APP_TITLE);
+        debugMode = (int) config.get(ConfigAttribute.DEBUG_MODE);
+        exitValueTestCounter = (int) config.get(ConfigAttribute.EXIT_TEST_COUNT_FRAME);
+        targetFPS = (int) config.get(ConfigAttribute.RENDER_FPS);
+        updateTestCounter = 0;
     }
 
     /**
@@ -130,7 +145,7 @@ public class App implements Game {
     }
 
     @Override
-    public void create(Game g) {
+    public void create() {
         System.out.printf("- create stuff for %s%n", getAppName());
     }
 
@@ -201,6 +216,15 @@ public class App implements Game {
      */
     public long getExitValueTestCounter() {
         return exitValueTestCounter;
+    }
+
+    /**
+     * Retrieve the time elapsed since initialization start.
+     *
+     * @return
+     */
+    public long getInternalTime() {
+        return System.currentTimeMillis() - appStartTime;
     }
 
     /**

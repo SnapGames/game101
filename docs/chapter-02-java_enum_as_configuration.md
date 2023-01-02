@@ -59,9 +59,9 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.debug.mode",
             "Setting the debug mode (0 to 5)",
             0,
-            v -> Integer.valueOf(v));
-
+            v -> Integer.valueOf(v)),
     //... other values will enhance the enum.
+    ;
 
     // internal attributes of the enum entry.
     private final String attrName;
@@ -94,8 +94,11 @@ but this is nothing without the `Configuration` system to retrieve and manage va
 
 ## Configuration class
 
-THe CConfiguration system will provide access to the configuration attribute values, from file AND from command line
+The `Configuration` system will provide access to the configuration attribute values, from file AND from command line
 argument.
+
+![The Configuration class to operate IConfigAttribute values](https://www.plantuml.com/plantuml/png/RL5lRxem67pVJz7VEynlVW6o69d0PZQLA2vBbeLKU81kRI7zus8Ml_leG8UuDqtptDtJk-jKQIAruGpzqoLmm3KZLA2IPe29rfBkZ0Q5gD0WSv82diygaTF2Es5V2F_71MWxM18EpiZTD90ekdbBVuJ34B027rGgQQrf9OQm3panJ3yJPkpErUuTKjsJHaGga0qI6f7Q1RUj_0QtrCcGY8v8bTKd7lZlfMnJ3t4EkgmoXK0OVWLINZFW8BJwgnWlYf9u7Zy52Fl1tVO-MQpyvXwypECa3ZPnCbjjbt4Ihhr5Cru7IpzO9s6qQQocZ2ZLFMSaiG5_cbQWBuOXPU3apM6xxneSkHUKJdOsvknjfyeT6dvz6xdxYcPToSu77Auu_O_8gAePEJm0gnUW52d0-LrGszOzMIY7D4TdpBv0XJxZxN8RuQGyeWlhU3oUN1Nhzdvi2Y8pd7q3
+"The Configuration class to operate IConfigAttribute values")
 
 But first, initialize the attributes with their default values:
 
@@ -157,38 +160,116 @@ public class App implements Game {
 We also can display a help message in case of error during argument parsing:
 
 ```Java
-    /**
- * Display an error message if argument unknownAttributeName is unknown.
- *
- * @param unknownAttributeName the unknown argument.
- * @param attributeValue       the value for this unknown argument.
- */
-private void displayHelpMessage(String unknownAttributeName,String attributeValue){
-        System.out.printf("INFO | Configuration : The argument %s=%s is unknown%n",unknownAttributeName,attributeValue);
-        displayHelpMessage();
-        }
+public class Configuration {
 
-/**
- * Display CLI argument help message based on values from the {@link ConfigAttribute} enum.
- */
-private void displayHelpMessage(){
+    private void displayHelpMessage(String unknownAttributeName, String attributeValue) {
+        System.out.printf("INFO | Configuration : The argument %s=%s is unknown%n", unknownAttributeName, attributeValue);
+        displayHelpMessage();
+    }
+
+    private void displayHelpMessage() {
         System.out.printf("INFO | Configuration : Here is the list of possible arguments:%n--%n");
-        Arrays.stream(attributes).forEach(ca->{
-        System.out.printf("INFO | Configuration : - %s : %s (default value is %s)%n",
-        ca.getAttrName(),
-        ca.getAttrDescription(),
-        ca.getDefaultValue().toString());
+        Arrays.stream(attributes).forEach(ca -> {
+            System.out.printf("INFO | Configuration : - %s : %s (default value is %s)%n",
+                    ca.getAttrName(),
+                    ca.getAttrDescription(),
+                    ca.getDefaultValue().toString());
         });
-        }
+    }
+}
 ```
 
 And when al least we get some configuration values, we can get it :
 
 ```Java
-    public Object get(IConfigAttribute ca){
+public class Configuration {
+    public Object get(IConfigAttribute ca) {
         return configurationValues.get(ca);
-        }
+    }
+}
 ```
+
+## Load configuration from file
+
+And, as we discussed before, we can retrieve configuration values from a file, we will use a properties file (a
+standard java way to set values) :
+
+### The configuration file :
+
+The properties file is a standard one and our own will figure out as below:
+
+```properties
+app.main.title=GDemoApp-test
+app.debug.mode=1
+app.test.counter=20
+app.render.fps=15
+```
+
+So now we can spend some time on the "read" implementation.
+
+### implementing the configuration file
+
+```Java
+public class Configuration {
+    //...
+    public Configuration setConfigurationFile(String cfgFile) {
+        this.configFile = cfgFile;
+        return this;
+    }
+
+    //...
+    public int parseConfigFile() {
+        int status = 0;
+        Properties props = new Properties();
+        if (Optional.ofNullable(configFile).isPresent()) {
+            try {
+                props.load(Configuration.class.getResourceAsStream(this.configFile));
+                for (Map.Entry<Object, Object> prop : props.entrySet()) {
+                    String[] kv = new String[]{(String) prop.getKey(), (String) prop.getValue()};
+                    if (!isArgumentFound(kv)) {
+                        System.err.printf("ERR | Configuration file=%s : Unknown property %s with value %s%n",
+                                cfgFile,
+                                prop.getKey(),
+                                prop.getValue());
+                    } else {
+                        System.out.printf("INFO | Configuration file=%s : set '%s' to %s%n",
+                                cfgFile,
+                                prop.getKey(),
+                                prop.getValue());
+                    }
+                }
+
+            } catch (IOException e) {
+                System.err.printf("ERR | Configuration file=%s : Unable to find and parse the configuration file : %s%n",
+                        cfgFile,
+                        e.getMessage());
+            }
+        } else {
+            status = -1;
+        }
+        return status;
+    }
+}
+```
+
+the provided new methods are:
+
+- `setConfigurationFile` to define the configuration file to be read,
+- `parseConfigFile` to parse values from the provided file according to existing defined arguments in
+  the `ConfigAttribute` enumeration.
 
 You can notice that error are output on the `System.err` output stream, and information are out on the `System.out`
 output stream.
+
+## Conclusion
+
+We spent maybe too much time on configuration, but you may see that this is essential.
+
+Like in the previous episode, you will find the corresponding code (and a lot more!) on this GitHub
+repository https://github.com/SnapGames/game101 on
+tag [create-config](https://github.com/SnapGames/game101/releases/tag/create-game "go and see files from tag 'create-game'")
+and create-config-test proposing some unit tests on this topic.
+
+That’s all folks!
+
+McG.

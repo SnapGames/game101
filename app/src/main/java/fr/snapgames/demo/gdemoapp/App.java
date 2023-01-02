@@ -6,10 +6,10 @@ package fr.snapgames.demo.gdemoapp;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
+import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -90,6 +90,11 @@ public class App implements Game {
     private Window window;
 
     /**
+     * The Renderer service to use to draw ion window.
+     */
+    private Renderer renderer;
+
+    /**
      * Displayed application title on the screen/window.
      */
     private String appTitle = "GDemoApp";
@@ -121,6 +126,20 @@ public class App implements Game {
 
         appStartTime = System.currentTimeMillis();
 
+        int initStatus = applyConfiguration(args);
+        // initialize your system and services from here
+        window = new Window(
+                (String) config.get(ConfigAttribute.APP_TITLE),
+                (int) config.get(ConfigAttribute.WINDOW_WIDTH),
+                (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
+
+        renderer = new Renderer(this);
+
+        logger.log(Level.INFO, "- initialization done.");
+        return initStatus;
+    }
+
+    public int applyConfiguration(String[] args) {
         int initStatus = config.parseConfigFile();
         if (initStatus == 0) {
             extractConfigurationValues();
@@ -131,13 +150,6 @@ public class App implements Game {
                 extractConfigurationValues();
             }
         }
-        // initialize your system and services from here
-        window = new Window(
-                (String) config.get(ConfigAttribute.APP_TITLE),
-                (int) config.get(ConfigAttribute.WINDOW_WIDTH),
-                (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
-
-        logger.log(Level.INFO, "- initialization done.");
         return initStatus;
     }
 
@@ -172,6 +184,9 @@ public class App implements Game {
     @Override
     public void render(Game g, int fps) {
         logger.log(Level.INFO, "  - render thing at {0} FPS", fps);
+
+        renderer.draw();
+        renderer.drawToWindow(window);
     }
 
     @Override
@@ -187,6 +202,7 @@ public class App implements Game {
                     updateTestCounter,
                     exitValueTestCounter});
         }
+        window.close();
         long duration = System.currentTimeMillis() - appStartTime;
         logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[]{duration, Utils.formatDuration(duration)});
         logger.log(Level.INFO, "End of {0}", getAppName());
@@ -200,6 +216,11 @@ public class App implements Game {
     @Override
     public boolean isExitRequested() {
         return (debugMode > 0 && updateTestCounter != -1 && updateTestCounter == exitValueTestCounter) || exitFlag;
+    }
+
+    @Override
+    public Configuration getConfiguration() {
+        return config;
     }
 
     /**

@@ -334,6 +334,10 @@ public class Game {
 
 And here we are, we are able to draw things on our `Window`!
 
+![Adding a Rendering draing service to our game stack](illustrations/figure-create-renderer.png "Adding a Rendering draing service to our game stack")
+
+Yes,I know a black screen is not exactly what you were expected, but we are ion the road of creating things :)
+
 ## Conclusion
 
 So 2 new things, a `Window` (yes, we now have one), and a way to draw something on it with `Renderer` !

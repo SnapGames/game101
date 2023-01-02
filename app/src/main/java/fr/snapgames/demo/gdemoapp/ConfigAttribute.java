@@ -78,7 +78,25 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.window.fullscreen",
             "Switch the Window to full screen",
             false,
-            Boolean::valueOf);
+            Boolean::valueOf),
+    /**
+     * Width for the Screen rendering size
+     */
+    SCREEN_WIDTH(
+            "screenWidth",
+            "app.screen.width",
+            "set the screen width",
+            320,
+            Integer::valueOf),
+    /**
+     * Height for the Screen rendering size
+     */
+    SCREEN_HEIGHT(
+            "screenHeight",
+            "app.screen.height",
+            "set the screen height",
+            200,
+            Integer::valueOf);
 
     private final String attrName;
     private final String attrDescription;

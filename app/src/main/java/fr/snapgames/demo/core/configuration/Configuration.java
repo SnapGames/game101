@@ -46,9 +46,21 @@ import java.util.logging.Logger;
  * @author Frédéric Delorme
  **/
 public class Configuration {
+    // internal Logger
+    private static final Logger logger = Logger.getLogger(Configuration.class.getName());
 
+    // Configuration filename.
     private String configFile;
 
+
+    IConfigAttribute[] attributes;
+    private Map<IConfigAttribute, Object> configurationValues = new ConcurrentHashMap<>();
+
+    /**
+     * Create the Configuration instance with the new IConfigAttribute array.
+     *
+     * @param attributes a new ConfigAttribute array implementation (a new enum).
+     */
     public Configuration(IConfigAttribute[] attributes) {
         setAttributes(attributes);
         // initialize all default values.
@@ -56,10 +68,6 @@ public class Configuration {
             configurationValues.put(ca, ca.getDefaultValue());
         });
     }
-
-    IConfigAttribute[] attributes;
-    private Map<IConfigAttribute, Object> configurationValues = new ConcurrentHashMap<>();
-
 
     /**
      * Parse all the values provided by the command line interactive.
@@ -109,7 +117,7 @@ public class Configuration {
      * @param attributeValue       the value for this unknown argument.
      */
     public void displayHelpMessage(String unknownAttributeName, String attributeValue) {
-        System.out.printf("The argument %s='%s' is unknown%n", unknownAttributeName, attributeValue);
+        logger.log(Level.INFO, "The argument {0}={1} is unknown", new Object[]{unknownAttributeName, attributeValue});
         displayHelpMessage();
     }
 
@@ -117,12 +125,12 @@ public class Configuration {
      * Display CLI argument help message based on values from the {@link ConfigAttribute} enum.
      */
     public void displayHelpMessage() {
-        System.out.println("INFO | Here is the list of possible arguments:");
+        logger.log(Level.INFO, "Here is the list of possible arguments:");
         Arrays.stream(attributes).forEach(ca -> {
-            System.out.printf("- %s : %s (default value is %s)%n",
+            logger.log(Level.INFO, "- {0} : {1} (default value is {2})", new Object[]{
                     ca.getAttrName(),
                     ca.getAttrDescription(),
-                    ca.getDefaultValue().toString());
+                    ca.getDefaultValue().toString()});
         });
     }
 
@@ -170,23 +178,23 @@ public class Configuration {
                 for (Map.Entry<Object, Object> prop : props.entrySet()) {
                     String[] kv = new String[]{(String) prop.getKey(), (String) prop.getValue()};
                     if (!isArgumentFound(kv)) {
-                        System.out.printf("file=%s : Unknown property %s with value %s%n",
+                        logger.log(Level.SEVERE, "file={0} : Unknown property {1} with value {2}", new Object[]{
                                 this.configFile,
                                 prop.getKey(),
-                                prop.getValue());
+                                prop.getValue()});
                         status = -1;
                     } else {
-                        System.out.printf("file=%s : set %s to %s%n",
+                        logger.log(Level.INFO, "file={0} : set {1} to {2}", new Object[]{
                                 this.configFile,
                                 prop.getKey().toString(),
-                                prop.getValue().toString());
+                                prop.getValue().toString()});
                     }
                 }
 
             } catch (IOException e) {
-                System.out.printf("file=%s : Unable to find and parse the configuration file : %s%n",
+                logger.log(Level.SEVERE, "file={0} : Unable to find and parse the configuration file : {1}", new Object[]{
                         this.configFile,
-                        e.getMessage());
+                        e.getMessage()});
             }
         } else {
             status = -1;

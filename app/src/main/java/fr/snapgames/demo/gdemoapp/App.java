@@ -4,11 +4,16 @@
 package fr.snapgames.demo.gdemoapp;
 
 import fr.snapgames.demo.core.Game;
+import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * Define a common Game interface with some default implementation for main core function.
@@ -20,12 +25,23 @@ import java.util.concurrent.ConcurrentHashMap;
  *     <li>then call the {@link Game#loop()}, until a {@link Game#isExitRequested()} become true</li>
  *     <li>and finally call the #{@link Game#dispose()} to free all reserved resources.</li>
  * </ul>
-
  *
  * @author Frédéric Delorme
  * @since 0.0.1
  */
 public class App implements Game {
+
+    // Logger management
+    private static final LogManager logManager = LogManager.getLogManager();
+    private static final Logger logger = Logger.getLogger(App.class.getName());
+
+    static {
+        try {
+            logManager.readConfiguration(App.class.getResourceAsStream("/logging.properties"));
+        } catch (IOException exception) {
+            logger.log(Level.SEVERE, "Cannot read configuration file", exception);
+        }
+    }
 
     // Configuration attributes
     Configuration config = new Configuration(ConfigAttribute.values());
@@ -40,7 +56,6 @@ public class App implements Game {
     private long exitValueTestCounter = -1;
 
     /**
-<<<<<<< HEAD
      * internal time tracking counter.
      */
     private long appStartTime = 0;
@@ -103,11 +118,14 @@ public class App implements Game {
         int initStatus = config.parseConfigFile();
         if (initStatus == 0) {
             extractConfigurationValues();
+            logger.log(Level.INFO, "Start {0}", getAppName());
+            logger.log(Level.INFO, "- initializing...");
             initStatus = config.parseArgs(args);
             if (initStatus == 0) {
                 extractConfigurationValues();
             }
         }
+        logger.log(Level.INFO, "- initialization done.");
         return initStatus;
     }
 
@@ -122,51 +140,26 @@ public class App implements Game {
         updateTestCounter = 0;
     }
 
-    /**
-     * Display an error message if argument unknownAttributeName is unknown.
-     *
-     * @param unknownAttributeName the unknown argument.
-     * @param attributeValue       the value for this unknown argument.
-     */
-    private void displayHelpMessage(String unknownAttributeName, String attributeValue) {
-        System.out.printf("The argument %s=%s is unknown %n", unknownAttributeName, attributeValue);
-        displayHelpMessage();
-    }
-
-    /**
-     * Display CLI argument help message based on values from the {@link ConfigAttribute} enum.
-     */
-    private void displayHelpMessage() {
-        System.out.printf("Here is the list of possible arguments:%n--%n");
-        Arrays.stream(ConfigAttribute.values()).forEach(ca -> {
-            System.out.printf("- %s : %s (default value is %s)%n",
-                    ca.getAttrName(),
-                    ca.getAttrDescription(),
-                    ca.getDefaultValue().toString());
-        });
-        System.out.printf("%n--%n%n");
-    }
-
     @Override
     public void create() {
-        System.out.printf("- create stuff for %s%n", getAppName());
+        logger.log(Level.INFO, "- create stuff for {0}", getAppName());
     }
 
     @Override
     public void input(Game g) {
-        System.out.printf("- Loop %d:%n  - handle input%n", updateTestCounter);
-
+        logger.log(Level.INFO, "- Loop {0}:", updateTestCounter);
+        logger.log(Level.INFO, "  - handle input");
     }
 
     @Override
     public void update(Game g, double elapsed) {
-        System.out.printf("- update thing %f%n", elapsed);
+        logger.log(Level.INFO, "  - update thing {0}", elapsed);
         updateTestCounter += 1;
     }
 
     @Override
     public void render(Game g, int fps) {
-        System.out.printf("- render thing at %d FPS%n", fps);
+        logger.log(Level.INFO, "  - render thing at {0} FPS", fps);
     }
 
     @Override
@@ -177,12 +170,14 @@ public class App implements Game {
     @Override
     public void dispose() {
         if (debugMode > 0) {
-            System.out.printf("debugMode=%d: Main game loop executed %d times (as required %d).%n",
+            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[]{
                     debugMode,
                     updateTestCounter,
-                    exitValueTestCounter);
+                    exitValueTestCounter});
         }
-        System.out.printf("End of %s%n", getAppName());
+        long duration = System.currentTimeMillis() - appStartTime;
+        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[]{duration, Utils.formatDuration(duration)});
+        logger.log(Level.INFO, "End of {0}", getAppName());
     }
 
     @Override
@@ -223,7 +218,6 @@ public class App implements Game {
     }
 
     /**
-<<<<<<< HEAD
      * Retrieve the time elapsed since initialization start.
      *
      * @return
@@ -233,8 +227,6 @@ public class App implements Game {
     }
 
     /**
-=======
->>>>>>> develop
      * The main entry for our application.
      *
      * @param args the list of args communicated by CLI

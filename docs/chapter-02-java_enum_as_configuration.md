@@ -267,7 +267,7 @@ We spent maybe too much time on configuration, but you may see that this is esse
 
 Like in the previous episode, you will find the corresponding code (and a lot more!) on this GitHub
 repository https://github.com/SnapGames/game101 on
-tag [create-config](https://github.com/SnapGames/game101/releases/tag/create-game "go and see files from tag 'create-game'")
+tag [create-config](https://github.com/SnapGames/game101/releases/tag/create-config "go and see files from tag 'create-game'")
 and create-config-test proposing some unit tests on this topic.
 
 That’s all folks!

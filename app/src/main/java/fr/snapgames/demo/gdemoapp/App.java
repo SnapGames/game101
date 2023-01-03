@@ -8,7 +8,9 @@ import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
+import fr.snapgames.demo.core.io.InputHandler;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -90,6 +92,11 @@ public class App implements Game {
     private Window window;
 
     /**
+     * The InputHandler to support mouse and key events
+     */
+    private InputHandler inputHandler;
+
+    /**
      * The Renderer service to use to draw ion window.
      */
     private Renderer renderer;
@@ -132,7 +139,8 @@ public class App implements Game {
                 (String) config.get(ConfigAttribute.APP_TITLE),
                 (int) config.get(ConfigAttribute.WINDOW_WIDTH),
                 (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
-
+        inputHandler = new InputHandler();
+        window.addListener(inputHandler);
         renderer = new Renderer(this);
 
         logger.log(Level.INFO, "- initialization done.");
@@ -173,6 +181,10 @@ public class App implements Game {
     public void input(Game g) {
         logger.log(Level.INFO, "- Loop {0}:", updateTestCounter);
         logger.log(Level.INFO, "  - handle input");
+        if (inputHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+            requestExit(true);
+            logger.log(Level.FINEST, "    - key {} has been released", new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
+        }
     }
 
     @Override
@@ -221,6 +233,16 @@ public class App implements Game {
     @Override
     public Configuration getConfiguration() {
         return config;
+    }
+
+
+    /**
+     * Request exit from this Application.
+     *
+     * @param exit boolean true to exit.
+     */
+    private void requestExit(boolean exit) {
+        this.exitFlag = exit;
     }
 
     /**

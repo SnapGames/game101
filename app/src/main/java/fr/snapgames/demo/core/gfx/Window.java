@@ -1,5 +1,7 @@
 package fr.snapgames.demo.core.gfx;
 
+import fr.snapgames.demo.core.io.InputHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
@@ -103,6 +105,17 @@ public class Window extends JPanel {
                 }
             }
         });
+    }
+
+
+    /**
+     * Add the {@link InputHandler} to manage keys and mouse.
+     *
+     * @param inputHandler the {@link InputHandler} instance to be connected to this {@link Window}.
+     */
+    public void addListener(InputHandler inputHandler) {
+        frame.addKeyListener(inputHandler);
+        frame.addMouseListener(inputHandler);
     }
 
     /**

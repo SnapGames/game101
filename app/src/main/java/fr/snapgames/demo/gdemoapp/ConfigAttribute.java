@@ -96,6 +96,18 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.screen.height",
             "set the screen height",
             200,
+            Integer::valueOf),
+    PLAY_AREA_WIDTH(
+            "playAreaWidth",
+            "app.play.area.width",
+            "set the width of the play area",
+            320,
+            Integer::valueOf),
+    PLAY_AREA_HEIGHT(
+            "playAreaHeight",
+            "app.play.area.height",
+            "set the height of the play area",
+            200,
             Integer::valueOf);
 
     private final String attrName;

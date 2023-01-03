@@ -231,7 +231,7 @@ You can exit the app demo by pressing the [ESCAPE] key.
 
 Since the first chapter, we use the [game101](https://github.com/SnapGames/game101) project on GitHub to support our
 posts, so keeping this habit,
-and you will find the [create-input-handler](https://github.com/SnapGames/game101/releases/tag/create-window) tag linked
+and you will find the [create-input-handler](https://github.com/SnapGames/game101/releases/tag/create-input-handler) tag linked
 to this new chapter.
 
 That’s all folks!

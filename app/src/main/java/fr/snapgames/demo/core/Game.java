@@ -1,6 +1,7 @@
 package fr.snapgames.demo.core;
 
 import fr.snapgames.demo.core.configuration.Configuration;
+import fr.snapgames.demo.core.entity.EntityManager;
 
 /**
  * THe Game Interface defining the right Game API for our game application framework.
@@ -158,4 +159,11 @@ public interface Game {
      * @return the Configuration instance required for sub services.
      */
     Configuration getConfiguration();
+
+    /**
+     * Retrieve the EntityManager required by sub services.
+     *
+     * @return the EntityManager instance required for sub services.
+     */
+    EntityManager getEntityManager();
 }

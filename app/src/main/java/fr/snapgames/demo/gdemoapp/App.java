@@ -6,10 +6,13 @@ package fr.snapgames.demo.gdemoapp;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
+import fr.snapgames.demo.core.entity.Entity;
+import fr.snapgames.demo.core.entity.EntityManager;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 import fr.snapgames.demo.core.io.InputHandler;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Map;
@@ -102,6 +105,11 @@ public class App implements Game {
     private Renderer renderer;
 
     /**
+     * Entity manager to hold al the game entities
+     */
+    private EntityManager entityMgr;
+
+    /**
      * Displayed application title on the screen/window.
      */
     private String appTitle = "GDemoApp";
@@ -142,6 +150,7 @@ public class App implements Game {
         inputHandler = new InputHandler();
         window.addListener(inputHandler);
         renderer = new Renderer(this);
+        entityMgr = new EntityManager();
 
         logger.log(Level.INFO, "- initialization done.");
         return initStatus;
@@ -175,6 +184,16 @@ public class App implements Game {
     @Override
     public void create() {
         logger.log(Level.INFO, "- create stuff for {0}", getAppName());
+        int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
+        int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
+        entityMgr.add(
+                new Entity("player")
+                        .setFillColor(Color.RED)
+                        .setBorderColor(Color.MAGENTA)
+                        .setSize(32.0, 32.0)
+                        .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
+                        .setSpeed(0.0, 0.0)
+        );
     }
 
     @Override
@@ -185,12 +204,58 @@ public class App implements Game {
             requestExit(true);
             logger.log(Level.FINEST, "    - key {} has been released", new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
         }
+
+        Entity player = entityMgr.get("player");
+        player.setSpeed(0.0, 0.0);
+
+        if (inputHandler.getKey(KeyEvent.VK_UP)) {
+            logger.log(Level.FINEST, "player move UP");
+            player.dy = -0.05;
+        }
+        if (inputHandler.getKey(KeyEvent.VK_DOWN)) {
+            logger.log(Level.FINEST, "player move DOWN");
+            player.dy = 0.05;
+        }
+        if (inputHandler.getKey(KeyEvent.VK_LEFT)) {
+            logger.log(Level.FINEST, "player move LEFT");
+            player.dx = -0.05;
+        }
+        if (inputHandler.getKey(KeyEvent.VK_RIGHT)) {
+            logger.log(Level.FINEST, "player move RIGHT");
+            player.dx = 0.05;
+        }
     }
 
     @Override
     public void update(Game g, double elapsed) {
         logger.log(Level.INFO, "  - update thing {0}", elapsed);
         updateTestCounter += 1;
+
+        entityMgr.getEntities().stream().forEach(e -> {
+            e.update(elapsed);
+            constrainToPlayArea(e);
+        });
+    }
+
+    private void constrainToPlayArea(Entity e) {
+        int paWidth = (int) config.get(ConfigAttribute.PLAY_AREA_WIDTH);
+        int paHeight = (int) config.get(ConfigAttribute.PLAY_AREA_HEIGHT);
+        if (e.x + e.width > paWidth) {
+            e.x = paWidth - e.width;
+            e.dx = -e.dx;
+        }
+        if (e.y + e.height > paHeight) {
+            e.y = paHeight - e.height;
+            e.dy = -e.dy;
+        }
+        if (e.x < 0.0) {
+            e.x = 0.0;
+            e.dx = -e.dx;
+        }
+        if (e.y < 0.0) {
+            e.y = 0.0;
+            e.dy = -e.dy;
+        }
     }
 
     @Override
@@ -233,6 +298,11 @@ public class App implements Game {
     @Override
     public Configuration getConfiguration() {
         return config;
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        return entityMgr;
     }
 
 

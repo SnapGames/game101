@@ -6,6 +6,7 @@ import fr.snapgames.demo.gdemoapp.ConfigAttribute;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 /**
  * {@link Renderer} is the Rendering service for our game.
@@ -47,10 +48,12 @@ public class Renderer {
      */
     public Renderer(Game g) {
         this.game = g;
+        // retrieve mandatory configuration
         windowWidth = (int) game.getConfiguration().get(ConfigAttribute.WINDOW_WIDTH);
         windowHeight = (int) game.getConfiguration().get(ConfigAttribute.WINDOW_HEIGHT);
         screenWidth = (int) game.getConfiguration().get(ConfigAttribute.SCREEN_WIDTH);
         screenHeight = (int) game.getConfiguration().get(ConfigAttribute.SCREEN_HEIGHT);
+        // Initialize internal rendering buffer
         buffer = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
     }
 
@@ -63,7 +66,14 @@ public class Renderer {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, screenWidth, screenHeight);
         // draw all the things you need.
-
+        game.getEntityManager().getEntities().forEach(e -> {
+            if (Optional.ofNullable(e.fillColor).isPresent()) {
+                g.setColor(e.fillColor);
+                g.fillRect((int) e.x, (int) e.y, (int) e.width, (int) e.height);
+            }
+            g.setColor(e.borderColor);
+            g.drawRect((int) e.x, (int) e.y, (int) e.width, (int) e.height);
+        });
         // release Graphics API
         g.dispose();
     }

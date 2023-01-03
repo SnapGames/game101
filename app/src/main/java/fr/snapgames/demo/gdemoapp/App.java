@@ -11,11 +11,15 @@ import fr.snapgames.demo.core.entity.EntityManager;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 import fr.snapgames.demo.core.io.InputHandler;
+import fr.snapgames.demo.core.physic.Material;
+import fr.snapgames.demo.core.physic.PhysicEngine;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -110,6 +114,11 @@ public class App implements Game {
     private EntityManager entityMgr;
 
     /**
+     * Physic computation engine
+     */
+    private PhysicEngine physicEngine;
+
+    /**
      * Displayed application title on the screen/window.
      */
     private String appTitle = "GDemoApp";
@@ -149,8 +158,9 @@ public class App implements Game {
                 (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
         inputHandler = new InputHandler();
         window.addListener(inputHandler);
-        renderer = new Renderer(this);
         entityMgr = new EntityManager();
+        renderer = new Renderer(this);
+        physicEngine = new PhysicEngine(this);
 
         logger.log(Level.INFO, "- initialization done.");
         return initStatus;
@@ -189,11 +199,13 @@ public class App implements Game {
         entityMgr.add(
                 new Entity("player")
                         .setFillColor(Color.RED)
-                        .setBorderColor(Color.MAGENTA)
-                        .setSize(32.0, 32.0)
+                        .setBorderColor(Color.WHITE)
+                        .setSize(16.0, 16.0)
                         .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
                         .setSpeed(0.0, 0.0)
-        );
+                        .setAcceleration(0.0, 0.0)
+                        .setDebug(2)
+                        .setMaterial(Material.RUBBER));
     }
 
     @Override
@@ -205,24 +217,34 @@ public class App implements Game {
             logger.log(Level.FINEST, "    - key {} has been released", new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
         }
 
-        Entity player = entityMgr.get("player");
-        player.setSpeed(0.0, 0.0);
+        boolean move = false;
+        double moveStep = 0.00001;
 
+
+        Entity player = entityMgr.get("player");
         if (inputHandler.getKey(KeyEvent.VK_UP)) {
-            logger.log(Level.FINEST, "player move UP");
-            player.dy = -0.05;
+            player.addForce(new Point2D.Double(0.0, -moveStep * 1000.0));
+            move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_DOWN)) {
-            logger.log(Level.FINEST, "player move DOWN");
-            player.dy = 0.05;
+            player.addForce(new Point2D.Double(0.0, moveStep));
+            move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_LEFT)) {
-            logger.log(Level.FINEST, "player move LEFT");
-            player.dx = -0.05;
+            player.addForce(new Point2D.Double(-moveStep, 0.0));
+            move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_RIGHT)) {
-            logger.log(Level.FINEST, "player move RIGHT");
-            player.dx = 0.05;
+            player.addForce(new Point2D.Double(moveStep, 0.0));
+            move = true;
+        }
+        if (!move) {
+            if (Optional.ofNullable(player.material).isPresent()) {
+                player.dx *= player.material.friction;
+                player.dy *= player.material.friction;
+                player.ax = 0.0;
+                player.ay = 0.0;
+            }
         }
     }
 
@@ -230,32 +252,7 @@ public class App implements Game {
     public void update(Game g, double elapsed) {
         logger.log(Level.INFO, "  - update thing {0}", elapsed);
         updateTestCounter += 1;
-
-        entityMgr.getEntities().stream().forEach(e -> {
-            e.update(elapsed);
-            constrainToPlayArea(e);
-        });
-    }
-
-    private void constrainToPlayArea(Entity e) {
-        int paWidth = (int) config.get(ConfigAttribute.PLAY_AREA_WIDTH);
-        int paHeight = (int) config.get(ConfigAttribute.PLAY_AREA_HEIGHT);
-        if (e.x + e.width > paWidth) {
-            e.x = paWidth - e.width;
-            e.dx = -e.dx;
-        }
-        if (e.y + e.height > paHeight) {
-            e.y = paHeight - e.height;
-            e.dy = -e.dy;
-        }
-        if (e.x < 0.0) {
-            e.x = 0.0;
-            e.dx = -e.dx;
-        }
-        if (e.y < 0.0) {
-            e.y = 0.0;
-            e.dy = -e.dy;
-        }
+        physicEngine.update(elapsed);
     }
 
     @Override

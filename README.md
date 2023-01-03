@@ -2,7 +2,7 @@
 
 This a test project to discover Gradle as a build tool through a playful game project.
 
-The project bring some structured code with good patterns with only JDK 19 is used (see [.sdkmanrc](.sdkmanrc) file for
+The project bring some structured code with good patterns with only JDK 18 is used (see [.sdkmanrc](.sdkmanrc) file for
 details)
 
 ## build

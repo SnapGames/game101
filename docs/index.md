@@ -7,5 +7,8 @@ to a package organized project to provide Entity, physic, rendering, etc...
 1. [The Game class](chapter-01-the_game_class.md)
 2. [Java Enum as Configuration](chapter-02-java_enum_as_configuration.md)
 3. [Start drawing with Renderer](chapter-03-start_drawing_with_renderer.md)
-4. ...
+4. [Add keys and mouse](chapter-04-add_keys_and_mouse.md)
+5. [Bring Entity and its manager](chapter-05-bring_entity_and_its_manager.md)
+6. [Adding Physics](chapter-06-add_physic.md)
 
+![The latest chapter's screenshot: the physic engine](illustrations/figure-add-physic-engine-debug_screenshot-02.png "The latest chapter's screenshot: the physic engine")

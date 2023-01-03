@@ -2,6 +2,7 @@ package fr.snapgames.demo.gdemoapp;
 
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
 
+import java.awt.geom.Point2D;
 import java.util.function.Function;
 
 /**
@@ -99,16 +100,86 @@ public enum ConfigAttribute implements IConfigAttribute {
             Integer::valueOf),
     PLAY_AREA_WIDTH(
             "playAreaWidth",
-            "app.play.area.width",
+            "app.physic.world.play.area.width",
             "set the width of the play area",
             320,
             Integer::valueOf),
     PLAY_AREA_HEIGHT(
             "playAreaHeight",
-            "app.play.area.height",
+            "app.physic.world.play.area.height",
             "set the height of the play area",
             200,
-            Integer::valueOf);
+            Integer::valueOf),
+    PHYSIC_GRAVITY(
+            "physicGravity",
+            "app.physic.world.gravity",
+            "set the 2D vector for gravity applied by physic engine",
+            new Point2D.Double(0.0, 0.0),
+            v -> {
+                return stringToPoint2D(v, new Point2D.Double(0.0, 0.0));
+            }
+    ),
+    PHYSIC_MIN_SPEED(
+            "physicSpeedMin",
+            "app.physic.world.speed.min",
+            "set the minimum speed below considered as zero",
+            0.01,
+            Double::valueOf
+    ),
+    PHYSIC_MAX_SPEED_X(
+            "physicSpeedXMax",
+            "app.physic.world.speed.x.max",
+            "set the maximum speed on X axis",
+            0.01,
+            Double::valueOf
+    ),
+    PHYSIC_MAX_SPEED_Y(
+            "physicSpeedYMax",
+            "app.physic.world.speed.y.max",
+            "set the maximum speed on Y axis",
+            0.01,
+            Double::valueOf
+    ),
+    PHYSIC_MIN_ACCELERATION(
+            "physicMinAcceleration",
+            "app.physic.world.acceleration.min",
+            "Set the minimum acceleration below considered as zero",
+            0.00001,
+            Double::valueOf),
+    PHYSIC_MAX_ACCELERATION_X(
+            "physicMaxAccelerationX",
+            "app.physic.world.acceleration.x.max",
+            "Set the maximum acceleration on X axis",
+            0.2,
+            Double::valueOf),
+    PHYSIC_MAX_ACCELERATION_Y(
+            "physicMaxAccelerationY",
+            "app.physic.world.acceleration.y.max",
+            "Set the maximum acceleration on Y axis",
+            0.2,
+            Double::valueOf);
+
+    /**
+     * Convert String "v([double],[double])" to Point2D.
+     *
+     * @param value
+     * @param defaultValue
+     * @return Point2D value corresponding to the converted string.
+     */
+    private static Point2D stringToPoint2D(String value, Point2D defaultValue) {
+        if (value == null || value.equals("")) {
+            return defaultValue;
+        }
+        String[] interpretedValue = value
+                .substring(
+                        "v(".length(),
+                        value.length() - ")".length())
+                .split(",");
+        Point2D convertedValue = new Point2D.Double(
+                Double.parseDouble(interpretedValue[0]),
+                Double.parseDouble(interpretedValue[1]));
+        return convertedValue;
+    }
 
     private final String attrName;
     private final String attrDescription;

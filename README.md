@@ -23,6 +23,10 @@ Simply execute the following command lien :
 gradle run
 ```
 
+And a new window will appear:
+
+![Current chapter is about Entity](docs/illustrations/figure-create-entity-screenshot-01.png "Current chapter is about Entity")
+
 ## develop
 
 The git repo is controlled through the
@@ -44,7 +48,7 @@ git flow feature finish
 > _**Git Warning**_<br/>_This `feature finish` git flow operation will merge the corresponding feature branch into the
 develop branch and delete the feature branch, locally AND remotely._
 
-## local documentation
+## Local documentation
 
 for some detailed documentation, see the provided [/docs](docs/index.md) directory.
 
@@ -52,6 +56,8 @@ Bring:
 
 - Some configuration though file and CLI,
 - add logging capabilities,
-- and design a default graphics display.
+- design a default graphics display,
+- manage keys and mouse,
+- bring entities to life
 
 McG.

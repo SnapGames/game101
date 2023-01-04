@@ -31,7 +31,6 @@ public class PhysicEngine {
      */
     public PhysicEngine(Game game) {
         this.game = game;
-        this.em = game.getEntityManager();
         this.world = new World(this.game.getConfiguration());
     }
 

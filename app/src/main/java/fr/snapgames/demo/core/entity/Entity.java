@@ -40,14 +40,29 @@ public class Entity {
      */
     public List<Point2D> forces = new ArrayList<>();
 
+    /**
+     * entity horizontal size
+     */
     public double width;
 
+    /**
+     * entity vertical size
+     */
     public double height;
 
+    /**
+     * entity direction move
+     */
     private double direction;
 
+    /**
+     * entity Color to fill with
+     */
     public Color fillColor;
 
+    /**
+     * entity Color to draw border with
+     */
     public Color borderColor;
 
     /**
@@ -181,16 +196,33 @@ public class Entity {
         return this;
     }
 
-
+    /**
+     * @param d
+     * @return
+     */
     public Entity setDebug(int d) {
         this.debug = d;
         return this;
     }
 
+    /**
+     * @param m
+     * @return
+     */
     public Entity setMaterial(Material m) {
         this.material = m;
         return this;
     }
+
+    /**
+     * @param m
+     * @return
+     */
+    public Entity setMass(double m) {
+        this.mass = m;
+        return this;
+    }
+
     /**
      * Retrieve name of this {@link Entity}
      *

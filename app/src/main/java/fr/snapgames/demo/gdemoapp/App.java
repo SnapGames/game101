@@ -201,32 +201,32 @@ public class App implements Game {
         int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
         int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
         entityMgr.add(
-            new Entity("player")
-                .setFillColor(Color.RED)
-                .setBorderColor(Color.WHITE)
-                .setSize(16.0, 16.0)
-                .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
-                .setSpeed(0.0, 0.0)
-                .setAcceleration(0.0, 0.0)
-                .setDebug(2)
-                .setMaterial(Material.RUBBER));
+                new Entity("player")
+                        .setFillColor(Color.RED)
+                        .setBorderColor(Color.WHITE)
+                        .setSize(16.0, 16.0)
+                        .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
+                        .setSpeed(0.0, 0.0)
+                        .setAcceleration(0.0, 0.0)
+                        .setDebug(2)
+                        .setMaterial(Material.RUBBER));
 
         for (int t = 0; t < 30; t++) {
             entityMgr.add(
-                new Entity("ball_" + t)
-                    .withFillColor(Color.BLUE)
-                    .withBorderColor(Color.CYAN)
-                    .withMass(0.01)
-                    .setSize(8.0, 8.0)
-                    .setPosition(
-                        Math.random() * screenWidth,
-                        Math.random() * screenHeight)
-                    .setSpeed(
-                        Math.random() * 20.0,
-                        Math.random() * 20.0)
-                    .setAcceleration(0.0, 0.0)
-                    .setDebug(2)
-                    .setMaterial(Material.SUPER_BALL));
+                    new Entity("ball_" + t)
+                            .setFillColor(Color.BLUE)
+                            .setBorderColor(Color.CYAN)
+                            .setMass(0.01)
+                            .setSize(8.0, 8.0)
+                            .setPosition(
+                                    Math.random() * screenWidth,
+                                    Math.random() * screenHeight)
+                            .setSpeed(
+                                    Math.random() * 20.0,
+                                    Math.random() * 20.0)
+                            .setAcceleration(0.0, 0.0)
+                            .setDebug(2)
+                            .setMaterial(Material.SUPER_BALL));
         }
     }
 
@@ -237,7 +237,7 @@ public class App implements Game {
         if (inputHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
             requestExit(true);
             logger.log(Level.FINEST, "    - key {} has been released",
-                    new Object[] { KeyEvent.getKeyText(KeyEvent.VK_ESCAPE) });
+                    new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
         }
 
         boolean move = false;
@@ -293,14 +293,14 @@ public class App implements Game {
     @Override
     public void dispose() {
         if (debugMode > 0) {
-            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[] {
+            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[]{
                     debugMode,
                     updateTestCounter,
-                    exitValueTestCounter });
+                    exitValueTestCounter});
         }
         window.close();
         long duration = System.currentTimeMillis() - appStartTime;
-        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[] { duration, Utils.formatDuration(duration) });
+        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[]{duration, Utils.formatDuration(duration)});
         logger.log(Level.INFO, "End of {0}", getAppName());
     }
 

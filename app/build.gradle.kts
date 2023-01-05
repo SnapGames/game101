@@ -34,8 +34,13 @@ testing {
 
 application {
     // Define the main class for the application.
-    mainClass.set("com.merckgroup.demo.gdemoapp.App")
+    mainClass.set("fr.snapgames.demo.gdemoapp.App")
 
+}
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(18))
+    }
 }
 
 version = "0.0.8"

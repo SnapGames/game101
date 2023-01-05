@@ -3,6 +3,8 @@ package fr.snapgames.demo.core.physic;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.entity.Entity;
 
+import java.awt.geom.Rectangle2D;
+
 /**
  * Create a Physic Engine to compute Entity moves and behaviors.
  *
@@ -40,9 +42,10 @@ public class PhysicEngine {
      * @param elapsed
      */
     public void update(double elapsed) {
+        double time = elapsed * 0.002;
         game.getEntityManager().getEntities().forEach(e -> {
-            updateEntity(game, e, elapsed);
-            constrained(game, e, elapsed);
+            updateEntity(game, e, time);
+            constrained(game, e, time);
         });
     }
 
@@ -61,17 +64,15 @@ public class PhysicEngine {
             e.ay += f.getY();
         });
 
-        //e.ax = thresholdMinMax(e.ax, world.minAcc, world.maxAccX);
-        //e.ay = thresholdMinMax(e.ay, world.minAcc, world.maxAccY);
+        e.ax = thresholdMinMax(e.ax, world.minAcc, world.maxAccX);
+        e.ay = thresholdMinMax(e.ay, world.minAcc, world.maxAccY);
 
-        e.dx += e.ax * (0.5 * (elapsed * elapsed));
-        e.dy += e.ay * (0.5 * e.mass * (elapsed * elapsed));
+        e.dx += (e.ax * (0.5 * (elapsed * elapsed)));
+        e.dy += (e.ay * (0.5 * (elapsed * elapsed)) * e.mass);
         e.dx = thresholdMinMax(e.dx, world.minSpeed, world.maxSpeedX);
         e.dy = thresholdMinMax(e.dy, world.minSpeed, world.maxSpeedY);
 
-        if (e.contact != 0) {
-            friction = e.material.friction;
-        }
+        friction = e.contact == 0 ? world.material.friction : e.material.friction;
 
         e.x += e.dx * elapsed * friction;
         e.y += e.dy * elapsed * friction;
@@ -89,39 +90,39 @@ public class PhysicEngine {
      */
     private void constrained(Game game, Entity e, double elapsed) {
         e.contact = 0;
-        if (e.x + e.width > world.paWidth) {
-            e.x = world.paWidth - e.width;
-            e.contact = 1;
-            e.dx = thresholdMinMax(
-                    -e.dx * e.material.elasticity,
-                    world.minSpeed,
-                    world.maxSpeedX);
-            ;
-        }
-        if (e.y + e.height > world.paHeight) {
-            e.y = world.paHeight - e.height;
-            e.contact += 2;
-            e.dy = thresholdMinMax(
-                    -e.dy * e.material.elasticity,
-                    world.minSpeed,
-                    world.maxSpeedY);
-            ;
-        }
-        if (e.x < 0.0) {
-            e.x = 0.0;
-            e.contact += 4;
-            e.dx = thresholdMinMax(
-                    -e.dx * e.material.elasticity,
-                    world.minSpeed,
-                    world.maxSpeedX);
-        }
-        if (e.y < 0.0) {
-            e.y = 0.0;
-            e.contact += 8;
-            e.dy = thresholdMinMax(
-                    -e.dy * e.material.elasticity,
-                    world.minSpeed,
-                    world.maxSpeedY);
+        if (!world.playArea.contains((Rectangle2D) e.box)) {
+            if (e.x + e.width > world.playArea.getWidth()) {
+                e.x = world.playArea.getWidth() - e.width;
+                e.contact = 1;
+                e.dx = thresholdMinMax(
+                        -e.dx * e.material.elasticity,
+                        world.minSpeed,
+                        world.maxSpeedX);
+            }
+            if (e.y + e.height > world.playArea.getHeight()) {
+                e.y = world.playArea.getHeight() - e.height;
+                e.contact += 2;
+                e.dy = thresholdMinMax(
+                        -e.dy * e.material.elasticity,
+                        world.minSpeed,
+                        world.maxSpeedY);
+            }
+            if (e.x < 0.0) {
+                e.x = 0.0;
+                e.contact += 4;
+                e.dx = thresholdMinMax(
+                        -e.dx * e.material.elasticity,
+                        world.minSpeed,
+                        world.maxSpeedX);
+            }
+            if (e.y < 0.0) {
+                e.y = 0.0;
+                e.contact += 8;
+                e.dy = thresholdMinMax(
+                        -e.dy * e.material.elasticity,
+                        world.minSpeed,
+                        world.maxSpeedY);
+            }
         }
     }
 

@@ -40,25 +40,25 @@ public class Entity {
      */
     public List<Point2D> forces = new ArrayList<>();
 
-    public double width;
+    public double width = 16.0;
 
-    public double height;
+    public double height = 16.0;
 
     private double direction;
 
-    public Color fillColor;
+    public Color fillColor = Color.RED;
 
-    public Color borderColor;
+    public Color borderColor = Color.BLACK;
 
     /**
      * The {@link Material} defining physic attributes for that {@link Entity}.
      */
-    public Material material;
+    public Material material = Material.DEFAULT;
 
     /**
      * Mass for that entity.
      */
-    public double mass;
+    public double mass = 1.0;
 
     /**
      * Define contact sides if contact exists:
@@ -78,24 +78,15 @@ public class Entity {
 
     /**
      * Create a new Entity with its name.
+     * According to size and position default value, the {@link Entity#box} is updated.
      *
      * @param name the name for this new {@link Entity}.
      */
     public Entity(String name) {
         this.name = name;
+        updateBox();
     }
 
-
-    /**
-     * Apply a force f to that {@link Entity}
-     *
-     * @param f a {@link Point2D} force to be applied.
-     * @return
-     */
-    public Entity addForce(Point2D f) {
-        this.forces.add(f);
-        return this;
-    }
 
     /**
      * Define the {@link Entity} position in a fluent API
@@ -217,21 +208,23 @@ public class Entity {
     }
 
     /**
+     * Apply a force f to that {@link Entity}
+     *
+     * @param f a {@link Point2D} force to be applied.
+     * @return
+     */
+    public Entity addForce(Point2D f) {
+        this.forces.add(f);
+        return this;
+    }
+
+    /**
      * Retrieve name of this {@link Entity}
      *
      * @return the name for this {@link Entity}.
      */
     public String getName() {
         return name;
-    }
-
-
-    /**
-     * Update the bounding box {@link Shape} according to the position
-     * and size of the {@link Entity}.
-     */
-    public void updateBox() {
-        this.box = new Rectangle2D.Double(x, y, width, height);
     }
 
     /**
@@ -253,6 +246,14 @@ public class Entity {
                 material.friction));
 
         return infos;
+    }
+
+    /**
+     * Update the bounding box {@link Shape} according to the position
+     * and size of the {@link Entity}.
+     */
+    public void updateBox() {
+        this.box = new Rectangle2D.Double(x, y, width, height);
     }
 
 }

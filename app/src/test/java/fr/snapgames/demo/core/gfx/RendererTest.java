@@ -40,6 +40,7 @@ class RendererTest {
 
     @Test
     void testRendererDrawToWindowOperation() {
+        game.initialize(new String[]{});
         renderer = new Renderer(game);
         Window window = new Window("test", 320, 200);
         renderer.draw();

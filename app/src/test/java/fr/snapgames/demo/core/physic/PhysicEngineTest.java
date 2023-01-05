@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 public class PhysicEngineTest {
 
@@ -35,13 +36,14 @@ public class PhysicEngineTest {
 
     @Test
     public void testPhysicEngineHasPlayArea() {
+        Rectangle2D playArea = pe.getWorld().playArea;
         Assertions.assertEquals(
-                320,
-                pe.getWorld().paWidth,
+                320.0,
+                playArea.getWidth(),
                 "Play area width has not been correctly setup");
         Assertions.assertEquals(
-                200,
-                pe.getWorld().paHeight,
+                200.0,
+                playArea.getHeight(),
                 "Play area height has not been correctly setup");
     }
 

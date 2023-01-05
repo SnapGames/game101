@@ -149,7 +149,7 @@ public class App implements Game {
 
     @Override
     public int initialize(String[] args) {
-        System.out.printf("Start %s%n- initializing...%n", getAppName());
+        logger.log(Level.INFO, "Start {0}%n- initializing...%n", getAppName());
 
         appStartTime = System.currentTimeMillis();
 
@@ -169,6 +169,13 @@ public class App implements Game {
         return initStatus;
     }
 
+    /**
+     * Request configuration file all the config values to initialize internals.
+     * It also parses the provided CLI args to override configuration value if necessary.
+     *
+     * @param args a String array containing the CLI arguments from the main method.
+     * @return 0 is ok, other value is an issue.
+     */
     public int applyConfiguration(String[] args) {
         int initStatus = config.parseConfigFile();
         if (initStatus == 0) {
@@ -203,29 +210,29 @@ public class App implements Game {
         entityMgr.add(
                 new Entity("player")
                         .setFillColor(Color.RED)
-                        .setBorderColor(Color.WHITE)
+                        .setBorderColor(Color.BLACK)
                         .setSize(16.0, 16.0)
-                        .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
+                        .setPosition((screenWidth - 16) * 0.5, (screenHeight - 16) * 0.5)
                         .setSpeed(0.0, 0.0)
                         .setAcceleration(0.0, 0.0)
-                        .setDebug(2)
-                        .setMaterial(Material.RUBBER));
+                        .setMass(80.0)
+                        .setMaterial(Material.STEEL));
 
         for (int t = 0; t < 30; t++) {
             entityMgr.add(
                     new Entity("ball_" + t)
                             .setFillColor(Color.BLUE)
-                            .setBorderColor(Color.CYAN)
-                            .setMass(0.01)
+                            .setBorderColor(Color.BLACK)
                             .setSize(8.0, 8.0)
                             .setPosition(
-                                    Math.random() * screenWidth,
-                                    Math.random() * screenHeight)
-                            .setSpeed(
-                                    Math.random() * 20.0,
-                                    Math.random() * 20.0)
+                                    (Math.random() * screenWidth) - 8.0,
+                                    (Math.random() * screenHeight) - 8.0)
+                            /**.setSpeed(
+                             40.0 * Math.random() - 20.0,
+                             40.0 * Math.random() - 20.0)**/
+                            .setSpeed(0.0, 0.0)
                             .setAcceleration(0.0, 0.0)
-                            .setDebug(2)
+                            .setMass(Math.random() * 50.0)
                             .setMaterial(Material.SUPER_BALL));
         }
     }
@@ -241,31 +248,31 @@ public class App implements Game {
         }
 
         boolean move = false;
-        double moveStep = 0.00001;
+        double accelerationStep = 600.0;
+        double jumpFactor = 5.0 * accelerationStep;
 
         Entity player = entityMgr.get("player");
+
         if (inputHandler.getKey(KeyEvent.VK_UP)) {
-            player.addForce(new Point2D.Double(0.0, -moveStep * 1000.0));
+            player.addForce(new Point2D.Double(0.0, -jumpFactor));
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_DOWN)) {
-            player.addForce(new Point2D.Double(0.0, moveStep));
+            player.addForce(new Point2D.Double(0.0, accelerationStep));
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_LEFT)) {
-            player.addForce(new Point2D.Double(-moveStep, 0.0));
+            player.addForce(new Point2D.Double(-accelerationStep, 0.0));
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_RIGHT)) {
-            player.addForce(new Point2D.Double(moveStep, 0.0));
+            player.addForce(new Point2D.Double(accelerationStep, 0.0));
             move = true;
         }
         if (!move) {
             if (Optional.ofNullable(player.material).isPresent()) {
                 player.dx *= player.material.friction;
                 player.dy *= player.material.friction;
-                player.ax = 0.0;
-                player.ay = 0.0;
             }
         }
     }

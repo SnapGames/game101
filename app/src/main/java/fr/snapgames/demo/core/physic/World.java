@@ -4,6 +4,7 @@ import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * The {@link World} object intends to provide some world default attribute to configure the {@link PhysicEngine}
@@ -23,18 +24,16 @@ public class World {
     public double maxAccY;
     public double minAcc;
     /**
-     * Play area width
+     * Play area
      */
-    int paWidth;
-    /**
-     * Play area height
-     */
-    int paHeight;
+    Rectangle2D playArea;
 
     /**
      * The default World gravity
      */
-    public Point2D gravity = new Point2D.Double(0, 0.000981);
+    public Point2D gravity = new Point2D.Double(0, 0.981);
+
+    public Material material = Material.AIR;
 
     /**
      * Initialization of the World object to define world context for PhysicEngine.
@@ -53,8 +52,9 @@ public class World {
         maxAccX = (double) configuration.get(ConfigAttribute.PHYSIC_MAX_ACCELERATION_X);
         maxAccY = (double) configuration.get(ConfigAttribute.PHYSIC_MAX_ACCELERATION_Y);
         // get play area dimension
-        paWidth = (int) configuration.get(ConfigAttribute.PLAY_AREA_WIDTH);
-        paHeight = (int) configuration.get(ConfigAttribute.PLAY_AREA_HEIGHT);
+        playArea = new Rectangle2D.Double(0.0, 0.0,
+                (double) configuration.get(ConfigAttribute.PLAY_AREA_WIDTH),
+                (double) configuration.get(ConfigAttribute.PLAY_AREA_HEIGHT));
     }
 
     /**
@@ -70,8 +70,22 @@ public class World {
      * Define the {@link World}'s gravity with the provided {@link Point2D} value.
      *
      * @param g the {@link Point2D} gravity value to be set to that {@link World} object.
+     * @return the updated {@link World} object (Fluent API)
      */
-    public void setGravity(Point2D g) {
+    public World setGravity(Point2D g) {
         this.gravity = g;
+        return this;
+    }
+
+    /**
+     * Define the default {@link Material} for this World, these characteristics
+     * will be used by the {@link PhysicEngine} as a default friction.
+     *
+     * @param mat the {@link Material} to be applied to all {@link fr.snapgames.demo.core.entity.Entity} in this {@link World}
+     * @return the updated {@link World} object (Fluent API)
+     */
+    public World setMaterial(Material mat) {
+        this.material = mat;
+        return this;
     }
 }

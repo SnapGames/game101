@@ -46,7 +46,7 @@ $$
 
 ## Implementation
 
-Now I know about theory, let's dive into the code with the core of the servie:
+Now I know about theory, let's dive into the code with the core of the service:
 
 ### Main PhysicEngine class
 
@@ -67,7 +67,7 @@ class PhysicEngine {
 ```
 
 - The `game` is a reference to the parent class.
-- `world` is an instance of the followng `World` object, defining some context and constrains to the world where `Entity`'s instances are going to moves.
+- `world` is an instance of the following `World` object, defining some context and constrains to the world where `Entity`'s instances are going to moves.
 
 ### The World
 
@@ -84,11 +84,11 @@ public class World {
 }
 ```
 
-We also need to define some maximum speed and accelerationt to manage out physic simulation limit, because, and this is
+We also need to define some maximum speed and acceleration to manage out physic simulation limit, because, and this is
 not the main theme of this chapter and tutorial, Newton's mathematics laws has some limitation, and our game is not a
 nuclear physic simulator !
 
-> The goals for those technical limits is also to avoid infinit values driving to unpredictable behaviors of our entities.
+> The goals for those threshold limits is also to avoid infinite values driving to unpredictable behaviors of our entities.
 > **Evil is hidden in details**, and a too large number of decimals in a number closed to 0.0 is a killing detail.
 
 So here are our technical limitation :
@@ -108,9 +108,10 @@ public class World {
 }
 ```
 
-And we need some specific configuration, so all limitation values are extracted from configuration file :
+And we need some specific configuration, so all limitation values are extracted from configuration file (config.properties):
 
 ```properties
+#...
 # gravity
 app.physic.world.gravity=v(0.0,0.000981)
 # world play area
@@ -223,7 +224,7 @@ public enum ConfigAttribute implements IConfigAttribute {
 }
 ```
 
-The new helper `stringToPoint2D()` add the capability to read configuration value as a `Point2D`, primarily used to the get the gravit value, by converting a `String` value `v([double],[double])` to `Point2D`:
+The new helper `stringToPoint2D()` add the capability to read configuration value as a `Point2D`, primarily used to the get the gravity value, by converting a `String` value `v([double],[double])` to `Point2D`:
 
 ```java
 public enum ConfigAttribute implements IConfigAttribute {

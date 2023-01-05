@@ -1,5 +1,6 @@
 package fr.snapgames.demo.gdemoapp;
 
+import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
 
 import java.awt.geom.Point2D;
@@ -103,13 +104,13 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.physic.world.play.area.width",
             "set the width of the play area",
             320,
-            Integer::valueOf),
+            Double::valueOf),
     PLAY_AREA_HEIGHT(
             "playAreaHeight",
             "app.physic.world.play.area.height",
             "set the height of the play area",
             200,
-            Integer::valueOf),
+            Double::valueOf),
     PHYSIC_GRAVITY(
             "physicGravity",
             "app.physic.world.gravity",

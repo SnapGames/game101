@@ -40,30 +40,14 @@ public class Entity {
      */
     public List<Point2D> forces = new ArrayList<>();
 
-    /**
-     * entity horizontal size
-     */
-
     public double width;
 
-    /**
-     * entity vertical size
-     */
     public double height;
 
-    /**
-     * entity direction move
-     */
     private double direction;
 
-    /**
-     * entity Color to fill with
-     */
     public Color fillColor;
 
-    /**
-     * entity Color to draw border with
-     */
     public Color borderColor;
 
     /**
@@ -106,9 +90,11 @@ public class Entity {
      * Apply a force f to that {@link Entity}
      *
      * @param f a {@link Point2D} force to be applied.
+     * @return
      */
-    public void addForce(Point2D f) {
+    public Entity addForce(Point2D f) {
         this.forces.add(f);
+        return this;
     }
 
     /**

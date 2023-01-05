@@ -43,6 +43,7 @@ public class Entity {
     /**
      * entity horizontal size
      */
+
     public double width;
 
     /**
@@ -197,8 +198,10 @@ public class Entity {
     }
 
     /**
-     * @param d
-     * @return
+     * Set the debug display level for this {@link Entity}.
+     *
+     * @param d the int level from 0 to 5
+     * @return the updated {@link Entity}.
      */
     public Entity setDebug(int d) {
         this.debug = d;
@@ -206,8 +209,10 @@ public class Entity {
     }
 
     /**
-     * @param m
-     * @return
+     * Seth the {@link Material} for this {@link Entity}
+     *
+     * @param m the material instance to be applied to the Entity.
+     * @return the updated {@link Entity}.
      */
     public Entity setMaterial(Material m) {
         this.material = m;
@@ -215,11 +220,13 @@ public class Entity {
     }
 
     /**
-     * @param m
-     * @return
+     * Set the mass value for this {@link Entity}
+     *
+     * @param mass a double value from 1.0 to what_ever_you_want_that_physic_can_do
+     * @return the updated {@link Entity}.
      */
-    public Entity setMass(double m) {
-        this.mass = m;
+    public Entity setMass(double mass) {
+        this.mass = mass;
         return this;
     }
 
@@ -261,4 +268,5 @@ public class Entity {
 
         return infos;
     }
+
 }

@@ -148,6 +148,11 @@ public class PhysicEngine {
         return ceilValue(Math.copySign((Math.abs(x) > max ? max : x), x), min);
     }
 
+    /**
+     * Retrieve the {@link World} instance applied to the {@link PhysicEngine}
+     *
+     * @return a {@link World} instance.
+     */
     public World getWorld() {
         return world;
     }

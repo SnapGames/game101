@@ -8,6 +8,18 @@ The Physic Engine is one more service for our application. we will use the same 
 
 ## Some mathematics
 
+The implementation of our `PhysicEngine` service will try to satisfy to some of the Newton's laws of physic. 
+We will compute the acceleration, sum of all applied forces, then compute the resulting speed to finally define the position of our `Entity`. 
+
+![The acceleration, the spedd and the gravity are used as parameters in physic computation](https://docs.google.com/drawings/d/e/2PACX-1vS1mK0tLz4VBBNbMNIJxtHGTymADBu7emdwWDRA5RIwxEnJQ0DcOFqP4uCc7lFwj77qbLl3Ntm9tzbO/pub?w=549&h=362 "The acceleration, the speed and the gravity are used as parameters in physic computation")
+
+The previous diagram try to illustre the mathematics vectors we will apply to this Entity named "player".
+
+But let's dive into some mathematics. 
+
+>_**Note**_ 
+>_If you don't need/want to, just jump to the next "Implementation" paragraph._
+
 The acceleration of applied on a GameObject s the sum of all applied forces, divided by its mass:
 
 $$

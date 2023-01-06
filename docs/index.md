@@ -11,4 +11,4 @@ to a package organized project to provide Entity, physic, rendering, etc...
 5. [Bring Entity and its manager](chapter-05-bring_entity_and_its_manager.md)
 6. [Adding Physics](chapter-06-add_physic.md)
 
-![The latest chapter's screenshot: the physic engine](illustrations/figure-add-physic-engine-debug_screenshot-02.png "The latest chapter's screenshot: the physic engine")
+![The latest chapter's screenshot: the physic engine](illustrations/figure-add-physic-engine_screenshot.png "The latest chapter's screenshot: the physic engine")

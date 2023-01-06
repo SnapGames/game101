@@ -4,7 +4,7 @@ Here is the most complex thing we are going to manage: move of our GameObject ac
 
 The Physic Engine is one more service for our application. we will use the same approach.
 
-![Class diagram for our PhysicEngine](http://www.plantuml.com/plantuml/png/PKux2iCm3Drz2lS0kO27aYLqAdJhhCR25jXAi1HARb-2Kx398jxdwKcZA1JTSZ8tZPZHhWc8JIIFDgF6nKibe5heiocAcHE8s0TaFE4hxaBpn87uBxsNalo99rRI_GaC0KkdcQF43iEzgt1hszSuDNhik03vQjMhxdlCYzc_uR2oK4odDyaQ8HGp8lijfny0 "Class diagram for our PhysicEngine")
+![Class diagram for our PhysicEngine](http://www.plantuml.com/plantuml/png/RL11QiCm4Bph5Iev-m7M8GHCw2bGwA7dZRMr5wHLaDQ4KFhtIaZKDib5Q6PtPjWv9O4eYtVgJMRqg6yEYDLC5hL7cODD5O18fEiYcDJe82Nz3XxRzsD-91hFF16ZFlHzt_Yl49tT4cSMaiS562QCAitXtgXd-yOVXc7uKLftscVMsB1S7QhVghs0O2HmJ-frKiApljCC7irdNkEfG8kSidypB0nceT2u9xyZZKA1r-1ojkwwu_uMWnLDSLtOjc9k6w1sVNN7sfEvbrVjR3T1DO4mjOsi-x_I-FPHjV6NenEoNRpx0m00 "Class diagram for our PhysicEngine")
 
 ## Some mathematics
 
@@ -67,7 +67,8 @@ class PhysicEngine {
 ```
 
 - The `game` is a reference to the parent class.
-- `world` is an instance of the following `World` object, defining some context and constrains to the world where `Entity`'s instances are going to moves.
+- `world` is an instance of the following `World` object, defining some context and constrains to the world
+  where `Entity`'s instances are going to moves.
 
 ### The World
 
@@ -88,7 +89,8 @@ We also need to define some maximum speed and acceleration to manage out physic 
 not the main theme of this chapter and tutorial, Newton's mathematics laws has some limitation, and our game is not a
 nuclear physic simulator !
 
-> The goals for those threshold limits is also to avoid infinite values driving to unpredictable behaviors of our entities.
+> The goals for those threshold limits is also to avoid infinite values driving to unpredictable behaviors of our
+> entities.
 > **Evil is hidden in details**, and a too large number of decimals in a number closed to 0.0 is a killing detail.
 
 So here are our technical limitation :
@@ -108,7 +110,8 @@ public class World {
 }
 ```
 
-And we need some specific configuration, so all limitation values are extracted from configuration file (config.properties):
+And we need some specific configuration, so all limitation values are extracted from configuration file (
+config.properties):
 
 ```properties
 #...
@@ -155,7 +158,8 @@ public class World {
 }
 ```
 
-And by the way, you've noticed the new `ConfigAttribute` enumeration items with their default keys, value and definition :
+And by the way, you've noticed the new `ConfigAttribute` enumeration items with their default keys, value and
+definition :
 
 ```java
 
@@ -224,7 +228,8 @@ public enum ConfigAttribute implements IConfigAttribute {
 }
 ```
 
-The new helper `stringToPoint2D()` add the capability to read configuration value as a `Point2D`, primarily used to the get the gravity value, by converting a `String` value `v([double],[double])` to `Point2D`:
+The new helper `stringToPoint2D()` add the capability to read configuration value as a `Point2D`, primarily used to the
+get the gravity value, by converting a `String` value `v([double],[double])` to `Point2D`:
 
 ```java
 public enum ConfigAttribute implements IConfigAttribute {
@@ -251,7 +256,8 @@ public enum ConfigAttribute implements IConfigAttribute {
 
 All the processing for the `GameObject` is hidden in the details of the `update()` method:
 
-Applying what we've described at the beginning of this chapter, we compute acceleration, speed, and the position for all the entities taking part in the `Game` through the `EntityManager` entity collection.
+Applying what we've described at the beginning of this chapter, we compute acceleration, speed, and the position for all
+the entities taking part in the `Game` through the `EntityManager` entity collection.
 
 ```java
 class PhysicEngine {
@@ -306,7 +312,9 @@ class PhysicEngine {
 ```
 
 But this is only the necessary, I need to limit the moves of our objects by constraining the Entity into
-the `World` play area defined by `(paWidth, paHeight)`, but taking in account the speed limit defined at the world level (see `minSpeed`, `maxSpeedX`, `maxSpeedY`) and using the entity's define `Material` `elasticity` value to compute the bouncing effect in case of collision with play area limits.
+the `World` play area defined by `(paWidth, paHeight)`, but taking in account the speed limit defined at the world
+level (see `minSpeed`, `maxSpeedX`, `maxSpeedY`) and using the entity's define `Material` `elasticity` value to compute
+the bouncing effect in case of collision with play area limits.
 
 ```java
 class PhysicEngine {
@@ -353,7 +361,8 @@ class PhysicEngine {
 
 ## The Game
 
-I now modify the `Game` class to apply physic engine computation to the Entities, which was achieved by the previously existing `Entity#update()` method itself.
+I now modify the `Game` class to apply physic engine computation to the Entities, which was achieved by the previously
+existing `Entity#update()` method itself.
 The update is now delegated to the `PhysicEngine` :
 
 ```java
@@ -431,5 +440,17 @@ $> gradle run
 
 Here be the following window with some `GameObject`, :
 
-![Multiple object with physic](illustrations/ch06_add-physic-engine_screenshot.png "Multiple object with physic")
+![Multiple object with physic](illustrations/figure-add-physic-engine_screenshot.png  "Multiple object with physic")
 
+## Conclusion
+
+If we stick to the previous posts, you may know now that: the
+GitHub [Game101](https://github.com/SnapGames/game101/ "Open the GitHub project game101") project hosts a specific tag
+for this
+part: [create-physic-engine](https://github.com/SnapGames/game101/releases/tag/create-physic-engine "Go and explore the code from this tag create-physic-engine").
+
+See you soon to add 7th’s chapter talking about Camera and more !
+
+That’s all folks !
+
+McG.

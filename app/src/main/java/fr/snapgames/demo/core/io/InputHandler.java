@@ -76,7 +76,7 @@ public class InputHandler implements KeyListener, MouseListener {
     @Override
     public void keyReleased(KeyEvent e) {
         preKeys[e.getKeyCode()] = keys[e.getKeyCode()];
-        keys[e.getKeyCode()] = true;
+        keys[e.getKeyCode()] = false;
     }
 
     /**

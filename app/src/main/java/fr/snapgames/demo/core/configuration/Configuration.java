@@ -105,6 +105,7 @@ public class Configuration {
             if (ca.getAttrName().equals(kv[0]) || ca.getConfigKey().equals(kv[0])) {
                 configurationValues.put(ca, ca.getAttrParser().apply(kv[1]));
                 found = true;
+                break;
             }
         }
         return found;

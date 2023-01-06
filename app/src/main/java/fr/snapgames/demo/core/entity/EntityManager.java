@@ -1,7 +1,6 @@
 package fr.snapgames.demo.core.entity;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,7 +14,7 @@ public class EntityManager {
     /**
      * internal map of handled {@link Entity}.
      */
-    Map<String, Entity> entities = new HashMap<>();
+    Map<String, Entity> entities = new ConcurrentHashMap<>();
 
     /**
      * Create the Entity Manager.

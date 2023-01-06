@@ -1,5 +1,9 @@
 package fr.snapgames.demo.core;
 
+import java.awt.geom.Point2D;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Add some utilities and helpers to convert values to String.
  *
@@ -41,5 +45,28 @@ public class Utils {
         d = (int) time;
 
         return (String.format("%d d - %02d:%02d:%02d.%03d", d, h, m, s, ms));
+    }
+
+    /**
+     * Convert String "v([double],[double])" to Point2D.
+     *
+     * @param value
+     * @param defaultValue
+     * @return Point2D value corresponding to the converted string.
+     * @since 0.0.8
+     */
+    private static Point2D stringToPoint2D(String value, Point2D defaultValue) {
+        if (value == null || value.equals("")) {
+            return defaultValue;
+        }
+        String[] interpretedValue = value
+                .substring(
+                        "v(".length(),
+                        value.length() - ")".length())
+                .split(",");
+        Point2D convertedValue = new Point2D.Double(
+                Double.parseDouble(interpretedValue[0]),
+                Double.parseDouble(interpretedValue[1]));
+        return convertedValue;
     }
 }

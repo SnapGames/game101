@@ -11,25 +11,32 @@ import fr.snapgames.demo.core.entity.EntityManager;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 import fr.snapgames.demo.core.io.InputHandler;
+import fr.snapgames.demo.core.physic.Material;
+import fr.snapgames.demo.core.physic.PhysicEngine;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Define a common Game interface with some default implementation for main core function.
+ * Define a common Game interface with some default implementation for main core
+ * function.
  * <p>
  * Basically the Game is started by a call to the run() method, and :
  * <ul>
- *     <li>run first execute the {@link Game#initialize(String[])},</li>
- *     <li>and if initialization is ok (=0), call {@link Game#create()},</li>
- *     <li>then call the {@link Game#loop()}, until a {@link Game#isExitRequested()} become true</li>
- *     <li>and finally call the #{@link Game#dispose()} to free all reserved resources.</li>
+ * <li>run first execute the {@link Game#initialize(String[])},</li>
+ * <li>and if initialization is ok (=0), call {@link Game#create()},</li>
+ * <li>then call the {@link Game#loop()}, until a {@link Game#isExitRequested()}
+ * become true</li>
+ * <li>and finally call the #{@link Game#dispose()} to free all reserved
+ * resources.</li>
  * </ul>
  *
  * @author Frédéric Delorme
@@ -110,6 +117,11 @@ public class App implements Game {
     private EntityManager entityMgr;
 
     /**
+     * Physic computation engine
+     */
+    private PhysicEngine physicEngine;
+
+    /**
      * Displayed application title on the screen/window.
      */
     private String appTitle = "GDemoApp";
@@ -122,7 +134,7 @@ public class App implements Game {
     }
 
     /**
-     * a specific constructor for test  and debug mode.
+     * a specific constructor for test and debug mode.
      *
      * @param configFile the configuration file to be loaded.
      */
@@ -137,7 +149,7 @@ public class App implements Game {
 
     @Override
     public int initialize(String[] args) {
-        System.out.printf("Start %s%n- initializing...%n", getAppName());
+        logger.log(Level.INFO, "Start {0}%n- initializing...%n", getAppName());
 
         appStartTime = System.currentTimeMillis();
 
@@ -149,13 +161,21 @@ public class App implements Game {
                 (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
         inputHandler = new InputHandler();
         window.addListener(inputHandler);
-        renderer = new Renderer(this);
         entityMgr = new EntityManager();
+        renderer = new Renderer(this);
+        physicEngine = new PhysicEngine(this);
 
         logger.log(Level.INFO, "- initialization done.");
         return initStatus;
     }
 
+    /**
+     * Request configuration file all the config values to initialize internals.
+     * It also parses the provided CLI args to override configuration value if necessary.
+     *
+     * @param args a String array containing the CLI arguments from the main method.
+     * @return 0 is ok, other value is an issue.
+     */
     public int applyConfiguration(String[] args) {
         int initStatus = config.parseConfigFile();
         if (initStatus == 0) {
@@ -171,7 +191,8 @@ public class App implements Game {
     }
 
     /**
-     * from loaded file, extract configuration values ad set corresponding internal App attributes.
+     * from loaded file, extract configuration values ad set corresponding internal
+     * App attributes.
      */
     private void extractConfigurationValues() {
         appTitle = (String) config.get(ConfigAttribute.APP_TITLE);
@@ -189,11 +210,31 @@ public class App implements Game {
         entityMgr.add(
                 new Entity("player")
                         .setFillColor(Color.RED)
-                        .setBorderColor(Color.MAGENTA)
-                        .setSize(32.0, 32.0)
-                        .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
+                        .setBorderColor(Color.BLACK)
+                        .setSize(16.0, 16.0)
+                        .setPosition((screenWidth - 16) * 0.5, (screenHeight - 16) * 0.5)
                         .setSpeed(0.0, 0.0)
-        );
+                        .setAcceleration(0.0, 0.0)
+                        .setMass(80.0)
+                        .setMaterial(Material.STEEL));
+
+        for (int t = 0; t < 30; t++) {
+            entityMgr.add(
+                    new Entity("ball_" + t)
+                            .setFillColor(Color.BLUE)
+                            .setBorderColor(Color.BLACK)
+                            .setSize(8.0, 8.0)
+                            .setPosition(
+                                    (Math.random() * screenWidth) - 8.0,
+                                    (Math.random() * screenHeight) - 8.0)
+                            /**.setSpeed(
+                             40.0 * Math.random() - 20.0,
+                             40.0 * Math.random() - 20.0)**/
+                            .setSpeed(0.0, 0.0)
+                            .setAcceleration(0.0, 0.0)
+                            .setMass(Math.random() * 50.0)
+                            .setMaterial(Material.SUPER_BALL));
+        }
     }
 
     @Override
@@ -202,27 +243,37 @@ public class App implements Game {
         logger.log(Level.INFO, "  - handle input");
         if (inputHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
             requestExit(true);
-            logger.log(Level.FINEST, "    - key {} has been released", new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
+            logger.log(Level.FINEST, "    - key {} has been released",
+                    new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
         }
+
+        boolean move = false;
+        double accelerationStep = 600.0;
+        double jumpFactor = 5.0 * accelerationStep;
 
         Entity player = entityMgr.get("player");
-        player.setSpeed(0.0, 0.0);
 
         if (inputHandler.getKey(KeyEvent.VK_UP)) {
-            logger.log(Level.FINEST, "player move UP");
-            player.dy = -0.05;
+            player.addForce(new Point2D.Double(0.0, -jumpFactor));
+            move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_DOWN)) {
-            logger.log(Level.FINEST, "player move DOWN");
-            player.dy = 0.05;
+            player.addForce(new Point2D.Double(0.0, accelerationStep));
+            move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_LEFT)) {
-            logger.log(Level.FINEST, "player move LEFT");
-            player.dx = -0.05;
+            player.addForce(new Point2D.Double(-accelerationStep, 0.0));
+            move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_RIGHT)) {
-            logger.log(Level.FINEST, "player move RIGHT");
-            player.dx = 0.05;
+            player.addForce(new Point2D.Double(accelerationStep, 0.0));
+            move = true;
+        }
+        if (!move) {
+            if (Optional.ofNullable(player.material).isPresent()) {
+                player.dx *= player.material.friction;
+                player.dy *= player.material.friction;
+            }
         }
     }
 
@@ -230,32 +281,7 @@ public class App implements Game {
     public void update(Game g, double elapsed) {
         logger.log(Level.INFO, "  - update thing {0}", elapsed);
         updateTestCounter += 1;
-
-        entityMgr.getEntities().stream().forEach(e -> {
-            e.update(elapsed);
-            constrainToPlayArea(e);
-        });
-    }
-
-    private void constrainToPlayArea(Entity e) {
-        int paWidth = (int) config.get(ConfigAttribute.PLAY_AREA_WIDTH);
-        int paHeight = (int) config.get(ConfigAttribute.PLAY_AREA_HEIGHT);
-        if (e.x + e.width > paWidth) {
-            e.x = paWidth - e.width;
-            e.dx = -e.dx;
-        }
-        if (e.y + e.height > paHeight) {
-            e.y = paHeight - e.height;
-            e.dy = -e.dy;
-        }
-        if (e.x < 0.0) {
-            e.x = 0.0;
-            e.dx = -e.dx;
-        }
-        if (e.y < 0.0) {
-            e.y = 0.0;
-            e.dy = -e.dy;
-        }
+        physicEngine.update(elapsed);
     }
 
     @Override
@@ -305,7 +331,6 @@ public class App implements Game {
         return entityMgr;
     }
 
-
     /**
      * Request exit from this Application.
      *
@@ -334,7 +359,7 @@ public class App implements Game {
     }
 
     /**
-     * return the trigger value  to exit from loop ni test mode.
+     * return the trigger value to exit from loop ni test mode.
      *
      * @return the value of the test max number of loop.
      */

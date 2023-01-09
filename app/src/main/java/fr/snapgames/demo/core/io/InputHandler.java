@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The {@link InputHandler} service is provided a nice implementation to manage Event from mouse and keyboard,
@@ -50,6 +52,32 @@ public class InputHandler implements KeyListener, MouseListener {
     private boolean[] preMouseButtons;
 
     /**
+     * Shift key status
+     */
+    private boolean shiftPressed;
+    /**
+     * Control key status
+     */
+    private boolean ctrlPressed;
+    /**
+     * Alt key status
+     */
+    private boolean altPressed;
+    /**
+     * AltGr key status
+     */
+    private boolean altGrPressed;
+    /**
+     * Meta key status
+     */
+    private boolean metaPressed;
+
+    /**
+     * The list of Listeners to be updated according to Key events.
+     */
+    private List<KeyListener> listeners = new ArrayList<>();
+
+    /**
      * INputHandler initialization:
      * <ol>
      *     <li>setting key buffers to maximum key code value</li>
@@ -62,8 +90,30 @@ public class InputHandler implements KeyListener, MouseListener {
         mouseButtons = new boolean[msButtons];
     }
 
+    /**
+     * Add a specific Listener to be updated at Key Event.
+     *
+     * @param kl a KeyListener implementation to keep updated on Key event.
+     */
+    public void addListener(KeyListener kl) {
+        listeners.add(kl);
+    }
+
+
+    private void testModifierKeys(KeyEvent e) {
+        shiftPressed = e.isShiftDown();
+        ctrlPressed = e.isControlDown();
+        altPressed = e.isAltDown();
+        altGrPressed = e.isAltGraphDown();
+        metaPressed = e.isMetaDown();
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
+        testModifierKeys(e);
+        for (KeyListener kl : listeners) {
+            kl.keyTyped(e);
+        }
         // nothing done now with that event.
     }
 
@@ -71,12 +121,20 @@ public class InputHandler implements KeyListener, MouseListener {
     public void keyPressed(KeyEvent e) {
         preKeys[e.getKeyCode()] = keys[e.getKeyCode()];
         keys[e.getKeyCode()] = true;
+        testModifierKeys(e);
+        for (KeyListener kl : listeners) {
+            kl.keyPressed(e);
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         preKeys[e.getKeyCode()] = keys[e.getKeyCode()];
         keys[e.getKeyCode()] = false;
+        testModifierKeys(e);
+        for (KeyListener kl : listeners) {
+            kl.keyReleased(e);
+        }
     }
 
     /**

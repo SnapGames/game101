@@ -40,7 +40,7 @@ public enum ConfigAttribute implements IConfigAttribute {
      */
     EXIT_TEST_COUNT_FRAME(
             "testCounter",
-            "app.test.counter",
+            "app.test.loop.counter",
             "if debug>0, set a number of frame to execute before exit (test mode)",
             -1,
             v -> Integer.valueOf(v)),
@@ -158,7 +158,18 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.physic.world.acceleration.y.max",
             "Set the maximum acceleration on Y axis",
             0.2,
-            Double::valueOf);
+            Double::valueOf),
+    DEBUG_WHILE_LIST("debugWhiteList",
+            "app.debug.filter.white.list",
+            "List of entity to display debug information for",
+            "",
+            v -> v),
+
+    DEBUG_BLACK_LIST("debugBlackList",
+            "app.debug.filter.black.list",
+            "List of entity to NOT display debug information for",
+            "",
+            v -> v);
 
     /**
      * Convert String "v([double],[double])" to Point2D.

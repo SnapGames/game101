@@ -56,7 +56,7 @@ public class PhysicEngine {
      * @param e       the concerned entity.
      * @param elapsed the elapsed time since previous call.
      */
-    private void updateEntity(Game game, Entity e, double elapsed) {
+    private void updateEntity(Game game, Entity<?> e, double elapsed) {
         double friction = 1.0;
         e.addForce(world.gravity);
         e.forces.forEach(f -> {
@@ -88,41 +88,39 @@ public class PhysicEngine {
      * @param e       the concerned entity.
      * @param elapsed the elapsed time since previous call.
      */
-    private void constrained(Game game, Entity e, double elapsed) {
+    private void constrained(Game game, Entity<?> e, double elapsed) {
         e.contact = 0;
-        if (!world.playArea.contains((Rectangle2D) e.box)) {
-            if (e.x + e.width > world.playArea.getWidth()) {
-                e.x = world.playArea.getWidth() - e.width;
-                e.contact = 1;
-                e.dx = thresholdMinMax(
-                        -e.dx * e.material.elasticity,
-                        world.minSpeed,
-                        world.maxSpeedX);
-            }
-            if (e.y + e.height > world.playArea.getHeight()) {
-                e.y = world.playArea.getHeight() - e.height;
-                e.contact += 2;
-                e.dy = thresholdMinMax(
-                        -e.dy * e.material.elasticity,
-                        world.minSpeed,
-                        world.maxSpeedY);
-            }
-            if (e.x < 0.0) {
-                e.x = 0.0;
-                e.contact += 4;
-                e.dx = thresholdMinMax(
-                        -e.dx * e.material.elasticity,
-                        world.minSpeed,
-                        world.maxSpeedX);
-            }
-            if (e.y < 0.0) {
-                e.y = 0.0;
-                e.contact += 8;
-                e.dy = thresholdMinMax(
-                        -e.dy * e.material.elasticity,
-                        world.minSpeed,
-                        world.maxSpeedY);
-            }
+        if (e.x + e.width > world.playArea.getWidth()) {
+            e.x = world.playArea.getWidth() - e.width;
+            e.contact = 1;
+            e.dx = thresholdMinMax(
+                    -e.dx * e.material.elasticity,
+                    world.minSpeed,
+                    world.maxSpeedX);
+        }
+        if (e.y + e.height > world.playArea.getHeight()) {
+            e.y = world.playArea.getHeight() - e.height;
+            e.contact += 2;
+            e.dy = thresholdMinMax(
+                    -e.dy * e.material.elasticity,
+                    world.minSpeed,
+                    world.maxSpeedY);
+        }
+        if (e.x < 0.0) {
+            e.x = 0.0;
+            e.contact += 4;
+            e.dx = thresholdMinMax(
+                    -e.dx * e.material.elasticity,
+                    world.minSpeed,
+                    world.maxSpeedX);
+        }
+        if (e.y < 0.0) {
+            e.y = 0.0;
+            e.contact += 8;
+            e.dy = thresholdMinMax(
+                    -e.dy * e.material.elasticity,
+                    world.minSpeed,
+                    world.maxSpeedY);
         }
     }
 

@@ -2,6 +2,8 @@ package fr.snapgames.demo.core;
 
 import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.entity.EntityManager;
+import fr.snapgames.demo.core.gfx.Window;
+import fr.snapgames.demo.core.physic.PhysicEngine;
 
 /**
  * THe Game Interface defining the right Game API for our game application framework.
@@ -166,4 +168,54 @@ public interface Game {
      * @return the EntityManager instance required for sub services.
      */
     EntityManager getEntityManager();
+
+    /**
+     * Retrieve the PhysicEngine service instance.
+     *
+     * @return a PhysicEngine instance.
+     */
+    PhysicEngine getPhysicEngine();
+
+    /**
+     * retrieve the {@link Window} for this Game implementation.
+     *
+     * @return the current active Game {@link Window}.
+     */
+    Window getWindow();
+
+    /**
+     * return the current debug mode set at Game level
+     *
+     * @return an int value between 0 and 4, defining level of display debug information. 0 mean no debug info.
+     */
+    int getDebugMode();
+
+    /**
+     * Return the number of Image per frame drawn.
+     *
+     * @return a double value computed according to the real number of frame per second processed.
+     */
+    double getFPS();
+
+    /**
+     * Request exit out of the Game.
+     *
+     * @param exit a boolean value, if true, request exit is effective.
+     */
+    void requestExit(boolean exit);
+
+    /**
+     * Set the debug info display level.
+     *
+     * @param d 0 to 4, 0 mean no display.
+     */
+    void setDebugMode(int d);
+
+    /**
+     * Request to the Game implementation to pause the update process.
+     *
+     * @param pause true is to pause the update. else continue updating all entities.
+     */
+    void requestPause(boolean pause);
+
 }

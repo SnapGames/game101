@@ -2,10 +2,16 @@ package fr.snapgames.demo.core.gfx;
 
 
 import fr.snapgames.demo.core.Game;
+import fr.snapgames.demo.core.entity.Entity;
+import fr.snapgames.demo.core.gfx.plugins.DrawHelperPlugin;
+import fr.snapgames.demo.core.gfx.plugins.GameObjectDrawHelperPlugin;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -41,6 +47,10 @@ public class Renderer {
      */
     int screenHeight;
 
+    private Map<Class<? extends Entity<?>>, DrawHelperPlugin<? extends Entity<?>>> plugins = new HashMap<>();
+    private String filterWhiteList;
+    private String filterBlackList;
+
     /**
      * Initialize the Renderer service with its parent game.
      *
@@ -53,8 +63,21 @@ public class Renderer {
         windowHeight = (int) game.getConfiguration().get(ConfigAttribute.WINDOW_HEIGHT);
         screenWidth = (int) game.getConfiguration().get(ConfigAttribute.SCREEN_WIDTH);
         screenHeight = (int) game.getConfiguration().get(ConfigAttribute.SCREEN_HEIGHT);
+
+        // Debug information draw Entity's filtering list
+        filterWhiteList = (String) game.getConfiguration().get(ConfigAttribute.DEBUG_WHILE_LIST);
+        filterBlackList = (String) game.getConfiguration().get(ConfigAttribute.DEBUG_BLACK_LIST);
+
         // Initialize internal rendering buffer
         buffer = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
+        // add default rendering helpers
+        addPlugin(new GameObjectDrawHelperPlugin());
+
+    }
+
+
+    public void addPlugin(DrawHelperPlugin<? extends Entity<?>> dhp) {
+        this.plugins.put(dhp.getEntityType(), dhp);
     }
 
     /**
@@ -66,16 +89,90 @@ public class Renderer {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, screenWidth, screenHeight);
         // draw all the things you need.
-        game.getEntityManager().getEntities().forEach(e -> {
-            if (Optional.ofNullable(e.fillColor).isPresent()) {
-                g.setColor(e.fillColor);
-                g.fillRect((int) e.x, (int) e.y, (int) e.width, (int) e.height);
-            }
-            g.setColor(e.borderColor);
-            g.drawRect((int) e.x, (int) e.y, (int) e.width, (int) e.height);
-        });
+        game.getEntityManager().getEntities()
+                .stream()
+                .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
+                .forEach(e -> {
+                    // draw objects
+                    drawEntity(g, e);
+
+                    if (game.getDebugMode() > 0) {
+                        drawDebugInformation(g, e);
+                    }
+                });
+        // draw some debug information.
+        drawDisplayDebugLine(g);
+
         // release Graphics API
         g.dispose();
+    }
+
+    private void drawDisplayDebugLine(Graphics2D g) {
+        if (game.getDebugMode() > 0) {
+            g.setFont(g.getFont().deriveFont(10.0f));
+            g.setColor(new Color(0.3f, 0.0f, 0.0f, 0.5f));
+            g.fillRect(0, buffer.getHeight() - 20, buffer.getWidth(), 20);
+            g.setColor(Color.ORANGE);
+            String debugLine = String.format("[ dbg:%d | fps:%02.1f | pause:%s | obj:%d | g:(%1.3f,%1.3f)]",
+                    game.getDebugMode(),
+                    game.getFPS(),
+                    game.isPaused() ? "on" : "off",
+                    game.getEntityManager().getEntities().size(),
+                    game.getPhysicEngine().getWorld().getGravity().getX(),
+                    game.getPhysicEngine().getWorld().getGravity().getY());
+            g.drawString(debugLine, 8, buffer.getHeight() - 8);
+        }
+    }
+
+    private void drawDebugInformation(Graphics2D g, Entity<?> e) {
+
+        if (game.getDebugMode() >= e.debug
+                && filterWhiteList.contains(e.name)
+                && !filterBlackList.contains(e.name)) {
+            g.setColor(Color.ORANGE);
+            g.draw(e.box);
+            if (game.getDebugMode() > 1) {
+                int offX = (int) e.x + 4;
+                int offY = (int) e.y;
+                g.setFont(g.getFont().deriveFont(8.5f));
+                long nbLines = e.getDebugInfo().stream().filter(s -> game.getDebugMode() >= Integer.parseInt(s.substring(1, 2))).count();
+                int hh = (int) (g.getFontMetrics().getHeight()
+                        * (nbLines - 1));
+                if (e.y + hh > buffer.getHeight()) {
+                    offY = buffer.getHeight() - hh;
+                }
+
+                int ww = g.getFontMetrics().stringWidth(e.getDebugInfo().stream().max(Comparator.comparingInt(String::length)).get());
+
+                if (e.x + ww > buffer.getWidth()) {
+                    offX = buffer.getWidth() - ww;
+                }
+
+                int l = 0;
+                for (String s : e.getDebugInfo()) {
+                    if (s.startsWith("(")) {
+                        if (game.getDebugMode() >= Integer.parseInt(s.substring(1, 2))) {
+                            l += 10;
+                            g.setColor(new Color(0.0f, 0.0f, 0.4f, 0.5f));
+                            g.fillRect((int) (offX + e.width + 1), offY - 10 + l, ww + 2, 10);
+                            g.setColor(Color.WHITE);
+                            g.drawString(s.substring(3), (int) (offX + e.width + 4), offY + l);
+                        }
+                    } else {
+                        l += 10;
+                        g.drawString(s, (int) (offX + e.width + 4), offY + l);
+                    }
+                }
+                g.drawLine((int) (e.x + e.width + 1.0), (int) e.y, (int) (offX + e.width + 3.0), offY);
+            }
+        }
+    }
+
+    private void drawEntity(Graphics2D g, Entity<?> e) {
+        if (plugins.containsKey(e.getClass())) {
+            DrawHelperPlugin<? extends Entity<?>> dhp = plugins.get(e.getClass());
+            dhp.draw(this, g, e);
+        }
     }
 
     /**

@@ -16,9 +16,11 @@ import java.util.List;
  * @author Frédéric Delorme
  * @since 0.0.7
  */
-public class Entity {
+public abstract class Entity<T> {
 
-    private final String name;
+    private static int index = 1;
+    public int id = index++;
+    public String name = "entity_" + String.format("entity_%03d", id);
 
     // debug level
     public int debug;
@@ -40,25 +42,25 @@ public class Entity {
      */
     public List<Point2D> forces = new ArrayList<>();
 
-    public double width = 16.0;
+    public double width;
 
-    public double height = 16.0;
+    public double height;
 
     private double direction;
 
-    public Color fillColor = Color.RED;
+    public Color fillColor;
 
-    public Color borderColor = Color.BLACK;
+    public Color borderColor;
 
     /**
      * The {@link Material} defining physic attributes for that {@link Entity}.
      */
-    public Material material = Material.DEFAULT;
+    public Material material;
 
     /**
      * Mass for that entity.
      */
-    public double mass = 1.0;
+    public double mass;
 
     /**
      * Define contact sides if contact exists:
@@ -75,6 +77,14 @@ public class Entity {
      * The bounding box for that entity.
      */
     public Shape box;
+    /**
+     * Rendering layer for that object
+     */
+    private int layer;
+    /**
+     * rendering priority in the entity's layer.
+     */
+    private int priority;
 
     /**
      * Create a new Entity with its name.
@@ -84,7 +94,14 @@ public class Entity {
      */
     public Entity(String name) {
         this.name = name;
-        updateBox();
+        this.mass = 1.0;
+        this.material = Material.DEFAULT;
+        this.width = 16.0;
+        this.height = 16.0;
+        this.fillColor = Color.RED;
+        this.borderColor = Color.BLACK;
+        layer = 1;
+        priority = 1;
     }
 
 
@@ -95,7 +112,7 @@ public class Entity {
      * @param y vertical position
      * @return the updated {@link Entity}.
      */
-    public Entity setPosition(double x, double y) {
+    public Entity<T> setPosition(double x, double y) {
         this.x = x;
         this.y = y;
         return this;
@@ -108,7 +125,7 @@ public class Entity {
      * @param dy vertical velocity
      * @return the updated {@link Entity}.
      */
-    public Entity setSpeed(double dx, double dy) {
+    public Entity<T> setSpeed(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
         return this;
@@ -121,7 +138,7 @@ public class Entity {
      * @param ay vertical acceleration
      * @return the updated {@link Entity}.
      */
-    public Entity setAcceleration(double ax, double ay) {
+    public Entity<T> setAcceleration(double ax, double ay) {
         this.ax = ax;
         this.ay = ay;
         return this;
@@ -135,7 +152,7 @@ public class Entity {
      * @return the updated {@link Entity}.
      */
 
-    public Entity setSize(double w, double h) {
+    public Entity<T> setSize(double w, double h) {
         this.width = w;
         this.height = h;
         return this;
@@ -147,7 +164,7 @@ public class Entity {
      * @param d the direction encoding
      * @return the updated {@link Entity}.
      */
-    public Entity setDirection(double d) {
+    public Entity<T> setDirection(double d) {
         this.direction = d;
         return this;
     }
@@ -158,7 +175,7 @@ public class Entity {
      * @param c the border {@link Color}
      * @return the updated {@link Entity}.
      */
-    public Entity setBorderColor(Color c) {
+    public Entity<T> setBorderColor(Color c) {
         this.borderColor = c;
         return this;
     }
@@ -169,7 +186,7 @@ public class Entity {
      * @param c the fill {@link Color}
      * @return the updated {@link Entity}.
      */
-    public Entity setFillColor(Color c) {
+    public Entity<T> setFillColor(Color c) {
         this.fillColor = c;
         return this;
     }
@@ -180,7 +197,7 @@ public class Entity {
      * @param d the int level from 0 to 5
      * @return the updated {@link Entity}.
      */
-    public Entity setDebug(int d) {
+    public Entity<T> setDebug(int d) {
         this.debug = d;
         return this;
     }
@@ -191,7 +208,7 @@ public class Entity {
      * @param m the material instance to be applied to the Entity.
      * @return the updated {@link Entity}.
      */
-    public Entity setMaterial(Material m) {
+    public Entity<T> setMaterial(Material m) {
         this.material = m;
         return this;
     }
@@ -202,7 +219,7 @@ public class Entity {
      * @param mass a double value from 1.0 to what_ever_you_want_that_physic_can_do
      * @return the updated {@link Entity}.
      */
-    public Entity setMass(double mass) {
+    public Entity<T> setMass(double mass) {
         this.mass = mass;
         return this;
     }
@@ -213,7 +230,7 @@ public class Entity {
      * @param f a {@link Point2D} force to be applied.
      * @return
      */
-    public Entity addForce(Point2D f) {
+    public Entity<T> addForce(Point2D f) {
         this.forces.add(f);
         return this;
     }
@@ -256,4 +273,33 @@ public class Entity {
         this.box = new Rectangle2D.Double(x, y, width, height);
     }
 
+    public int getLayer() {
+        return layer;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    /**
+     * Set the display layer for that object.
+     *
+     * @param l the drawing layer number.
+     * @return the updated {@link Entity}.
+     */
+    public Entity<T> setLayer(int l) {
+        this.layer = l;
+        return this;
+    }
+
+    /**
+     * Set the display priority for that object.
+     *
+     * @param p the drawing priority value.
+     * @return the updated {@link Entity}.
+     */
+    public Entity<T> setPriority(int p) {
+        this.priority = p;
+        return this;
+    }
 }

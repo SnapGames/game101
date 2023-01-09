@@ -8,6 +8,8 @@ import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.entity.EntityManager;
+import fr.snapgames.demo.core.entity.GameObject;
+import fr.snapgames.demo.core.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 import fr.snapgames.demo.core.io.InputHandler;
@@ -16,7 +18,9 @@ import fr.snapgames.demo.core.physic.PhysicEngine;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
@@ -160,6 +164,8 @@ public class App implements Game {
                 (int) config.get(ConfigAttribute.WINDOW_WIDTH),
                 (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
         inputHandler = new InputHandler();
+        inputHandler.addListener(new CommonGameKeyListener(this));
+
         window.addListener(inputHandler);
         entityMgr = new EntityManager();
         renderer = new Renderer(this);
@@ -207,33 +213,48 @@ public class App implements Game {
         logger.log(Level.INFO, "- create stuff for {0}", getAppName());
         int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
         int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
-        entityMgr.add(
-                new Entity("player")
-                        .setFillColor(Color.RED)
-                        .setBorderColor(Color.BLACK)
-                        .setSize(16.0, 16.0)
-                        .setPosition((screenWidth - 16) * 0.5, (screenHeight - 16) * 0.5)
-                        .setSpeed(0.0, 0.0)
-                        .setAcceleration(0.0, 0.0)
-                        .setMass(80.0)
-                        .setMaterial(Material.STEEL));
+        // Create the main player entity.
+        var player = (GameObject) new GameObject("player")
+                .setType(Rectangle2D.class)
+                .setFillColor(Color.RED)
+                .setBorderColor(new Color(0.3f, 0.0f, 0.0f))
+                .setSize(16.0, 16.0)
+                .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
+                .setSpeed(0.0, 0.0)
+                .setAcceleration(0.0, 0.0)
+                .setMass(80.0)
+                .setDebug(1)
+                .setMaterial(Material.STEEL)
+                .setLayer(1);
+        entityMgr.add(player);
+        // Add some balls
+        createBlueBalls(10,
+                8.0,
+                screenWidth,
+                screenHeight,
+                Color.CYAN,
+                Color.BLUE);
+    }
 
-        for (int t = 0; t < 30; t++) {
+    private void createBlueBalls(int nbBall,
+                                 double ballRadius,
+                                 int screenWidth, int screenHeight,
+                                 Color fillColor, Color borderColor) {
+        for (int i = 0; i < nbBall; i++) {
             entityMgr.add(
-                    new Entity("ball_" + t)
-                            .setFillColor(Color.BLUE)
-                            .setBorderColor(Color.BLACK)
-                            .setSize(8.0, 8.0)
-                            .setPosition(
-                                    (Math.random() * screenWidth) - 8.0,
-                                    (Math.random() * screenHeight) - 8.0)
-                            /**.setSpeed(
-                             40.0 * Math.random() - 20.0,
-                             40.0 * Math.random() - 20.0)**/
-                            .setSpeed(0.0, 0.0)
+                    new GameObject("ball_" + i)
+                            .setType(Ellipse2D.class)
+                            .setFillColor(fillColor)
+                            .setBorderColor(borderColor)
+                            .setSize(ballRadius, ballRadius)
+                            .setPosition((screenWidth - 32) * Math.random(), (screenHeight - 32) * Math.random())
+                            .setSpeed(10.0 * Math.random(), 10.0 * Math.random())
+                            .setMass(20.0 * Math.random())
                             .setAcceleration(0.0, 0.0)
-                            .setMass(Math.random() * 50.0)
-                            .setMaterial(Material.SUPER_BALL));
+                            .setDebug(4)
+                            .setMaterial(Material.SUPER_BALL)
+                            .setLayer(2)
+                            .setPriority(i + 2));
         }
     }
 
@@ -331,13 +352,19 @@ public class App implements Game {
         return entityMgr;
     }
 
-    /**
-     * Request exit from this Application.
-     *
-     * @param exit boolean true to exit.
-     */
-    private void requestExit(boolean exit) {
+    @Override
+    public void requestExit(boolean exit) {
         this.exitFlag = exit;
+    }
+
+    @Override
+    public void setDebugMode(int d) {
+        debugMode = d;
+    }
+
+    @Override
+    public void requestPause(boolean pause) {
+        pauseFlag = pause;
     }
 
     /**
@@ -349,13 +376,24 @@ public class App implements Game {
         return updateTestCounter;
     }
 
-    /**
-     * return the level of debug mode.
-     *
-     * @return the level of debug from 0 to 5.
-     */
+    @Override
     public int getDebugMode() {
         return debugMode;
+    }
+
+    @Override
+    public double getFPS() {
+        return targetFPS;
+    }
+
+    @Override
+    public PhysicEngine getPhysicEngine() {
+        return physicEngine;
+    }
+
+    @Override
+    public Window getWindow() {
+        return window;
     }
 
     /**

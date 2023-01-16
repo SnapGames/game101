@@ -27,18 +27,7 @@ public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> 
     public void draw(Renderer r, Graphics2D g, Entity<?> entity) {
         GameObject go = (GameObject) entity;
         switch (go.type) {
-            case "java.awt.geom.Rectangle2D",
-                    "java.awt.geom.Ellipse2D" -> {
-                if (Optional.ofNullable(go.fillColor).isPresent()) {
-                    g.setColor(go.fillColor);
-                    g.fill(go.box);
-                }
-                if (Optional.ofNullable(go.borderColor).isPresent()) {
-                    g.setColor(go.borderColor);
-                    g.draw(go.box);
-                }
-            }
-            case "java.awt.image.BufferedImage" -> {
+            case IMAGE -> {
                 if (go.direction > 0) {
                     g.drawImage(go.image, (int) go.x, (int) go.y, null);
                 } else {
@@ -49,8 +38,25 @@ public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> 
 
                 }
             }
+            case POINT, RECTANGLE, ELLIPSE -> {
+                if (Optional.ofNullable(go.fillColor).isPresent()) {
+                    g.setColor(go.fillColor);
+                    g.fill(go.box);
+                }
+                if (Optional.ofNullable(go.borderColor).isPresent()) {
+                    g.setColor(go.borderColor);
+                    g.draw(go.box);
+                }
+            }
+            case LINE -> {
+                if (Optional.ofNullable(go.borderColor).isPresent()) {
+                    g.setColor(go.borderColor);
+                    g.drawLine((int) go.x, (int) go.y,
+                            (int) (go.x + go.width), (int) (go.y + go.height));
+                }
+            }
             default -> {
-                // Nothing to do in that case.
+                // nothing to test here
             }
         }
     }

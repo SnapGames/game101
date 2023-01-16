@@ -16,20 +16,50 @@ import java.util.Optional;
  * @since 0.0.9
  */
 public class GameObject extends Entity<GameObject> {
-
-    public String type;
-
+    /**
+     * The type of this new GameObject.
+     */
+    public ObjectType type;
+    /**
+     * the direction where this object is moving.
+     */
     public double direction;
+    /**
+     * the possible image instance if type is set to BufferedImage.
+     */
     public BufferedImage image;
 
+    /**
+     * Create a brand new {@link GameObject} instance with only default values.
+     *
+     * @see Entity
+     */
+    public GameObject() {
+        super();
+        this.mass = 1.0;
+        this.type = ObjectType.RECTANGLE;
+    }
+
+    /**
+     * Create a new {@link GameObject} instance named name, and set all default values.
+     *
+     * @param name name for that new {@link GameObject}.
+     * @see Entity
+     */
     public GameObject(String name) {
         super(name);
         this.mass = 1.0;
-        this.type = Rectangle2D.class.getTypeName();
+        this.type = ObjectType.RECTANGLE;
     }
 
-    public Entity<GameObject> setType(Class<?> t) {
-        this.type = t.getTypeName();
+    /**
+     * Define the {@link GameObject} type for its rendering and physic management.
+     *
+     * @param t the type can be one of the following: Rectangle2D, Ellipse2D, BufferedImage. the bounding box will be updated accordingly.
+     * @return the updated Entity according to fluent API pattern.
+     */
+    public Entity<GameObject> setType(ObjectType t) {
+        this.type = t;
         updateBox();
         return this;
     }
@@ -37,11 +67,10 @@ public class GameObject extends Entity<GameObject> {
     @Override
     public void updateBox() {
         switch (type) {
-            case "java.awt.geom.Rectangle2D",
-                    "java.awt.image.BufferedImage" -> {
+            case RECTANGLE, IMAGE, LINE, POINT -> {
                 this.box = new Rectangle2D.Double(x, y, width, height);
             }
-            case "java.awt.geom.Ellipse2D" -> {
+            case ELLIPSE -> {
                 this.box = new Ellipse2D.Double(x, y, width, height);
             }
             default -> {
@@ -59,11 +88,12 @@ public class GameObject extends Entity<GameObject> {
         List<String> infos = new ArrayList<>();
         infos.add(String.format("(1)id:%04d", this.id));
         infos.add(String.format("(1)name:%s", this.name));
-        infos.add(String.format("(2)type:%s", type.substring(type.lastIndexOf(".") + 1)));
+        infos.add(String.format("(2)type:%s", type.toString()));
         infos.add(String.format("(2)pos:%4.2f,%4.2f", x, y));
         infos.add(String.format("(2)size:%4.2f,%4.2f", width, height));
         infos.add(String.format("(3)spd:%4.2f,%4.2f", dx, dy));
         infos.add(String.format("(3)acc:%4.2f,%4.2f", ax, ay));
+        infos.add(String.format("(4)l:%d p:%d", getLayer(), getPriority()));
         if (Optional.ofNullable(material).isPresent()) {
             infos.add(String.format("(4)map:%s[d=%4.2f,e=%4.2f,f=%4.2f]",
                     material.name,

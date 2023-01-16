@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+/**
+ * {@link PhysicEngine} is the class under test.
+ * @author Frédéric Delorme
+ */
 public class PhysicEngineTest {
 
     App game;

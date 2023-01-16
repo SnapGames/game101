@@ -9,6 +9,7 @@ import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.entity.EntityManager;
 import fr.snapgames.demo.core.entity.GameObject;
+import fr.snapgames.demo.core.entity.ObjectType;
 import fr.snapgames.demo.core.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
@@ -18,13 +19,9 @@ import fr.snapgames.demo.core.physic.PhysicEngine;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -76,10 +73,6 @@ public class App implements Game {
      * internal time tracking counter.
      */
     private long appStartTime = 0;
-    /**
-     * Configuration attributes map.
-     */
-    private Map<ConfigAttribute, Object> configurationValues = new ConcurrentHashMap<>();
 
     /**
      * exit required if true
@@ -215,7 +208,7 @@ public class App implements Game {
         int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
         // Create the main player entity.
         var player = (GameObject) new GameObject("player")
-                .setType(Rectangle2D.class)
+                .setType(ObjectType.RECTANGLE)
                 .setFillColor(Color.RED)
                 .setBorderColor(new Color(0.3f, 0.0f, 0.0f))
                 .setSize(16.0, 16.0)
@@ -243,7 +236,7 @@ public class App implements Game {
         for (int i = 0; i < nbBall; i++) {
             entityMgr.add(
                     new GameObject("ball_" + i)
-                            .setType(Ellipse2D.class)
+                            .setType(ObjectType.ELLIPSE)
                             .setFillColor(fillColor)
                             .setBorderColor(borderColor)
                             .setSize(ballRadius, ballRadius)
@@ -272,7 +265,7 @@ public class App implements Game {
         double accelerationStep = 600.0;
         double jumpFactor = 5.0 * accelerationStep;
 
-        Entity player = entityMgr.get("player");
+        Entity<?> player = entityMgr.get("player");
 
         if (inputHandler.getKey(KeyEvent.VK_UP)) {
             player.addForce(new Point2D.Double(0.0, -jumpFactor));
@@ -408,7 +401,7 @@ public class App implements Game {
     /**
      * Retrieve the time elapsed since initialization start.
      *
-     * @return
+     * @return the time elapsed since initialization start
      */
     public long getInternalTime() {
         return System.currentTimeMillis() - appStartTime;

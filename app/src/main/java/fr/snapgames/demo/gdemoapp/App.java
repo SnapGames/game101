@@ -6,10 +6,7 @@ package fr.snapgames.demo.gdemoapp;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
-import fr.snapgames.demo.core.entity.Entity;
-import fr.snapgames.demo.core.entity.EntityManager;
-import fr.snapgames.demo.core.entity.GameObject;
-import fr.snapgames.demo.core.entity.ObjectType;
+import fr.snapgames.demo.core.entity.*;
 import fr.snapgames.demo.core.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
@@ -21,6 +18,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -92,6 +90,8 @@ public class App implements Game {
      * targeted frame per second for rendering and loop processing.
      */
     private int targetFPS = 60;
+
+    private int targetUPS = 60;
 
     /**
      * Window to display our game app.
@@ -198,6 +198,7 @@ public class App implements Game {
         debugMode = (int) config.get(ConfigAttribute.DEBUG_MODE);
         exitValueTestCounter = (int) config.get(ConfigAttribute.EXIT_TEST_COUNT_FRAME);
         targetFPS = (int) config.get(ConfigAttribute.RENDER_FPS);
+        targetUPS = (int) config.get(ConfigAttribute.PHYSIC_UPS);
         updateTestCounter = 0;
     }
 
@@ -218,7 +219,8 @@ public class App implements Game {
                 .setMass(80.0)
                 .setDebug(1)
                 .setMaterial(Material.STEEL)
-                .setLayer(1);
+                .setLayer(1)
+                .setPriority(1);
         entityMgr.add(player);
         // Add some balls
         createBlueBalls(10,
@@ -227,6 +229,14 @@ public class App implements Game {
                 screenHeight,
                 Color.CYAN,
                 Color.BLUE);
+        entityMgr.add(
+                new GridObject("grid")
+                        .setStepSize(16.0, 16.0)
+                        .setSize(
+                                physicEngine.getWorld().getPlayArea().getWidth(),
+                                physicEngine.getWorld().getPlayArea().getHeight())
+                        .setBorderColor(Color.DARK_GRAY)
+                        .setLayer(-1));
     }
 
     private void createBlueBalls(int nbBall,
@@ -262,8 +272,8 @@ public class App implements Game {
         }
 
         boolean move = false;
-        double accelerationStep = 600.0;
-        double jumpFactor = 5.0 * accelerationStep;
+        double accelerationStep = 200.0;
+        double jumpFactor = 0.5 * accelerationStep;
 
         Entity<?> player = entityMgr.get("player");
 
@@ -299,11 +309,14 @@ public class App implements Game {
     }
 
     @Override
-    public void render(Game g, int fps) {
-        logger.log(Level.INFO, "  - render thing at {0} FPS", fps);
-
-        renderer.draw();
+    public void render(Game g, Map<String, Object> renderingAttributes) {
+        renderer.draw(renderingAttributes);
         renderer.drawToWindow(window);
+    }
+
+    @Override
+    public int getTargetUps() {
+        return targetUPS;
     }
 
     @Override

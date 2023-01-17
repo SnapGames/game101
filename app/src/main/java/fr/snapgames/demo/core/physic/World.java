@@ -94,4 +94,8 @@ public class World {
         this.material = mat;
         return this;
     }
+
+    public Rectangle2D getPlayArea() {
+        return playArea;
+    }
 }

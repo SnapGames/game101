@@ -110,6 +110,13 @@ public enum ConfigAttribute implements IConfigAttribute {
             "set the height of the play area",
             200.0,
             Double::valueOf),
+    PHYSIC_UPS(
+            "physicUps",
+            "app.physic.ups",
+            "set the Update Per Second (UPS) rate",
+            60,
+            Integer::valueOf
+    ),
     PHYSIC_GRAVITY(
             "physicGravity",
             "app.physic.world.gravity",

@@ -306,4 +306,9 @@ public class Entity<T> {
         this.priority = p;
         return this;
     }
+
+    public Entity<T> setName(String entityName) {
+        this.name = entityName;
+        return this;
+    }
 }

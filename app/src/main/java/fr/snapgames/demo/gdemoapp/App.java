@@ -6,7 +6,10 @@ package fr.snapgames.demo.gdemoapp;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
-import fr.snapgames.demo.core.entity.*;
+import fr.snapgames.demo.core.entity.Entity;
+import fr.snapgames.demo.core.entity.EntityManager;
+import fr.snapgames.demo.core.entity.GameObject;
+import fr.snapgames.demo.core.entity.ObjectType;
 import fr.snapgames.demo.core.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
@@ -402,8 +405,10 @@ public class App implements Game {
     }
 
     @Override
-    public void render(Game g, Map<String, Object> renderingAttributes) {
-        renderer.draw(renderingAttributes);
+    public void render(Game g, int fps) {
+        logger.log(Level.INFO, "  - render thing at {0} FPS", fps);
+
+        renderer.draw();
         renderer.drawToWindow(window);
     }
 

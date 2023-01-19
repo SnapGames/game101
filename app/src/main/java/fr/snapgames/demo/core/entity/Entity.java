@@ -307,6 +307,12 @@ public class Entity<T> {
         return this;
     }
 
+    /**
+     * Set the name of the {@link Entity}.
+     *
+     * @param entityName the new name of te {@link Entity}
+     * @return the updated {@link Entity}.
+     */
     public Entity<T> setName(String entityName) {
         this.name = entityName;
         return this;

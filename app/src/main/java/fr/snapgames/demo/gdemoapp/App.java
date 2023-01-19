@@ -6,10 +6,7 @@ package fr.snapgames.demo.gdemoapp;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
-import fr.snapgames.demo.core.entity.Entity;
-import fr.snapgames.demo.core.entity.EntityManager;
-import fr.snapgames.demo.core.entity.GameObject;
-import fr.snapgames.demo.core.entity.ObjectType;
+import fr.snapgames.demo.core.entity.*;
 import fr.snapgames.demo.core.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
@@ -398,17 +395,19 @@ public class App implements Game {
     }
 
     @Override
-    public void update(Game g, double elapsed) {
+    public void update(Game g, Map<String, Object> attributes, double elapsed) {
+        int ups = (int) attributes.get("game.ups");
         logger.log(Level.INFO, "  - update thing {0}", elapsed);
         updateTestCounter += 1;
         physicEngine.update(elapsed);
     }
 
     @Override
-    public void render(Game g, int fps) {
+    public void render(Game g, Map<String, Object> attributes) {
+        int fps = (int) attributes.get("game.fps");
         logger.log(Level.INFO, "  - render thing at {0} FPS", fps);
 
-        renderer.draw();
+        renderer.draw(attributes);
         renderer.drawToWindow(window);
     }
 

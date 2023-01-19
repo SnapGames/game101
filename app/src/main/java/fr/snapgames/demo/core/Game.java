@@ -45,10 +45,11 @@ public interface Game {
     /**
      * Update all the entities in the game according to some possible input changes and compute next moves for the entities.
      *
-     * @param g       the parent Game instance.
-     * @param elapsed the elapsed time since previous call for an incremental time update computation.
+     * @param g          the parent Game instance.
+     * @param attributes a map of statistical values to be used at Rendering lvel for display purpose (or anything else, computed by the {@link Game#loop()})..
+     * @param elapsed    the elapsed time since previous call for an incremental time update computation.
      */
-    void update(Game g, double elapsed);
+    void update(Game g, Map<String, Object> attributes, double elapsed);
 
     /**
      * Draw everything on screen about the entities and the game play.
@@ -73,6 +74,9 @@ public interface Game {
         double gameTime = 0;
         double elapsed;
         Map<String, Object> renderingAttributes = new HashMap<>();
+        renderingAttributes.put("game.time", gameTime);
+        renderingAttributes.put("game.fps", fps);
+        renderingAttributes.put("game.ups", ups);
         create();
 
         while (!isExitRequested()) {
@@ -80,7 +84,7 @@ public interface Game {
             input(this);
             elapsed = currentTime - previousTime;
             if (!isPaused()) {
-                update(this, elapsed);
+                update(this, renderingAttributes, elapsed);
                 gameTime += elapsed;
                 upsCount += 1;
             }
@@ -160,8 +164,8 @@ public interface Game {
     /**
      * Return the state of pause mode.
      * <ul>
-     *     <li><code>true</code> the game is in pause mode: no {@link Game#update(Game, double)} are processing,</li>
-     *     <li><code>false</code> the game is in normal mode, {@link Game#update(Game, double)} is processed.</li>
+     *     <li><code>true</code> the game is in pause mode: no {@link Game#update(Game, Map, double)} are processing,</li>
+     *     <li><code>false</code> the game is in normal mode, {@link Game#update(Game, Map, double)} is processed.</li>
      * </ul>
      *
      * @return boolean value for pause mode.

@@ -251,6 +251,103 @@ You can now see the setting of the new `GameObject`:
 - (3) define its rendering `layer`,
 - (4) set the rendering `priority` in its layer.
 
+Executing our new Plugin architecture will show the following window:
+
+![Mutiple GameObject types rendered through a dedicated plugin](illustrations/figure-add-gameobject.png "Mutiple GameObject types rendered through a dedicated plugin")
+
+## Adding Interaction
+
+To add more fun and test capabilities, I want the App implmentation offers the opportunity to manage the number of Ball objects on the play area.
+
+| Key                 | Action                              | 
+|---------------------|-------------------------------------|
+| <kbd>PAGEUP</kbd>   | Add 10 new Balls on the play Area   |
+| <kbd>PAGEDOWN</kbd> | Remove 10 Balls from the play Area  |
+| <kbd>DELETE</kbd>   | Remove all Balls from the play Area |
+
+So in the App class code:
+
+
+```java
+public class App implements Game {
+    //...
+    public void input(Game g) {
+        //...
+        // Managing Balls
+        if (inputHandler.getKey(KeyEvent.VK_PAGE_UP)) {
+            // maximize number of managed entities.
+            if (getEntityManager().getEntities().size() < 2000) {
+                addNewBalls("ball_#", 10);
+            }
+        }
+        if (inputHandler.getKey(KeyEvent.VK_PAGE_DOWN)) {
+            removeNbObjectByNameFilter("ball_", 10);
+        }
+        if (inputHandler.getKey(KeyEvent.VK_DELETE)) {
+            removeAllObjectByNameFilter("ball_");
+        }
+    }
+    //...
+}
+```
+And the required corresponding methods:
+
+```java
+public class App implements Game {
+ //...
+ private void removeNbObjectByNameFilter(String objectName, int nb) {
+    List<Entity<?>> toBeRemoved = new ArrayList<>();
+    int count = 0;
+    for (Entity<?> e : getEntityManager().getEntities()) {
+      if (e.getName().contains(objectName)) {
+        toBeRemoved.add(e);
+        count++;
+        if (count > nb) {
+          break;
+        }
+      }
+    }
+    toBeRemoved.forEach(e -> {
+      getEntityManager().getEntityMap().remove(e.getName());
+    });
+  }
+  // (1)
+  private void addNewBalls(String objectName, int nb) {
+    int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
+    int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
+    createBlueBalls(objectName, nb,
+            24.0,
+            screenWidth,
+            screenHeight,
+            Color.CYAN,
+            Color.BLUE);
+  }
+    
+  // (2)
+  private void removeAllObjectByNameFilter(String objectName) {
+    List<Entity<?>> toBeRemoved = new ArrayList<>();
+    for (Entity<?> e : getEntityManager().getEntities()) {
+      if (e.getName().contains(objectName)) {
+        toBeRemoved.add(e);
+      }
+    }
+    toBeRemoved.forEach(e -> {
+      getEntityManager().getEntityMap().remove(e.getName());
+    });
+  }
+  //...
+}
+```
+
+1. Adding balls
+
+![](illustrations/figure-adding-balls.png)
+
+2. Removing all balls
+
+![](illustrations/figure-gameobject-no-ball.png)
+
+
 ## Debugging Usage
 
 Ok, we now understand how to specialize the rendering process for dedicated object. Let's implement a second
@@ -260,7 +357,6 @@ The GridObject principle is to draw a simple grid with a defined size at the top
 materialize this area and its size.
 
 ![Adding a GridObject to the equation](http://www.plantuml.com/plantuml/png/hOunJiGm44NxEONfGB0NYD2o1GWw43VmnXyoo7QiyOG58UvE14ui4e4egAB9V_x_xR9QqI5uEj8E0IPvov4wTZ01slKkVnrMLNW_A3ArtkPixX4T15BEgwYih-MujW6t-oUqQl2Y8xZCXTqYhq-8SjSVpANOmmryWjpvuP7ZhCDH8G-snGfv8tDgtFZpM9f9xmnb-lnYUz8yz-pelIpKoTNMF5PyVoHd_sL0lylKnfMLiFkJLI7_qwesLgk9CflDTjNNfCzF_aQLjYPnWkS8setX4Fm7 "Adding a GridObject to the equation")
-
 
 ### the GridObject
 

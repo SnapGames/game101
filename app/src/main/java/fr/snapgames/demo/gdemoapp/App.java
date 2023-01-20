@@ -330,7 +330,7 @@ public class App implements Game {
             }
         }
         if (inputHandler.getKey(KeyEvent.VK_PAGE_DOWN)) {
-            removeNbObjectByNameFilter("ball_", 1);
+            removeNbObjectByNameFilter("ball_", 10);
         }
         if (inputHandler.getKey(KeyEvent.VK_DELETE)) {
             removeAllObjectByNameFilter("ball_");

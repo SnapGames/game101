@@ -157,11 +157,14 @@ public class App implements Game {
         window = new Window(
                 (String) config.get(ConfigAttribute.APP_TITLE),
                 (int) config.get(ConfigAttribute.WINDOW_WIDTH),
-                (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
+                (int) config.get(ConfigAttribute.WINDOW_HEIGHT))
+                .setIcon("/images/sg-logo-image.png");
+
+
         inputHandler = new InputHandler();
         inputHandler.addListener(new CommonGameKeyListener(this));
-
         window.addListener(inputHandler);
+
         entityMgr = new EntityManager();
         renderer = new Renderer(this);
         physicEngine = new PhysicEngine(this);
@@ -221,7 +224,7 @@ public class App implements Game {
                 .setMass(80.0)
                 .setDebug(1)
                 .setMaterial(Material.STEEL)
-                .setLayer(1)
+                .setLayer(10)
                 .setPriority(1);
         entityMgr.add(player);
 

@@ -251,6 +251,10 @@ You can now see the setting of the new `GameObject`:
 - (3) define its rendering `layer`,
 - (4) set the rendering `priority` in its layer.
 
+Executing our new Plugin architecture will show the following window:
+
+![Mutiple GameObject types rendered through a dedicated plugin](illustrations/figure-add-gameobject.png "Mutiple GameObject types rendered through a dedicated plugin")
+
 ## Debugging Usage
 
 Ok, we now understand how to specialize the rendering process for dedicated object. Let's implement a second
@@ -260,7 +264,6 @@ The GridObject principle is to draw a simple grid with a defined size at the top
 materialize this area and its size.
 
 ![Adding a GridObject to the equation](http://www.plantuml.com/plantuml/png/hOunJiGm44NxEONfGB0NYD2o1GWw43VmnXyoo7QiyOG58UvE14ui4e4egAB9V_x_xR9QqI5uEj8E0IPvov4wTZ01slKkVnrMLNW_A3ArtkPixX4T15BEgwYih-MujW6t-oUqQl2Y8xZCXTqYhq-8SjSVpANOmmryWjpvuP7ZhCDH8G-snGfv8tDgtFZpM9f9xmnb-lnYUz8yz-pelIpKoTNMF5PyVoHd_sL0lylKnfMLiFkJLI7_qwesLgk9CflDTjNNfCzF_aQLjYPnWkS8setX4Fm7 "Adding a GridObject to the equation")
-
 
 ### the GridObject
 

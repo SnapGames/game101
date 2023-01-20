@@ -251,9 +251,118 @@ You can now see the setting of the new `GameObject`:
 - (3) define its rendering `layer`,
 - (4) set the rendering `priority` in its layer.
 
+## Debugging Usage
+
+Ok, we now understand how to specialize the rendering process for dedicated object. Let's implement a second
+new `GameObject` variation with a visual `GridObject` which purpose is only using it at development and debugging time.
+
+The GridObject principle is to draw a simple grid with a defined size at the top background of our play area, to
+materialize this area and its size.
+
+![Adding a GridObject to the equation](http://www.plantuml.com/plantuml/png/hOunJiGm44NxEONfGB0NYD2o1GWw43VmnXyoo7QiyOG58UvE14ui4e4egAB9V_x_xR9QqI5uEj8E0IPvov4wTZ01slKkVnrMLNW_A3ArtkPixX4T15BEgwYih-MujW6t-oUqQl2Y8xZCXTqYhq-8SjSVpANOmmryWjpvuP7ZhCDH8G-snGfv8tDgtFZpM9f9xmnb-lnYUz8yz-pelIpKoTNMF5PyVoHd_sL0lylKnfMLiFkJLI7_qwesLgk9CflDTjNNfCzF_aQLjYPnWkS8setX4Fm7 "Adding a GridObject to the equation")
+
+
+### the GridObject
+
+The GridObject class is a very simple one adding some new attributes to the GameObject stepX and stepY:
+
+```java
+public class GridObject extends GameObject {
+    private double stepX = 16.0;
+    private double stepY = 16.0;
+
+    public GridObject(String name) {
+        super(name);
+    }
+
+    public GridObject setStepSize(double sx, double sy) {
+        this.stepX = sx;
+        this.stepY = sy;
+        return this;
+    }
+    //... setters and getters
+}
+```
+
+We also implement the mandatory constructor and a specific setter for define easily the step size on X and Y axis.
+
+### The GridObjectDrawHelperPlugin
+
+Now we add this new GridObject, we need to specialize the Renderer with a dedicated draw helper for this object nature.
+
+```java
+public class GridObjectDrawHelperPlugin implements DrawHelperPlugin<GridObject> {
+    // (1)
+    @Override
+    public Class<?> getEntityType() {
+        return GridObject.class;
+    }
+
+    // (2)
+    @Override
+    public void draw(Renderer r, Graphics2D g, Entity e) {
+        GridObject go = (GridObject) e;
+        g.setColor(go.borderColor);
+        for (double x = 0; x < go.width; x += go.getStepX()) {
+            g.drawRect((int) x, 0, (int) go.getStepX(), (int) go.height);
+        }
+        for (double y = 0; y < go.height; y += go.getStepY()) {
+            g.drawRect((int) 0, (int) y, (int) go.width, (int) go.getStepY());
+        }
+
+    }
+}
+```
+
+1. we define the class on which this plugin must be used for,
+2. the `draw()` method is a very simple one, drawing rectangle based on a `GridObject` `width` and `height` and
+   the `stepX` and `stepY` size with 2 for loops.
+
+We now add this enw plugin to the Renderer:
+
+```java
+public class Renderer {
+    public Renderer(Game g) {
+        //...
+        addPlugin(new GameObjectDrawHelperPlugin());
+        addPlugin(new GridObjectDrawHelperPlugin());
+    }
+}
+```
+
+And in the `App` class, a `Game` interface implementation :
+
+```java
+public class App implements Game {
+    public void create() {
+        //...
+        // Add a background GridObject as re visual reference
+        entityMgr.add(
+                new GridObject("grid")
+                        .setStepSize(16.0, 16.0)
+                        .setSize(
+                                physicEngine.getWorld().getPlayArea().getWidth(),
+                                physicEngine.getWorld().getPlayArea().getHeight())
+                        .setBorderColor(Color.DARK_GRAY)
+                        .setLayer(-1));
+    }
+}
+```
+
+Then, executing the new enhanced App class :
+
+```bash
+gradle run
+```
+
+You must see the following animated window :
+
+![a gray GridObject drawn at background](illustrations/figure-add-gridobject-and-plugin.png "a gray GridObject drawn at background")
+
 ## Conclusion
 
-Finally, executing our new Renderer implementation is able to satisfy any new need without change the core Renderer draw processing, and take benefits from all future GameObject descendants.
+Finally, executing our new Renderer implementation is able to satisfy any new need without change the core Renderer draw
+processing, and take benefits from all future GameObject descendants.
 
 
 

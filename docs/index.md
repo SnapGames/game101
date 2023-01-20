@@ -12,4 +12,4 @@ to a package organized project to provide Entity, physic, rendering, etc...
 6. [Adding Physics](chapter-06-add_physic.md)
 7. [Upgrade with GameObject and Plugin](chapter-07-upgrade_with_gameobject_and_plugin.md)
 
-![The latest chapter's screenshot: the physic engine](illustrations/figure-add-physic-engine_screenshot.png "The latest chapter's screenshot: the physic engine")
+![The latest chapter's screenshot: Renderer plugin and GridObject](illustrations/figure-add-gridobject-and-plugin.png "The latest chapter's screenshot:  Renderer plugin and GridObject")

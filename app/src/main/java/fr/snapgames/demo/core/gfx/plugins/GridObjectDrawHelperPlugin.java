@@ -14,7 +14,7 @@ import java.awt.*;
  **/
 public class GridObjectDrawHelperPlugin implements DrawHelperPlugin<GridObject> {
     @Override
-    public Class getEntityType() {
+    public Class<GridObject> getEntityType() {
         return GridObject.class;
     }
 
@@ -26,7 +26,7 @@ public class GridObjectDrawHelperPlugin implements DrawHelperPlugin<GridObject> 
             g.drawRect((int) x, 0, (int) go.getStepX(), (int) go.height);
         }
         for (double y = 0; y < go.height; y += go.getStepY()) {
-            g.drawRect((int) 0, (int) y, (int) go.width, (int) go.getStepY());
+            g.drawRect(0, (int) y, (int) go.width, (int) go.getStepY());
         }
 
     }

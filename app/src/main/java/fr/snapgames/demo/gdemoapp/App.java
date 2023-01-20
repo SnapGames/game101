@@ -527,4 +527,7 @@ public class App implements Game {
         app.run(args);
     }
 
+    public Renderer getRenderer() {
+        return this.renderer;
+    }
 }

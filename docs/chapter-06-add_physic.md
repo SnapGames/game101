@@ -8,17 +8,18 @@ The Physic Engine is one more service for our application. we will use the same 
 
 ## Some mathematics
 
-The implementation of our `PhysicEngine` service will try to satisfy to some of the Newton's laws of physic. 
-We will compute the acceleration, sum of all applied forces, then compute the resulting speed to finally define the position of our `Entity`. 
+The implementation of our `PhysicEngine` service will try to satisfy to some of the Newton's laws of physic.
+We will compute the acceleration, sum of all applied forces, then compute the resulting speed to finally define the
+position of our `Entity`.
 
 ![The acceleration, the spedd and the gravity are used as parameters in physic computation](https://docs.google.com/drawings/d/e/2PACX-1vS1mK0tLz4VBBNbMNIJxtHGTymADBu7emdwWDRA5RIwxEnJQ0DcOFqP4uCc7lFwj77qbLl3Ntm9tzbO/pub?w=549&h=362 "The acceleration, the speed and the gravity are used as parameters in physic computation")
 
 The previous diagram try to illustre the mathematics vectors we will apply to this Entity named "player".
 
-But let's dive into some mathematics. 
+But let's dive into some mathematics.
 
->_**Note**_ 
->_If you don't need/want to, just jump to the next "Implementation" paragraph._
+> _**Note**_
+> _If you don't need/want to, just jump to the next "Implementation" paragraph._
 
 The acceleration of applied on a GameObject s the sum of all applied forces, divided by its mass:
 
@@ -444,7 +445,78 @@ public class App extends Game {
 }
 ```
 
-So if now I run the application with :
+Only adding a simple red square is a good start, but with interaction would be better no ?
+
+### Cursor keys to move !
+
+We need to do some action when the cusor keys are pressed:
+
+|       Key        | Action                   |
+|:----------------:|:-------------------------|
+|  <kbd>UP</kbd>   | move player up           |
+| <kbd>DOWN</kbd>  | move player down         |
+| <kbd>LEFT</kbd>  | move player to the left  |
+| <kbd>RIGHT</kbd> | move player to the right |
+
+We need to enhance the input() method from App:
+
+```java
+public class App implements Game {
+    //...
+    @Override
+    public void input() {
+        //...
+        // (1)
+        boolean move = false;
+        double accelerationStep = 200.0;
+        double jumpFactor = 0.5 * accelerationStep;
+
+        // (2)
+        Entity<?> player = entityMgr.get("player");
+        // (3)
+
+        // move up
+        if (inputHandler.getKey(KeyEvent.VK_UP)) {
+            player.addForce(new Point2D.Double(0.0, -jumpFactor));
+            move = true;
+        }
+        // move Down
+        if (inputHandler.getKey(KeyEvent.VK_DOWN)) {
+            player.addForce(new Point2D.Double(0.0, accelerationStep));
+            move = true;
+        }
+        /// move Left
+        if (inputHandler.getKey(KeyEvent.VK_LEFT)) {
+            player.addForce(new Point2D.Double(-accelerationStep, 0.0));
+            move = true;
+        }
+        // move right
+        if (inputHandler.getKey(KeyEvent.VK_RIGHT)) {
+            player.addForce(new Point2D.Double(accelerationStep, 0.0));
+            move = true;
+        }
+        // (4)
+        if (!move) {
+            if (Optional.ofNullable(player.material).isPresent()) {
+                player.dx *= player.material.friction;
+                player.dy *= player.material.friction;
+            }
+        }
+    }
+    //...
+}
+```
+
+1. we define some internal variables to support move acceleration for a simple step and the force value to be used in a
+   Jumping action.
+2. We retrieve the 'player' `Entity` from the `EntityManager`
+3. let's detect keys pressed for <kbd>UP</kbd>, <kbd>DOWN</kbd>, <kbd>LEFT</kbd> and <kbd>RIGHT</kbd>, and apply the
+   corresponding force, here is
+   a [Point2D](https://download.java.net/java/early_access/panama/docs/api/java.desktop/java/awt/geom/Point2D.html "Go and read the corresponding JDK19 javadoc for Point2D interface")
+   vector, on both axis for vertical and horizontal moves,
+4. If not move require, let's apply the default friction effect from the Entity's material itself.
+
+So, run the application with :
 
 ```bash
 $> gradle run
@@ -452,7 +524,9 @@ $> gradle run
 
 Here be the following window with some `GameObject`, :
 
-![Multiple object with physic](illustrations/figure-add-physic-engine_screenshot.png  "Multiple object with physic")
+![Multiple object with physic and interaction](illustrations/figure-add-physic-engine_screenshot.png  "Multiple object with physic and interaction")
+
+Please, have fun by pressing the CURSOR quad keys to move your red square player entity.
 
 ## Conclusion
 

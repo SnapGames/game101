@@ -186,4 +186,9 @@ public class Window extends JPanel {
     public Graphics2D getGraphics2D() {
         return (Graphics2D) frame.getGraphics();
     }
+
+    public Window setIcon(String pathToIconImage) {
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(pathToIconImage)));
+        return this;
+    }
 }

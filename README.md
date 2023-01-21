@@ -25,7 +25,7 @@ gradle run
 
 And a new window will appear:
 
-![Current chapter is about Entity](docs/illustrations/figure-create-entity-screenshot-01.png "Current chapter is about Entity")
+![Current chapter is about Entity](docs/illustrations/figure-adding-balls.png "Current chapter is about Entity")
 
 ## develop
 
@@ -58,6 +58,8 @@ Bring:
 - add logging capabilities,
 - design a default graphics display,
 - manage keys and mouse,
-- bring entities to life
+- bring entities to life,
+- Physic engine,
+- interaction with keyboard.
 
 McG.

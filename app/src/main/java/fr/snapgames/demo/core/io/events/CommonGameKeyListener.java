@@ -1,4 +1,4 @@
-package fr.snapgames.demo.core.events;
+package fr.snapgames.demo.core.io.events;
 
 
 import fr.snapgames.demo.core.Game;

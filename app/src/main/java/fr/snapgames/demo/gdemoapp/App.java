@@ -7,10 +7,10 @@ import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.entity.*;
-import fr.snapgames.demo.core.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 import fr.snapgames.demo.core.io.InputHandler;
+import fr.snapgames.demo.core.io.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.physic.Material;
 import fr.snapgames.demo.core.physic.PhysicEngine;
 
@@ -157,11 +157,14 @@ public class App implements Game {
         window = new Window(
                 (String) config.get(ConfigAttribute.APP_TITLE),
                 (int) config.get(ConfigAttribute.WINDOW_WIDTH),
-                (int) config.get(ConfigAttribute.WINDOW_HEIGHT));
+                (int) config.get(ConfigAttribute.WINDOW_HEIGHT))
+                .setIcon("/images/sg-logo-image.png");
+
+
         inputHandler = new InputHandler();
         inputHandler.addListener(new CommonGameKeyListener(this));
-
         window.addListener(inputHandler);
+
         entityMgr = new EntityManager();
         renderer = new Renderer(this);
         physicEngine = new PhysicEngine(this);
@@ -221,7 +224,7 @@ public class App implements Game {
                 .setMass(80.0)
                 .setDebug(1)
                 .setMaterial(Material.STEEL)
-                .setLayer(1)
+                .setLayer(10)
                 .setPriority(1);
         entityMgr.add(player);
 

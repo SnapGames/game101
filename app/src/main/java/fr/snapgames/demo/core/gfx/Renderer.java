@@ -101,36 +101,41 @@ public class Renderer {
                     // draw objects
                     drawEntity(g, e);
 
-                    if (game.getDebugMode() > 0) {
-                        drawDebugInformation(g, e);
-                    }
+
                 });
-        // draw some debug information.
-        drawDisplayDebugLine(g, attributes);
+        // draw entity's display debug information
+        if (game.getDebugMode() > 0) {
+            game.getEntityManager().getEntities()
+                    .stream()
+                    .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
+                    .forEach(e -> {
+                        drawDebugInformation(g, e);
+                    });
+            // draw some debug information.
+            drawDisplayDebugLine(g, attributes);
+        }
 
         // release Graphics API
         g.dispose();
     }
 
     private void drawDisplayDebugLine(Graphics2D g, Map<String, Object> attributes) {
-        if (game.getDebugMode() > 0) {
-            g.setFont(g.getFont().deriveFont(10.0f));
-            g.setColor(new Color(0.3f, 0.0f, 0.0f, 0.5f));
-            g.fillRect(0, buffer.getHeight() - 20, buffer.getWidth(), 20);
-            g.setColor(Color.ORANGE);
-            int ups = (int) (attributes.containsKey("game.ups") ? attributes.get("game.ups") : -1);
-            int fps = (int) (attributes.containsKey("game.fps") ? attributes.get("game.fps") : -1);
-            double gameTime = (double) (attributes.containsKey("game.time") ? attributes.get("game.time") : -1.0);
-            String debugLine = String.format("[ dbg:%d | fps:%02d | ups:%02d |pause:%s | obj:%d | g:%1.3f | gtime: %04.3fs]",
-                    game.getDebugMode(),
-                    fps,
-                    ups,
-                    game.isPaused() ? "on" : "off",
-                    game.getEntityManager().getEntities().size(),
-                    game.getPhysicEngine().getWorld().getGravity().getY(),
-                    Math.abs(gameTime / 1000.0));
-            g.drawString(debugLine, 8, buffer.getHeight() - 8);
-        }
+        g.setFont(g.getFont().deriveFont(10.0f));
+        g.setColor(new Color(0.3f, 0.0f, 0.0f, 0.5f));
+        g.fillRect(0, buffer.getHeight() - 20, buffer.getWidth(), 20);
+        g.setColor(Color.ORANGE);
+        int ups = (int) (attributes.containsKey("game.ups") ? attributes.get("game.ups") : -1);
+        int fps = (int) (attributes.containsKey("game.fps") ? attributes.get("game.fps") : -1);
+        double gameTime = (double) (attributes.containsKey("game.time") ? attributes.get("game.time") : -1.0);
+        String debugLine = String.format("[ dbg:%d | fps:%02d | ups:%02d |pause:%s | obj:%d | g:%1.3f | gtime: %04.3fs]",
+                game.getDebugMode(),
+                fps,
+                ups,
+                game.isPaused() ? "on" : "off",
+                game.getEntityManager().getEntities().size(),
+                game.getPhysicEngine().getWorld().getGravity().getY(),
+                Math.abs(gameTime / 1000.0));
+        g.drawString(debugLine, 8, buffer.getHeight() - 8);
     }
 
     private void drawDebugInformation(Graphics2D g, Entity<?> e) {

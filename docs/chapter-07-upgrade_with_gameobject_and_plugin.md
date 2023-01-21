@@ -7,7 +7,18 @@ Gaz plant and an unmaintainable class.
 
 We also want to propose some specialized Entity to implement new graphical elements but also new behaviors and usages.
 
+The new coming `GameObject` could be
+
+- a POINT,
+- a LINE,
+- a RECTANGLE,
+- an ELLIPSE
+- or an IMAGE.
+
 Let's move to some interesting changes, opening to more features and fancy things.
+
+![The new coming `GameObject` could be point, line, rectangle, ellipse or image](https://docs.google.com/drawings/d/e/2PACX-1vRvvjadJjJdGu9WGHRp-a9KXr0LgmGAfoHF8pQYC1vwve_P6PGPMRjOgWFTV4nRFJ3PfzKFzOECUeIY/pub?w=619&h=404 "The new coming GameObject could be
+point, line, rectangle, ellipse or image")
 
 ## Proposed evolution
 
@@ -257,7 +268,8 @@ Executing our new Plugin architecture will show the following window:
 
 ## Adding Interaction
 
-To add more fun and test capabilities, I want the App implmentation offers the opportunity to manage the number of Ball objects on the play area.
+To add more fun and test capabilities, I want the App implmentation offers the opportunity to manage the number of Ball
+objects on the play area.
 
 | Key                 | Action                              | 
 |---------------------|-------------------------------------|
@@ -266,7 +278,6 @@ To add more fun and test capabilities, I want the App implmentation offers the o
 | <kbd>DELETE</kbd>   | Remove all Balls from the play Area |
 
 So in the App class code:
-
 
 ```java
 public class App implements Game {
@@ -290,52 +301,54 @@ public class App implements Game {
     //...
 }
 ```
+
 And the required corresponding methods:
 
 ```java
 public class App implements Game {
- //...
- private void removeNbObjectByNameFilter(String objectName, int nb) {
-    List<Entity<?>> toBeRemoved = new ArrayList<>();
-    int count = 0;
-    for (Entity<?> e : getEntityManager().getEntities()) {
-      if (e.getName().contains(objectName)) {
-        toBeRemoved.add(e);
-        count++;
-        if (count > nb) {
-          break;
+    //...
+    private void removeNbObjectByNameFilter(String objectName, int nb) {
+        List<Entity<?>> toBeRemoved = new ArrayList<>();
+        int count = 0;
+        for (Entity<?> e : getEntityManager().getEntities()) {
+            if (e.getName().contains(objectName)) {
+                toBeRemoved.add(e);
+                count++;
+                if (count > nb) {
+                    break;
+                }
+            }
         }
-      }
+        toBeRemoved.forEach(e -> {
+            getEntityManager().getEntityMap().remove(e.getName());
+        });
     }
-    toBeRemoved.forEach(e -> {
-      getEntityManager().getEntityMap().remove(e.getName());
-    });
-  }
-  // (1)
-  private void addNewBalls(String objectName, int nb) {
-    int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
-    int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
-    createBlueBalls(objectName, nb,
-            24.0,
-            screenWidth,
-            screenHeight,
-            Color.CYAN,
-            Color.BLUE);
-  }
-    
-  // (2)
-  private void removeAllObjectByNameFilter(String objectName) {
-    List<Entity<?>> toBeRemoved = new ArrayList<>();
-    for (Entity<?> e : getEntityManager().getEntities()) {
-      if (e.getName().contains(objectName)) {
-        toBeRemoved.add(e);
-      }
+
+    // (1)
+    private void addNewBalls(String objectName, int nb) {
+        int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
+        int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
+        createBlueBalls(objectName, nb,
+                24.0,
+                screenWidth,
+                screenHeight,
+                Color.CYAN,
+                Color.BLUE);
     }
-    toBeRemoved.forEach(e -> {
-      getEntityManager().getEntityMap().remove(e.getName());
-    });
-  }
-  //...
+
+    // (2)
+    private void removeAllObjectByNameFilter(String objectName) {
+        List<Entity<?>> toBeRemoved = new ArrayList<>();
+        for (Entity<?> e : getEntityManager().getEntities()) {
+            if (e.getName().contains(objectName)) {
+                toBeRemoved.add(e);
+            }
+        }
+        toBeRemoved.forEach(e -> {
+            getEntityManager().getEntityMap().remove(e.getName());
+        });
+    }
+    //...
 }
 ```
 
@@ -346,7 +359,6 @@ public class App implements Game {
 2. Removing all balls
 
 ![](illustrations/figure-gameobject-no-ball.png)
-
 
 ## Debugging Usage
 

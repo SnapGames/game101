@@ -16,7 +16,7 @@ import java.util.List;
  * @author Frédéric Delorme
  * @since 0.0.7
  */
-public abstract class Entity<T> {
+public class Entity<T> {
 
     private static int index = 1;
     public int id = index++;
@@ -86,14 +86,7 @@ public abstract class Entity<T> {
      */
     private int priority;
 
-    /**
-     * Create a new Entity with its name.
-     * According to size and position default value, the {@link Entity#box} is updated.
-     *
-     * @param name the name for this new {@link Entity}.
-     */
-    public Entity(String name) {
-        this.name = name;
+    public Entity() {
         this.mass = 1.0;
         this.material = Material.DEFAULT;
         this.width = 16.0;
@@ -102,6 +95,17 @@ public abstract class Entity<T> {
         this.borderColor = Color.BLACK;
         layer = 1;
         priority = 1;
+    }
+
+    /**
+     * Create a new Entity with its name.
+     * According to size and position default value, the {@link Entity#box} is updated.
+     *
+     * @param name the name for this new {@link Entity}.
+     */
+    public Entity(String name) {
+        this();
+        this.name = name;
     }
 
 
@@ -228,7 +232,7 @@ public abstract class Entity<T> {
      * Apply a force f to that {@link Entity}
      *
      * @param f a {@link Point2D} force to be applied.
-     * @return
+     * @return the updated {@link Entity}.
      */
     public Entity<T> addForce(Point2D f) {
         this.forces.add(f);
@@ -300,6 +304,17 @@ public abstract class Entity<T> {
      */
     public Entity<T> setPriority(int p) {
         this.priority = p;
+        return this;
+    }
+
+    /**
+     * Set the name of the {@link Entity}.
+     *
+     * @param entityName the new name of te {@link Entity}
+     * @return the updated {@link Entity}.
+     */
+    public Entity<T> setName(String entityName) {
+        this.name = entityName;
         return this;
     }
 }

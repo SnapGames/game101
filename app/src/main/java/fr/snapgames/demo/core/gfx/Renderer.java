@@ -5,6 +5,7 @@ import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.gfx.plugins.DrawHelperPlugin;
 import fr.snapgames.demo.core.gfx.plugins.GameObjectDrawHelperPlugin;
+import fr.snapgames.demo.core.gfx.plugins.GridObjectDrawHelperPlugin;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
 
 import java.awt.*;
@@ -12,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * {@link Renderer} is the Rendering service for our game.
@@ -72,6 +72,7 @@ public class Renderer {
         buffer = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
         // add default rendering helpers
         addPlugin(new GameObjectDrawHelperPlugin());
+        addPlugin(new GridObjectDrawHelperPlugin());
 
     }
 
@@ -82,12 +83,16 @@ public class Renderer {
 
     /**
      * Draw operation on the internal image buffer.
+     *
+     * @param attributes a Map of object to be used at rendering time, provisioned by the engine itself (information from the {@link Game#loop()})
      */
-    public void draw() {
+    public void draw(Map<String, Object> attributes) {
         Graphics2D g = (Graphics2D) buffer.getGraphics();
         // clear buffer with default color;
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, screenWidth, screenHeight);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         // draw all the things you need.
         game.getEntityManager().getEntities()
                 .stream()
@@ -101,25 +106,29 @@ public class Renderer {
                     }
                 });
         // draw some debug information.
-        drawDisplayDebugLine(g);
+        drawDisplayDebugLine(g, attributes);
 
         // release Graphics API
         g.dispose();
     }
 
-    private void drawDisplayDebugLine(Graphics2D g) {
+    private void drawDisplayDebugLine(Graphics2D g, Map<String, Object> attributes) {
         if (game.getDebugMode() > 0) {
             g.setFont(g.getFont().deriveFont(10.0f));
             g.setColor(new Color(0.3f, 0.0f, 0.0f, 0.5f));
             g.fillRect(0, buffer.getHeight() - 20, buffer.getWidth(), 20);
             g.setColor(Color.ORANGE);
-            String debugLine = String.format("[ dbg:%d | fps:%02.1f | pause:%s | obj:%d | g:(%1.3f,%1.3f)]",
+            int ups = (int) (attributes.containsKey("game.ups") ? attributes.get("game.ups") : -1);
+            int fps = (int) (attributes.containsKey("game.fps") ? attributes.get("game.fps") : -1);
+            double gameTime = (double) (attributes.containsKey("game.time") ? attributes.get("game.time") : -1.0);
+            String debugLine = String.format("[ dbg:%d | fps:%02d | ups:%02d |pause:%s | obj:%d | g:%1.3f | gtime: %04.3fs]",
                     game.getDebugMode(),
-                    game.getFPS(),
+                    fps,
+                    ups,
                     game.isPaused() ? "on" : "off",
                     game.getEntityManager().getEntities().size(),
-                    game.getPhysicEngine().getWorld().getGravity().getX(),
-                    game.getPhysicEngine().getWorld().getGravity().getY());
+                    game.getPhysicEngine().getWorld().getGravity().getY(),
+                    Math.abs(gameTime / 1000.0));
             g.drawString(debugLine, 8, buffer.getHeight() - 8);
         }
     }
@@ -182,10 +191,12 @@ public class Renderer {
      */
     public void drawToWindow(Window w) {
         Graphics2D g = w.getGraphics2D();
-        g.drawImage(buffer,
-                0, 0, w.getFrame().getWidth(), w.getFrame().getHeight(),
-                0, 0, screenWidth, screenHeight,
-                null);
+        if (w.isDisplayable()) {
+            g.drawImage(buffer,
+                    0, 0, w.getFrame().getWidth(), w.getFrame().getHeight(),
+                    0, 0, screenWidth, screenHeight,
+                    null);
+        }
     }
 
     public BufferedImage getBuffer() {

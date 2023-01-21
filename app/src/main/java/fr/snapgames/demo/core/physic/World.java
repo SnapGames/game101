@@ -17,16 +17,16 @@ public class World {
     /**
      * Define World physic attributes limits.
      */
-    public final Double minSpeed;
-    public final Double maxSpeedX;
-    public final Double maxSpeedY;
-    public double maxAccX;
-    public double maxAccY;
-    public double minAcc;
+    public double minSpeed = 0.001;
+    public double maxSpeedX = 120.0;
+    public double maxSpeedY = 120.0;
+    public double minAcc = 0.00001;
+    public double maxAccX = 600.0;
+    public double maxAccY = 600.0;
     /**
      * Play area
      */
-    Rectangle2D playArea;
+    Rectangle2D playArea = new Rectangle2D.Double(0, 0, 320, 200);
 
     /**
      * The default World gravity
@@ -36,9 +36,15 @@ public class World {
     public Material material = Material.AIR;
 
     /**
-     * Initialization of the World object to define world context for PhysicEngine.
+     * Initialization of the World object with only default values.
+     */
+    public World() {
+    }
+
+    /**
+     * Initialization of the {@link World} object to define world context for {@link PhysicEngine}.
      *
-     * @param configuration
+     * @param configuration the parent {@link Configuration} instance to retrieve default World values from.
      */
     public World(Configuration configuration) {
         // get Gravity from the configuration file.
@@ -87,5 +93,9 @@ public class World {
     public World setMaterial(Material mat) {
         this.material = mat;
         return this;
+    }
+
+    public Rectangle2D getPlayArea() {
+        return playArea;
     }
 }

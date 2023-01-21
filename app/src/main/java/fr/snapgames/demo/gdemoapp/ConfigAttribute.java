@@ -1,6 +1,5 @@
 package fr.snapgames.demo.gdemoapp;
 
-import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
 
 import java.awt.geom.Point2D;
@@ -34,7 +33,7 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.debug.mode",
             "Setting the debug mode (0 to 5)",
             0,
-            v -> Integer.valueOf(v)),
+            Integer::valueOf),
     /*
      * number of loop cycle before exit in test mode.
      */
@@ -43,7 +42,7 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.test.loop.counter",
             "if debug>0, set a number of frame to execute before exit (test mode)",
             -1,
-            v -> Integer.valueOf(v)),
+            Integer::valueOf),
     /**
      * the FPS required for looping and rendering process.
      */
@@ -52,7 +51,7 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.render.fps",
             "set the frame per second for the render engine",
             60,
-            v -> Integer.valueOf(v)),
+            Integer::valueOf),
     /**
      * the width of our game's window
      */
@@ -103,22 +102,27 @@ public enum ConfigAttribute implements IConfigAttribute {
             "playAreaWidth",
             "app.physic.world.play.area.width",
             "set the width of the play area",
-            320,
+            320.0,
             Double::valueOf),
     PLAY_AREA_HEIGHT(
             "playAreaHeight",
             "app.physic.world.play.area.height",
             "set the height of the play area",
-            200,
+            200.0,
             Double::valueOf),
+    PHYSIC_UPS(
+            "physicUps",
+            "app.physic.ups",
+            "set the Update Per Second (UPS) rate",
+            60,
+            Integer::valueOf
+    ),
     PHYSIC_GRAVITY(
             "physicGravity",
             "app.physic.world.gravity",
             "set the 2D vector for gravity applied by physic engine",
             new Point2D.Double(0.0, 0.0),
-            v -> {
-                return stringToPoint2D(v, new Point2D.Double(0.0, 0.0));
-            }
+            v -> stringToPoint2D(v, new Point2D.Double(0.0, 0.0))
     ),
     PHYSIC_MIN_SPEED(
             "physicSpeedMin",
@@ -174,8 +178,8 @@ public enum ConfigAttribute implements IConfigAttribute {
     /**
      * Convert String "v([double],[double])" to Point2D.
      *
-     * @param value
-     * @param defaultValue
+     * @param value        the formatted String value to be converted
+     * @param defaultValue the default value if no conversion possible.
      * @return Point2D value corresponding to the converted string.
      */
     private static Point2D stringToPoint2D(String value, Point2D defaultValue) {
@@ -187,17 +191,16 @@ public enum ConfigAttribute implements IConfigAttribute {
                         "v(".length(),
                         value.length() - ")".length())
                 .split(",");
-        Point2D convertedValue = new Point2D.Double(
+        return new Point2D.Double(
                 Double.parseDouble(interpretedValue[0]),
                 Double.parseDouble(interpretedValue[1]));
-        return convertedValue;
     }
 
     private final String attrName;
     private final String attrDescription;
     private final Object attrDefaultValue;
     private final Function<String, Object> attrParser;
-    private String attrConfigKey;
+    private final String attrConfigKey;
 
     ConfigAttribute(String attrName, String attrConfigKey, String attrDescription, Object attrDefaultValue, Function<String, Object> parser) {
         this.attrName = attrName;
@@ -227,9 +230,6 @@ public enum ConfigAttribute implements IConfigAttribute {
         return this.attrDescription;
     }
 
-    /**
-     * @return
-     */
     @Override
     public String getConfigKey() {
         return attrConfigKey;

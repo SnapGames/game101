@@ -6,7 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.Optional;
+import java.awt.event.KeyListener;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * THe {@link Window} object intend to display on screen the content of our application game.
@@ -19,6 +21,10 @@ public class Window extends JPanel {
     public String title;
     private JFrame frame;
     private boolean fullScreenMode;
+    ComponentAdapter windowSizeAdapter;
+    private int oldWidth;
+    private int oldHeight;
+    List<KeyListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
      * Create a new Window wit a title, of size (width x height) or if requested in full screen mode.
@@ -32,7 +38,16 @@ public class Window extends JPanel {
         this.title = title;
         this.setSize(width, height);
         this.fullScreenMode = bFullScreenMode;
-
+        windowSizeAdapter = new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent componentEvent) {
+                if (!isFullScreen()) {
+                    oldWidth = frame.getWidth();
+                    oldHeight = frame.getHeight();
+                    setSize(frame.getWidth(), frame.getHeight());
+                }
+            }
+        };
         createPanel(title, width, height, fullScreenMode);
     }
 
@@ -54,12 +69,32 @@ public class Window extends JPanel {
      * @param bFullScreen if true set to fullscreen, else switch to window mode.
      */
     public void switchFullScreen(boolean bFullScreen) {
-        this.fullScreenMode = bFullScreen;
-        if (bFullScreen && frame.isVisible()) {
-            frame.setVisible(false);
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+        frame.setVisible(false);
+        backUpListeners();
+        if (bFullScreen) {
+            oldWidth = frame.getWidth();
+            oldHeight = frame.getHeight();
             frame.dispose();
+            frame.setUndecorated(true);
+            gd.setFullScreenWindow(frame);
+            //frame.removeComponentListener(windowSizeAdapter);
+            this.fullScreenMode = true;
+        } else {
+            frame.dispose();
+            frame = new JFrame(title);
+            frame.setUndecorated(false);
+            gd.setFullScreenWindow(null);
+            Dimension dim = new Dimension(oldWidth, oldHeight);
+            this.setPreferredSize(dim);
+            frame.add(this);
+            //frame.addComponentListener(windowSizeAdapter);
+            frame.pack();
+            this.fullScreenMode = false;
         }
-        createPanel(this.title, this.getWidth(), this.getHeight(), bFullScreen);
+        restoreListeners();
+        frame.setVisible(true);
     }
 
     /**
@@ -74,37 +109,34 @@ public class Window extends JPanel {
             String title,
             int width, int height,
             boolean fullScreenMode) {
+
         Dimension dim = new Dimension(width, height);
-        if (Optional.ofNullable(frame).isPresent()) {
-            frame.dispose();
-            frame = null;
-        }
         frame = new JFrame(title);
         this.setSize(dim);
         this.setPreferredSize(dim);
         this.setMaximumSize(dim);
+        frame.setResizable(true);
         frame.setContentPane(this);
-
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         frame.setLocationRelativeTo(null);
-        if (fullScreenMode) {
-            gd.setFullScreenWindow(frame);
-        } else {
-            gd.setFullScreenWindow(null);
-        }
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setFocusTraversalKeysEnabled(true);
         frame.pack();
         frame.setVisible(true);
         frame.requestFocus();
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent componentEvent) {
-                if (!isFullScreen()) {
-                    setSize(frame.getWidth(), frame.getHeight());
-                }
-            }
-        });
+
+    }
+
+    private void restoreListeners() {
+        for (KeyListener kl : listeners) {
+            frame.addKeyListener(kl);
+        }
+    }
+
+    private void backUpListeners() {
+        listeners.clear();
+        for (KeyListener kl : frame.getKeyListeners()) {
+            listeners.add(kl);
+        }
     }
 
 
@@ -116,6 +148,7 @@ public class Window extends JPanel {
     public void addListener(InputHandler inputHandler) {
         frame.addKeyListener(inputHandler);
         frame.addMouseListener(inputHandler);
+        backUpListeners();
     }
 
     /**

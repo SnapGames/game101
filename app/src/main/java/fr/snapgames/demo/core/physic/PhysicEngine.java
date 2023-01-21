@@ -3,8 +3,6 @@ package fr.snapgames.demo.core.physic;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.entity.Entity;
 
-import java.awt.geom.Rectangle2D;
-
 /**
  * Create a Physic Engine to compute Entity moves and behaviors.
  *
@@ -42,7 +40,7 @@ public class PhysicEngine {
      * @param elapsed
      */
     public void update(double elapsed) {
-        double time = elapsed * 0.002;
+        double time = elapsed * 0.0045;
         game.getEntityManager().getEntities().forEach(e -> {
             updateEntity(game, e, time);
             constrained(game, e, time);
@@ -58,6 +56,8 @@ public class PhysicEngine {
      */
     private void updateEntity(Game game, Entity<?> e, double elapsed) {
         double friction = 1.0;
+        e.ax = 0;
+        e.ay = 0;
         e.addForce(world.gravity);
         e.forces.forEach(f -> {
             e.ax += f.getX();
@@ -97,6 +97,7 @@ public class PhysicEngine {
                     -e.dx * e.material.elasticity,
                     world.minSpeed,
                     world.maxSpeedX);
+            e.ax = 0.0;
         }
         if (e.y + e.height > world.playArea.getHeight()) {
             e.y = world.playArea.getHeight() - e.height;
@@ -105,6 +106,7 @@ public class PhysicEngine {
                     -e.dy * e.material.elasticity,
                     world.minSpeed,
                     world.maxSpeedY);
+            e.ay = 0.0;
         }
         if (e.x < 0.0) {
             e.x = 0.0;
@@ -113,6 +115,8 @@ public class PhysicEngine {
                     -e.dx * e.material.elasticity,
                     world.minSpeed,
                     world.maxSpeedX);
+            e.ax = 0.0;
+
         }
         if (e.y < 0.0) {
             e.y = 0.0;
@@ -121,6 +125,7 @@ public class PhysicEngine {
                     -e.dy * e.material.elasticity,
                     world.minSpeed,
                     world.maxSpeedY);
+            e.ay = 0.0;
         }
     }
 

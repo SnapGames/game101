@@ -7,10 +7,10 @@ import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.entity.*;
-import fr.snapgames.demo.core.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 import fr.snapgames.demo.core.io.InputHandler;
+import fr.snapgames.demo.core.io.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.physic.Material;
 import fr.snapgames.demo.core.physic.PhysicEngine;
 

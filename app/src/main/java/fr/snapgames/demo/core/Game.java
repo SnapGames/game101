@@ -74,9 +74,12 @@ public interface Game {
         double gameTime = 0;
         double elapsed;
         Map<String, Object> renderingAttributes = new HashMap<>();
+
         renderingAttributes.put("game.time", gameTime);
         renderingAttributes.put("game.fps", fps);
         renderingAttributes.put("game.ups", ups);
+
+        loadResources();
         create();
 
         while (!isExitRequested()) {
@@ -106,6 +109,13 @@ public interface Game {
             waitUntilNextFrame(elapsed);
             previousTime = currentTime;
         }
+    }
+
+    /**
+     * Load resources for the scene before {@link Game#create()}
+     */
+    default void loadResources() {
+
     }
 
 

@@ -22,12 +22,19 @@ public class GridObjectDrawHelperPlugin implements DrawHelperPlugin<GridObject> 
     public void draw(Renderer r, Graphics2D g, Entity e) {
         GridObject go = (GridObject) e;
         g.setColor(go.borderColor);
+        Stroke backPreviousStrokeValue = null;
+        if (go.getStroke() != null) {
+            backPreviousStrokeValue = g.getStroke();
+            g.setStroke(go.getStroke());
+        }
         for (double x = 0; x < go.width; x += go.getStepX()) {
             g.drawRect((int) x, 0, (int) go.getStepX(), (int) go.height);
         }
         for (double y = 0; y < go.height; y += go.getStepY()) {
             g.drawRect(0, (int) y, (int) go.width, (int) go.getStepY());
         }
-
+        if (go.getStroke() != null && backPreviousStrokeValue != null) {
+            g.setStroke(backPreviousStrokeValue);
+        }
     }
 }

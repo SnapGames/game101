@@ -7,6 +7,7 @@ import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.entity.*;
+import fr.snapgames.demo.core.gfx.RandomColor;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 import fr.snapgames.demo.core.io.InputHandler;
@@ -14,9 +15,11 @@ import fr.snapgames.demo.core.io.events.CommonGameKeyListener;
 import fr.snapgames.demo.core.physic.Material;
 import fr.snapgames.demo.core.physic.PhysicEngine;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,6 +127,8 @@ public class App implements Game {
      * Displayed application title on the screen/window.
      */
     private String appTitle = "GDemoApp";
+    BufferedImage imageBackground = null;
+    BufferedImage imagePlayer = null;
 
     /**
      * Default application constructor.
@@ -207,17 +212,35 @@ public class App implements Game {
         updateTestCounter = 0;
     }
 
+
+    @Override
+    public void loadResources() {
+        try {
+            imageBackground = ImageIO.read(this.getClass().getResourceAsStream("/images/backgrounds/forest.jpg"));
+            imagePlayer = ImageIO.read(this.getClass().getResourceAsStream("/images/sprites01.png"));
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void create() {
         logger.log(Level.INFO, "- create stuff for {0}", getAppName());
         int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
         int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
+
+
+        var background = (GameObject) new GameObject("background")
+                .setImage(imageBackground)
+                .setLayer(1)
+                .setPriority(2);
+        entityMgr.add(background);
+
         // Create the main player entity.
+        BufferedImage playerFrame1 = imagePlayer.getSubimage(0, 0, 32, 32);
         var player = (GameObject) new GameObject("player")
-                .setType(ObjectType.RECTANGLE)
-                .setFillColor(Color.RED)
-                .setBorderColor(new Color(0.3f, 0.0f, 0.0f))
-                .setSize(16.0, 16.0)
+                .setImage(playerFrame1)
                 .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
                 .setSpeed(0.0, 0.0)
                 .setAcceleration(0.0, 0.0)
@@ -237,11 +260,13 @@ public class App implements Game {
         entityMgr.add(
                 new GridObject("grid")
                         .setStepSize(16.0, 16.0)
+                        .setLineStroke(new float[]{4.0f, 4.0f, 0.0f})
                         .setSize(
                                 physicEngine.getWorld().getPlayArea().getWidth(),
                                 physicEngine.getWorld().getPlayArea().getHeight())
-                        .setBorderColor(Color.DARK_GRAY)
-                        .setLayer(-1));
+                        .setBorderColor(new Color(0.2f, 0.2f, 0.2f, 0.8f))
+                        .setLayer(2)
+                        .setPriority(1));
     }
 
     /**
@@ -263,7 +288,15 @@ public class App implements Game {
                                  Color fillColor, Color borderColor) {
         for (int i = 0; i < nbBall; i++) {
             double radius = Math.random() * ballRadius;
-            createBall(ballNamePrefix, width, height, fillColor, borderColor, radius);
+            createBall(ballNamePrefix,
+                    width, height,
+                    (fillColor == null
+                            ? RandomColor.get(
+                            0.0f, 0.0f, 0.0f, 0.5f,
+                            1.0f, 1.0f, 1.0f, 1.0f)
+                            : fillColor),
+                    borderColor,
+                    radius);
         }
     }
 
@@ -279,7 +312,7 @@ public class App implements Game {
                 .setAcceleration(0.0, 0.0)
                 .setDebug(4)
                 .setMaterial(Material.SUPER_BALL)
-                .setLayer(2)
+                .setLayer(3)
                 .setPriority(2);
         String ballName = name.replace("#", "" + go.id);
         go.setName(ballName);
@@ -318,6 +351,7 @@ public class App implements Game {
             player.addForce(new Point2D.Double(accelerationStep, 0.0));
             move = true;
         }
+
         if (!move) {
             if (Optional.ofNullable(player.material).isPresent()) {
                 player.dx *= player.material.friction;
@@ -325,6 +359,7 @@ public class App implements Game {
             }
         }
 
+        player.setDirection((player.dx >= 0 ? 1 : -1));
         // Managing Balls
         if (inputHandler.getKey(KeyEvent.VK_PAGE_UP)) {
             // maximize number of managed entities.
@@ -376,8 +411,8 @@ public class App implements Game {
                 24.0,
                 screenWidth,
                 screenHeight,
-                Color.CYAN,
-                Color.BLUE);
+                null,
+                Color.BLACK);
     }
 
     /**

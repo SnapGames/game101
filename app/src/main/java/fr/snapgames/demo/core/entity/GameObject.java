@@ -105,4 +105,18 @@ public class GameObject extends Entity<GameObject> {
         return infos;
     }
 
+    /**
+     * Set the image for this GameObject.
+     *
+     * @param image the new image to set as GameObject image.
+     * @return the updated GameObject thanks to fluent API.
+     */
+    public GameObject setImage(BufferedImage image) {
+        this.type = ObjectType.IMAGE;
+        this.image = image;
+        this.width = image.getWidth();
+        this.height = image.getHeight();
+        updateBox();
+        return this;
+    }
 }

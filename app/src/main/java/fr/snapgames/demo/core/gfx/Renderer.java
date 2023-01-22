@@ -2,6 +2,7 @@ package fr.snapgames.demo.core.gfx;
 
 
 import fr.snapgames.demo.core.Game;
+import fr.snapgames.demo.core.entity.Camera;
 import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.gfx.plugins.DrawHelperPlugin;
 import fr.snapgames.demo.core.gfx.plugins.GameObjectDrawHelperPlugin;
@@ -13,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * {@link Renderer} is the Rendering service for our game.
@@ -47,14 +49,19 @@ public class Renderer {
      */
     int screenHeight;
 
+    /**
+     * The current active camera for this rendering.
+     */
+    private Camera currentCamera;
+
     private Map<Class<? extends Entity<?>>, DrawHelperPlugin<? extends Entity<?>>> plugins = new HashMap<>();
     private String filterWhiteList;
     private String filterBlackList;
 
     /**
-     * Initialize the Renderer service with its parent game.
+     * Initialize the {@link Renderer} service with its parent {@link Game} instance.
      *
-     * @param g
+     * @param g the parent Game for the {@link Renderer} service
      */
     public Renderer(Game g) {
         this.game = g;
@@ -98,9 +105,16 @@ public class Renderer {
                 .stream()
                 .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                 .forEach(e -> {
+                    // Move view to camera view
+                    if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                        g.translate(-currentCamera.x, -currentCamera.y);
+                    }
                     // draw objects
                     drawEntity(g, e);
-
+                    // move back from camera view
+                    if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                        g.translate(currentCamera.x, currentCamera.y);
+                    }
 
                 });
         // draw entity's display debug information
@@ -109,7 +123,16 @@ public class Renderer {
                     .stream()
                     .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                     .forEach(e -> {
+                        // Move view to camera view
+                        if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                            g.translate(-currentCamera.x, -currentCamera.y);
+                        }
+                        // draw Entity debug display information.
                         drawDebugInformation(g, e);
+                        // move back from camera view
+                        if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                            g.translate(currentCamera.x, currentCamera.y);
+                        }
                     });
             // draw some debug information.
             drawDisplayDebugLine(g, attributes);
@@ -124,9 +147,9 @@ public class Renderer {
         g.setColor(new Color(0.3f, 0.0f, 0.0f, 0.5f));
         g.fillRect(0, buffer.getHeight() - 20, buffer.getWidth(), 20);
         g.setColor(Color.ORANGE);
-        int ups = (int) (attributes.containsKey("game.ups") ? attributes.get("game.ups") : -1);
-        int fps = (int) (attributes.containsKey("game.fps") ? attributes.get("game.fps") : -1);
-        double gameTime = (double) (attributes.containsKey("game.time") ? attributes.get("game.time") : -1.0);
+        int ups = (int) (attributes.getOrDefault("game.ups", -1));
+        int fps = (int) (attributes.getOrDefault("game.fps", -1));
+        double gameTime = (double) (attributes.getOrDefault("game.time", -1.0));
         String debugLine = String.format("[ dbg:%d | fps:%02d | ups:%02d |pause:%s | obj:%d | g:%1.3f | gtime: %04.3fs]",
                 game.getDebugMode(),
                 fps,
@@ -206,5 +229,14 @@ public class Renderer {
 
     public BufferedImage getBuffer() {
         return buffer;
+    }
+
+    /**
+     * Set the active {@link Camera} for the rendering process.
+     *
+     * @param currentCamera a {@link Camera} instance.
+     */
+    public void setCurrentCamera(Camera currentCamera) {
+        this.currentCamera = currentCamera;
     }
 }

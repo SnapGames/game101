@@ -28,12 +28,11 @@ public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> 
         GameObject go = (GameObject) entity;
         switch (go.type) {
             case IMAGE -> {
-                if (go.dx >= 0) {
+                if (go.direction > 0) {
                     g.drawImage(go.image, (int) go.x, (int) go.y, null);
                 } else {
                     g.drawImage(go.image,
-                            (int) (go.x + go.width), (int) go.y, (int) go.x, (int) (go.y),
-                            (int) go.x, (int) go.y, -(int) go.width, (int) go.height,
+                            (int) (go.x + go.width), (int) go.y, -(int) go.width, (int) go.height,
                             null);
 
                 }

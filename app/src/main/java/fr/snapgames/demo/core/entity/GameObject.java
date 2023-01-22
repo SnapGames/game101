@@ -36,8 +36,8 @@ public class GameObject extends Entity<GameObject> {
      */
     public GameObject() {
         super();
-        this.mass = 1.0;
-        this.type = ObjectType.RECTANGLE;
+        setMass(1.0);
+        setType(ObjectType.RECTANGLE);
     }
 
     /**
@@ -48,8 +48,9 @@ public class GameObject extends Entity<GameObject> {
      */
     public GameObject(String name) {
         super(name);
-        this.mass = 1.0;
-        this.type = ObjectType.RECTANGLE;
+        setMass(1.0);
+        setDirection(1.0);
+        setType(ObjectType.RECTANGLE);
     }
 
     /**
@@ -60,6 +61,7 @@ public class GameObject extends Entity<GameObject> {
      */
     public Entity<GameObject> setType(ObjectType t) {
         this.type = t;
+        setDirection(1.0);
         updateBox();
         return this;
     }
@@ -67,12 +69,8 @@ public class GameObject extends Entity<GameObject> {
     @Override
     public void updateBox() {
         switch (type) {
-            case RECTANGLE, IMAGE, LINE, POINT -> {
-                this.box = new Rectangle2D.Double(x, y, width, height);
-            }
-            case ELLIPSE -> {
-                this.box = new Ellipse2D.Double(x, y, width, height);
-            }
+            case RECTANGLE, IMAGE, LINE, POINT -> this.box = new Rectangle2D.Double(x, y, width, height);
+            case ELLIPSE -> this.box = new Ellipse2D.Double(x, y, width, height);
             default -> {
                 // nothing to do !
             }
@@ -90,7 +88,7 @@ public class GameObject extends Entity<GameObject> {
         infos.add(String.format("(1)name:%s", this.name));
         infos.add(String.format("(2)type:%s", type.toString()));
         infos.add(String.format("(2)pos:%4.2f,%4.2f", x, y));
-        infos.add(String.format("(2)size:%4.2f,%4.2f", width, height));
+        infos.add(String.format("(2)size:%.0fx%.0f", width, height));
         infos.add(String.format("(3)spd:%4.2f,%4.2f", dx, dy));
         infos.add(String.format("(3)acc:%4.2f,%4.2f", ax, ay));
         infos.add(String.format("(4)l:%d p:%d", getLayer(), getPriority()));
@@ -112,11 +110,21 @@ public class GameObject extends Entity<GameObject> {
      * @return the updated GameObject thanks to fluent API.
      */
     public GameObject setImage(BufferedImage image) {
-        this.type = ObjectType.IMAGE;
+        setType(ObjectType.IMAGE);
         this.image = image;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
+        setSize(image.getWidth(), image.getHeight());
         updateBox();
+        return this;
+    }
+
+    /**
+     * Set the {@link Entity} direction (-1 (left)  to 1 (right))
+     *
+     * @param d the direction encoding
+     * @return the updated {@link Entity}.
+     */
+    public GameObject setDirection(double d) {
+        this.direction = d;
         return this;
     }
 }

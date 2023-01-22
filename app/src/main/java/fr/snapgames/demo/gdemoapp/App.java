@@ -215,13 +215,23 @@ public class App implements Game {
 
     @Override
     public void loadResources() {
-        try {
-            imageBackground = ImageIO.read(this.getClass().getResourceAsStream("/images/backgrounds/forest.jpg"));
-            imagePlayer = ImageIO.read(this.getClass().getResourceAsStream("/images/sprites01.png"));
+        imageBackground = loadImage("/images/backgrounds/forest.jpg");
+        imagePlayer = loadImage("/images/sprites01.png");
+    }
 
+    /**
+     * Load a {@link BufferedImage} from a file path.
+     *
+     * @param pathToImage path to the image file.
+     * @return the corresponding {@link BufferedImage} instance.
+     */
+    private BufferedImage loadImage(String pathToImage) {
+        try {
+            return ImageIO.read(this.getClass().getResourceAsStream(pathToImage));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.severe("Unable to read image resource from " + pathToImage);
         }
+        return null;
     }
 
     @Override
@@ -230,7 +240,7 @@ public class App implements Game {
         int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
         int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
 
-
+        // Add a Background image
         var background = (GameObject) new GameObject("background")
                 .setImage(imageBackground)
                 .setLayer(1)
@@ -281,11 +291,11 @@ public class App implements Game {
      * @param fillColor   the  fill color for the ball rendering
      * @param borderColor the border color for the ball rendering
      */
-    private void createBlueBalls(String ballNamePrefix,
-                                 int nbBall,
-                                 double ballRadius,
-                                 int width, int height,
-                                 Color fillColor, Color borderColor) {
+    private void createBalls(String ballNamePrefix,
+                             int nbBall,
+                             double ballRadius,
+                             int width, int height,
+                             Color fillColor, Color borderColor) {
         for (int i = 0; i < nbBall; i++) {
             double radius = Math.random() * ballRadius;
             createBall(ballNamePrefix,
@@ -321,8 +331,8 @@ public class App implements Game {
 
     @Override
     public void input(Game g) {
-        logger.log(Level.INFO, "- Loop {0}:", updateTestCounter);
-        logger.log(Level.INFO, "  - handle input");
+        logger.log(Level.FINEST, "- Loop {0}:", updateTestCounter);
+        logger.log(Level.FINEST, "  - handle input");
         if (inputHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
             requestExit(true);
             logger.log(Level.FINEST, "    - key {} has been released",
@@ -333,7 +343,7 @@ public class App implements Game {
         double accelerationStep = 200.0;
         double jumpFactor = 0.5 * accelerationStep;
 
-        Entity<?> player = entityMgr.get("player");
+        GameObject player = (GameObject) entityMgr.get("player");
 
         if (inputHandler.getKey(KeyEvent.VK_UP)) {
             player.addForce(new Point2D.Double(0.0, -jumpFactor));
@@ -345,10 +355,12 @@ public class App implements Game {
         }
         if (inputHandler.getKey(KeyEvent.VK_LEFT)) {
             player.addForce(new Point2D.Double(-accelerationStep, 0.0));
+            player.setDirection(-1.0);
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_RIGHT)) {
             player.addForce(new Point2D.Double(accelerationStep, 0.0));
+            player.setDirection(1.0);
             move = true;
         }
 
@@ -359,7 +371,6 @@ public class App implements Game {
             }
         }
 
-        player.setDirection((player.dx >= 0 ? 1 : -1));
         // Managing Balls
         if (inputHandler.getKey(KeyEvent.VK_PAGE_UP)) {
             // maximize number of managed entities.
@@ -393,9 +404,7 @@ public class App implements Game {
                 }
             }
         }
-        toBeRemoved.forEach(e -> {
-            getEntityManager().getEntityMap().remove(e.getName());
-        });
+        toBeRemoved.forEach(e -> getEntityManager().getEntityMap().remove(e.getName()));
     }
 
     /**
@@ -407,7 +416,7 @@ public class App implements Game {
     private void addNewBalls(String objectName, int nb) {
         int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
         int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
-        createBlueBalls(objectName, nb,
+        createBalls(objectName, nb,
                 24.0,
                 screenWidth,
                 screenHeight,
@@ -418,24 +427,22 @@ public class App implements Game {
     /**
      * Remove all {@link Entity} based on a filtering name.
      *
-     * @param objectName
+     * @param objectNameFilter the object name filter used to remove corresponding {@link GameObject}.
      */
-    private void removeAllObjectByNameFilter(String objectName) {
+    private void removeAllObjectByNameFilter(String objectNameFilter) {
         List<Entity<?>> toBeRemoved = new ArrayList<>();
         for (Entity<?> e : getEntityManager().getEntities()) {
-            if (e.getName().contains(objectName)) {
+            if (e.getName().contains(objectNameFilter)) {
                 toBeRemoved.add(e);
             }
         }
-        toBeRemoved.forEach(e -> {
-            getEntityManager().getEntityMap().remove(e.getName());
-        });
+        toBeRemoved.forEach(e -> getEntityManager().getEntityMap().remove(e.getName()));
     }
 
     @Override
     public void update(Game g, Map<String, Object> attributes, double elapsed) {
         int ups = (int) attributes.get("game.ups");
-        logger.log(Level.INFO, "  - update thing {0}", elapsed);
+        logger.log(Level.FINEST, "  - update thing {0} at {1} u/s", new Object[]{elapsed, ups});
         updateTestCounter += 1;
         physicEngine.update(elapsed);
     }
@@ -443,7 +450,7 @@ public class App implements Game {
     @Override
     public void render(Game g, Map<String, Object> attributes) {
         int fps = (int) attributes.get("game.fps");
-        logger.log(Level.INFO, "  - render thing at {0} FPS", fps);
+        logger.log(Level.FINEST, "  - render thing at {0} FPS", fps);
 
         renderer.draw(attributes);
         renderer.drawToWindow(window);

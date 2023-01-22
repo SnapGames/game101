@@ -46,8 +46,6 @@ public class Entity<T> {
 
     public double height;
 
-    private double direction;
-
     public Color fillColor;
 
     public Color borderColor;
@@ -162,16 +160,6 @@ public class Entity<T> {
         return this;
     }
 
-    /**
-     * Set the {@link Entity} direction (-1 (left)  to 1 (right))
-     *
-     * @param d the direction encoding
-     * @return the updated {@link Entity}.
-     */
-    public Entity<T> setDirection(double d) {
-        this.direction = d;
-        return this;
-    }
 
     /**
      * Set the {@link Entity} draw border color
@@ -257,7 +245,7 @@ public class Entity<T> {
         List<String> infos = new ArrayList<>();
         infos.add(String.format("name:%s", name));
         infos.add(String.format("pos:%4.2f,%4.2f", x, y));
-        infos.add(String.format("size:%4.2f,%4.2f", width, height));
+        infos.add(String.format("size:%.0fx%.0f", width, height));
         infos.add(String.format("spd:%4.2f,%4.2f", dx, dy));
         infos.add(String.format("acc:%4.2f,%4.2f", ax, ay));
         infos.add(String.format("map:%s[d=%4.2f,e=%4.2f,f=%4.2f]",

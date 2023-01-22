@@ -35,10 +35,10 @@ public class EntityTest {
         Entity<String> p = new Entity<>();
         List<String> debugInfo = p.getDebugInfo();
         Assertions.assertTrue(debugInfo.get(0).startsWith("name:entity_"));
-        Assertions.assertEquals("pos:0.00,0.00", debugInfo.get(1));
-        Assertions.assertEquals("size:16.00,16.00", debugInfo.get(2));
-        Assertions.assertEquals("spd:0.00,0.00", debugInfo.get(3));
-        Assertions.assertEquals("acc:0.00,0.00", debugInfo.get(4));
+        Assertions.assertEquals("pos:0,00,0,00", debugInfo.get(1).trim());
+        Assertions.assertEquals("size:16x16", debugInfo.get(2).trim());
+        Assertions.assertEquals("spd:0,00,0,00", debugInfo.get(3).trim());
+        Assertions.assertEquals("acc:0,00,0,00", debugInfo.get(4).trim());
         Assertions.assertTrue(debugInfo.get(5).startsWith("map:default[d="));
 
     }

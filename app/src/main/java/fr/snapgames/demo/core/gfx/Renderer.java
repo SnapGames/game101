@@ -10,11 +10,9 @@ import fr.snapgames.demo.core.gfx.plugins.GridObjectDrawHelperPlugin;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * {@link Renderer} is the Rendering service for our game.
@@ -35,11 +33,8 @@ public class Renderer {
     /**
      * Window width
      */
-    int windowWidth;
-    /**
-     * Window height
-     */
-    int windowHeight;
+    private final Rectangle2D playArea;
+
     /**
      * Screen width
      */
@@ -57,6 +52,7 @@ public class Renderer {
     private Map<Class<? extends Entity<?>>, DrawHelperPlugin<? extends Entity<?>>> plugins = new HashMap<>();
     private String filterWhiteList;
     private String filterBlackList;
+    private boolean rendering;
 
     /**
      * Initialize the {@link Renderer} service with its parent {@link Game} instance.
@@ -66,10 +62,12 @@ public class Renderer {
     public Renderer(Game g) {
         this.game = g;
         // retrieve mandatory configuration
-        windowWidth = (int) game.getConfiguration().get(ConfigAttribute.WINDOW_WIDTH);
-        windowHeight = (int) game.getConfiguration().get(ConfigAttribute.WINDOW_HEIGHT);
+
         screenWidth = (int) game.getConfiguration().get(ConfigAttribute.SCREEN_WIDTH);
         screenHeight = (int) game.getConfiguration().get(ConfigAttribute.SCREEN_HEIGHT);
+        double playAreaWidth = (double) game.getConfiguration().get(ConfigAttribute.PLAY_AREA_WIDTH);
+        double playAreaHeight = (double) game.getConfiguration().get(ConfigAttribute.PLAY_AREA_HEIGHT);
+        playArea = new Rectangle2D.Double(0, 0, playAreaWidth, playAreaHeight);
 
         // Debug information draw Entity's filtering list
         filterWhiteList = (String) game.getConfiguration().get(ConfigAttribute.DEBUG_WHILE_LIST);
@@ -94,6 +92,7 @@ public class Renderer {
      * @param attributes a Map of object to be used at rendering time, provisioned by the engine itself (information from the {@link Game#loop()})
      */
     public void draw(Map<String, Object> attributes) {
+        rendering = true;
         Graphics2D g = (Graphics2D) buffer.getGraphics();
         // clear buffer with default color;
         g.setColor(Color.BLACK);
@@ -140,6 +139,7 @@ public class Renderer {
 
         // release Graphics API
         g.dispose();
+        rendering = false;
     }
 
     private void drawDisplayDebugLine(Graphics2D g, Map<String, Object> attributes) {
@@ -150,11 +150,12 @@ public class Renderer {
         int ups = (int) (attributes.getOrDefault("game.ups", -1));
         int fps = (int) (attributes.getOrDefault("game.fps", -1));
         double gameTime = (double) (attributes.getOrDefault("game.time", -1.0));
-        String debugLine = String.format("[ dbg:%d | fps:%02d | ups:%02d |pause:%s | obj:%d | g:%1.3f | gtime: %04.3fs]",
+        String debugLine = String.format("[ dbg:%d | f:%02d u:%02d |>:%s | scn:%s |o:%d | g:%1.3f | gtime: %04.3fs]",
                 game.getDebugMode(),
                 fps,
                 ups,
-                game.isPaused() ? "on" : "off",
+                game.isPaused() ? "off" : "on",
+                game.getSceneManager().getCurrent().getName(),
                 game.getEntityManager().getEntities().size(),
                 game.getPhysicEngine().getWorld().getGravity().getY(),
                 Math.abs(gameTime / 1000.0));
@@ -164,8 +165,8 @@ public class Renderer {
     private void drawDebugInformation(Graphics2D g, Entity<?> e) {
 
         if (game.getDebugMode() >= e.debug
-                && filterWhiteList.contains(e.name)
-                && !filterBlackList.contains(e.name)) {
+                && filteredName(filterWhiteList, e.name)
+                && !filteredName(filterBlackList, e.name)) {
             g.setColor(Color.ORANGE);
             g.draw(e.box);
             if (game.getDebugMode() > 1) {
@@ -175,14 +176,14 @@ public class Renderer {
                 long nbLines = e.getDebugInfo().stream().filter(s -> game.getDebugMode() >= Integer.parseInt(s.substring(1, 2))).count();
                 int hh = (int) (g.getFontMetrics().getHeight()
                         * (nbLines - 1));
-                if (e.y + hh > buffer.getHeight()) {
-                    offY = buffer.getHeight() - hh;
+                if (e.y + hh > playArea.getHeight()) {
+                    offY = (int) playArea.getHeight() - hh;
                 }
 
                 int ww = g.getFontMetrics().stringWidth(e.getDebugInfo().stream().max(Comparator.comparingInt(String::length)).get());
 
-                if (e.x + ww > buffer.getWidth()) {
-                    offX = buffer.getWidth() - ww;
+                if (e.x + ww > playArea.getWidth()) {
+                    offX = (int) playArea.getWidth() - ww;
                 }
 
                 int l = 0;
@@ -202,6 +203,14 @@ public class Renderer {
                 }
                 g.drawLine((int) (e.x + e.width + 1.0), (int) e.y, (int) (offX + e.width + 3.0), offY);
             }
+        }
+    }
+
+    private boolean filteredName(String filter, String entityName) {
+        if (!filter.equals("")) {
+            return Arrays.stream(filter.split(",")).anyMatch(entityName::contains);
+        } else {
+            return false;
         }
     }
 
@@ -238,5 +247,14 @@ public class Renderer {
      */
     public void setCurrentCamera(Camera currentCamera) {
         this.currentCamera = currentCamera;
+    }
+
+    /**
+     * Return the rendering flag value.
+     *
+     * @return a boolean value, if true, the rendering is now processing, if false, it is not currently processing.
+     */
+    public boolean isRendering() {
+        return rendering;
     }
 }

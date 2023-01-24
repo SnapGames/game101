@@ -537,23 +537,22 @@ class App implements Game {
 As we need some image resources, we are going to use a new `Game#loadResources()`
 interface to let the main `GameLoop` require the resources loading before `create()`.
 
-
-
 ```java
 public interface Game {
     //...
     default void loadResources() {
 
     }
+
     //...
     default void loop() {
-      //...
-      loadResources();
-      create();
+        //...
+        loadResources();
+        create();
 
-      while (!isExitRequested()) {
-          //...
-      }
+        while (!isExitRequested()) {
+            //...
+        }
     }
 }
 ```
@@ -621,5 +620,16 @@ You must see the following animated window :
 Finally, executing our new Renderer implementation is able to satisfy any new need without change the core Renderer draw
 processing, and take benefits from all future GameObject descendants.
 
+You can notice that the corresponding code will be found on the GitHub
+repository [Game101](https://github.com/SnapGames/game101/ "go and visit the corresponding Game101 project") :
+
+- on the [create-gameobject-and-plugin](https://github.com/SnapGames/game101/releases/tag/create-gameobject-and-plugin)
+  tag for the `GameObject` and `Renderer` plugin architecture,
+- at the [create-grid-object](https://github.com/SnapGames/game101/releases/tag/create-grid-object) tag for the
+  new `GridObject` implementation, used for debug purpose (mainly).
+
+That's All Folk !
+
+McGivrer.
 
 

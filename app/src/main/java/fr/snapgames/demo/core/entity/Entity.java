@@ -84,6 +84,11 @@ public class Entity<T> {
      */
     private int priority;
 
+    /**
+     * Define if the object must be stick to the camera viewport.
+     */
+    private boolean stickToCamera = false;
+
     public Entity() {
         this.mass = 1.0;
         this.material = Material.DEFAULT;
@@ -304,5 +309,14 @@ public class Entity<T> {
     public Entity<T> setName(String entityName) {
         this.name = entityName;
         return this;
+    }
+
+    /**
+     * Return true if this {@link Entity} instance must be stick to the {@link Camera} viewport.
+     *
+     * @return true if this {@link Entity} is stick to {@link Camera} viewport else false.
+     */
+    public boolean isStickToCamera() {
+        return !stickToCamera;
     }
 }

@@ -3,6 +3,7 @@ package fr.snapgames.demo.gdemoapp;
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
 
 import java.awt.geom.Point2D;
+import java.util.Arrays;
 import java.util.function.Function;
 
 /**
@@ -173,7 +174,23 @@ public enum ConfigAttribute implements IConfigAttribute {
             "app.debug.filter.black.list",
             "List of entity to NOT display debug information for",
             "",
-            v -> v);
+            v -> v),
+    SCENE_LIST("sceneList",
+            "app.scene.list",
+            "List of available scene implementations for that application",
+            new String[0],
+            v -> Arrays.stream(v.split(",")).toList()
+    ),
+    SCENE_DEFAULT("sceneDefault",
+            "app.scene.default",
+            "define the default scene to be activated at start",
+            "",
+            v -> v),
+    GAME_RESHUFFLE_FORCE("reshuffleForce",
+            "app.physic.ingame.balls.reshuffle.force",
+            "Force used to reshuffle balls' acceleration and move",
+            200.00,
+            Double::valueOf);
 
     /**
      * Convert String "v([double],[double])" to Point2D.

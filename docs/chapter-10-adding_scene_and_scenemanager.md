@@ -41,7 +41,7 @@ And finally the ending operation :
 
 ## The Scene manager
 
-![The SceneManager class implementation with its dependencies](https://www.plantuml.com/plantuml/png/VL9BZfiX3Dvp2hfBrSa5M5HJpKXTpQOvWGFE7qiya36PggFUlH3IFm_KxlWUV3R6pqM0fGQlFiaH0-hiWQ8waaCTK8x9bG50X6bV1Oko7ahHto6WeYZ81x2eTyWdidWHNr8yq58PX5BK5B9lsL7AQYl7zAvt5YE-GOG5UQqsANFfEtKE_r1wkq10qrjiPpW1UTXxFDyhvWroOyij0ESsqUnQdRWy5NCsVZQdH4xfBnH923pzmitICwyAMA4J26vYOo_N9_4L3r2zd3Ctg-gev5HMulUOSZVz7Vmwt0lzyTzMCcC6dcZB23An57ELHx9cTxK-QVIG2phZKjtxgyinlAyUDZymEcJawLqhiQ2yD3D3eyQXFLR1lWY35Jr-zDk0OqXtNze9DKol6D8mu4zfTH-kgTwJtcw_tks7kWLTlTzDOyzeTlKmqxVeGRgacx4-_n1jPSOewXcZgy7_0G00 "The SceneManager class implementation with its dependencies")
+![The SceneManager class implementation with its dependencies](http://www.plantuml.com/plantuml/png/VPB1Rjim44Jl_0hsvgBn3_1Gf4Y0dd9flc0jZkK5o1MnN3f5W_vx7L5GOWlDZJFpEEAAlAz6QYqdzyLEoF0b4OixSOJFiDCKQnTafdneXkg6HBNwdvInB1ycEVBOb8mdSVKqlVZd0O8d4XgXQz4csRHUfQ_ExqVA2FEd_9xEn8aE2JDKmnELYri_2efn9-7Pb6Mygs46luRpnD7vRoniJ8d_O3VEdMj2W_6P33kXZ6Nx9dp4aLgokNEtff5hcUfg_Er_QuQMkHsBGOyqBFRhfqSfYaAwiGS5sSPbASrkpLRYEthdaQXKn12dTaZlL5HwMHaDlo0H2jtCjHeZx84ob2vMNro6TNIefZIOxzVtOv5zViub8KDikLVNeKVagGFuRP1uiyszdSdlzz-l7eFxAERqwjM5OLPRwgqiZ9Hn4otjeJ-V_uH3KuMOkuV4bjC_ "The SceneManager class implementation with its dependencies")
 
 ### loading configuration
 
@@ -88,11 +88,11 @@ abstract class AbstractScene implements Scene {
 
     //...
     public void initialize(Game g) {
-        config = (Configuration) ServiceManager.get(Configuration.class);
-        renderer = (Renderer) ServiceManager.get(Renderer.class);
-        entityMgr = (EntityManager) ServiceManager.get(EntityManager.class);
-        physicEngine = (PhysicEngine) ServiceManager.get(PhysicEngine.class);
-        inputHandler = (InputHandler) ServiceManager.get(InputHandler.class);
+        config = g.getConfiguration();
+        renderer = g.getRenderer();
+        entityMgr = g.getEntityManager();
+        physicEngine = g.getPhysicEngine();
+        inputHandler = g.getInputHandler();
         prepare(g);
     }
     //...
@@ -177,7 +177,7 @@ class DemoScene extends AbstractScene {
     //...
     @Override
     public void input(Game g) {
-        EntityManager emgr = (EntityManager) ServiceManager.get(EntityManager.class);
+        EntityManager emgr = g.getEntityManager();
         boolean move = false;
         GameObject player = (GameObject) emgr.get("player");
         double moveStep = (double) player.getAttribute(MOVE_STEP_SPEED, 200.0);
@@ -218,13 +218,7 @@ public class App implements Game {
     public int initialize(String[] args) {
         //...
         // add the SceneManager (scene list loaded at initialization)
-        sceneMgr = new SceneManager();
-        smgr.add(sceneMgr);
-
-        smgr.initialize();
-
-        // initialize default scene.
-        sceneMgr.activateDefaultScene();
+        sceneMgr = new SceneManager(this);
 
         logger.log(Level.INFO, "initialization done.");
         return initStatus;

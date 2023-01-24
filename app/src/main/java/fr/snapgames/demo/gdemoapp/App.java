@@ -7,7 +7,6 @@ import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.entity.*;
-import fr.snapgames.demo.core.gfx.RandomColor;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
 import fr.snapgames.demo.core.io.InputHandler;

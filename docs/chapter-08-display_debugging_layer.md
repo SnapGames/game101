@@ -141,3 +141,27 @@ public class Renderer {
     }
 }
 ```
+
+This is now displaying the following information with debug mode level 2 to 5:
+
+![Level 1](illustrations/figure-debug_display_level_1.png "Level 1")
+
+![Level 2](illustrations/figure-debug_display_level_2.png "Level 2")
+
+![Level 3](illustrations/figure-debug_display_level_3.png "Level 3")
+
+![Level 4](illustrations/figure-debug_display_level_4.png "Level 4")
+
+## Conclusion
+
+According to our last development and changes, we are now able to display some valuable display debug information.
+
+The corresponding code will be found on GitHub
+project [Game101](https://github.com/SnapGames/game101/ "go and visit the GitHut project Gam101").
+
+THs specific add wil lbe linked by tha
+tag [create-debug-info](https://github.com/SnapGames/game101/release/tag/create-debug-info).
+
+That's all Folk !
+
+McG.

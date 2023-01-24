@@ -88,6 +88,7 @@ public class GameObject extends Entity<GameObject> {
         infos.add(String.format("(1)name:%s", this.name));
         infos.add(String.format("(2)type:%s", type.toString()));
         infos.add(String.format("(2)pos:%4.2f,%4.2f", x, y));
+        infos.add(String.format("(2)d:%s", direction < 0 ? "L" : "R"));
         infos.add(String.format("(2)size:%.0fx%.0f", width, height));
         infos.add(String.format("(3)spd:%4.2f,%4.2f", dx, dy));
         infos.add(String.format("(3)acc:%4.2f,%4.2f", ax, ay));

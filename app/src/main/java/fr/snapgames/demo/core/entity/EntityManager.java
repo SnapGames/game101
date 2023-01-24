@@ -14,7 +14,7 @@ public class EntityManager {
     /**
      * internal map of handled {@link Entity}.
      */
-    Map<String, Entity> entities = new ConcurrentHashMap<>();
+    Map<String, Entity<?>> entities = new ConcurrentHashMap<>();
 
     /**
      * Create the Entity Manager.
@@ -28,7 +28,7 @@ public class EntityManager {
      * @param name the name of the {@link Entity} to be retrieved from manager.
      * @return the Entity corresponding to the name.
      */
-    public Entity get(String name) {
+    public Entity<?> get(String name) {
         return entities.get(name);
     }
 
@@ -37,7 +37,7 @@ public class EntityManager {
      *
      * @param e the entity to be added.
      */
-    public void add(Entity e) {
+    public void add(Entity<?> e) {
         entities.put(e.getName(), e);
     }
 
@@ -46,7 +46,7 @@ public class EntityManager {
      *
      * @return the map of all handled entities.
      */
-    public Map<String, Entity> getEntityMap() {
+    public Map<String, Entity<?>> getEntityMap() {
         return entities;
     }
 
@@ -55,7 +55,14 @@ public class EntityManager {
      *
      * @return the current collection of {@link Entity}.
      */
-    public Collection<Entity> getEntities() {
+    public Collection<Entity<?>> getEntities() {
         return entities.values();
+    }
+
+    /**
+     * Reset entities list for the active scenes.
+     */
+    public void reset() {
+        entities.clear();
     }
 }

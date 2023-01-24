@@ -611,9 +611,13 @@ Then, executing the new enhanced App class :
 gradle run
 ```
 
-You must see the following animated window :
+You must see the following animated window with :
 
-![a gray GridObject drawn at background](illustrations/figure-add-gridobject-and-plugin.png "a gray GridObject drawn at background")
+- a background `GameObject` displaying an image,
+- a main `GameObject` that is an image,
+- and a bunch of multicolor `GameObject`s acting as ball:
+
+![a gray GridObject drawn at background](illustrations/figure-new-balls-images.png "a gray GridObject drawn at background")
 
 ## Conclusion
 

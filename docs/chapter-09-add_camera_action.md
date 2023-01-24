@@ -1,6 +1,4 @@
-# Camera, Action !
-
-# Camera Support
+# Add Camera, Action !
 
 ## Required
 
@@ -8,6 +6,15 @@ Add a `Camera` Object to move game view according to a target position in the ga
 an `Entity`.
 
 - add a smooth effect between target and the `Camera` move.
+
+![Adding a camera will help to implement a platformer]( https://docs.google.com/drawings/d/e/2PACX-1vSWff4JKLV2ZThVlxOQqF0Cnr-zMMUBiKa3b0NFGl_LuFx4HvWrp11RVMtupieJSdXqI6cU7wTCoK0B/pub?w=619&h=404 "Adding a camera will help to implement a platformer")
+
+Here are:
+
+- the play area at (0,0) with a size of 500 x 400,
+- a player GameObject at (p.x,p.y) with a size of 16x16,
+- the Camera object is targeting the player entity with a specific tween factor used to add some elasticity and delay in
+  the tracking operation.
 
 ## Implementation proposal
 
@@ -153,4 +160,4 @@ the [Game101](https://github.com/SnapGames/game101/ "go and visit the correspond
 
 That's all folk !
 
-Fred D.
+McG.

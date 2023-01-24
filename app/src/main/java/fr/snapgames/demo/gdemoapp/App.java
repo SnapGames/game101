@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -128,6 +129,11 @@ public class App implements Game {
     private String appTitle = "GDemoApp";
     BufferedImage imageBackground = null;
     BufferedImage imagePlayer = null;
+
+    /**
+     * Camera used to move viewport on a tracked object.
+     */
+    private Camera activeCamera;
 
     /**
      * Default application constructor.
@@ -273,9 +279,17 @@ public class App implements Game {
                         .setSize(
                                 physicEngine.getWorld().getPlayArea().getWidth(),
                                 physicEngine.getWorld().getPlayArea().getHeight())
-                        .setBorderColor(new Color(0.2f, 0.2f, 0.2f, 0.8f))
+                        .setBorderColor(new Color(0.1f, 0.1f, 0.1f, 0.38f))
                         .setLayer(2)
                         .setPriority(1));
+
+        // Define the active camera
+        setActiveCamera(new Camera("cam01")
+                .setTarget(player)
+                .setTween(0.005)
+                .setViewport(new Rectangle2D.Double(
+                        0.0, 0.0,
+                        screenWidth, screenHeight)));
     }
 
     /**
@@ -444,6 +458,9 @@ public class App implements Game {
         logger.log(Level.FINEST, "  - update thing {0} at {1} u/s", new Object[]{elapsed, ups});
         updateTestCounter += 1;
         physicEngine.update(elapsed);
+        if (Optional.ofNullable(activeCamera).isPresent()) {
+            activeCamera.update(elapsed);
+        }
     }
 
     @Override
@@ -531,6 +548,25 @@ public class App implements Game {
     @Override
     public double getFPS() {
         return targetFPS;
+    }
+
+    /**
+     * Retrieve the current active {@link Camera}
+     *
+     * @return a {@link Camera} instance.
+     */
+    public Camera getActiveCamera() {
+        return activeCamera;
+    }
+
+    /**
+     * Set the {@link Camera} object for this App.
+     *
+     * @param activeCamera the new active {@link Camera} instance.
+     */
+    public void setActiveCamera(Camera activeCamera) {
+        this.activeCamera = activeCamera;
+        this.renderer.setCurrentCamera(activeCamera);
     }
 
     @Override

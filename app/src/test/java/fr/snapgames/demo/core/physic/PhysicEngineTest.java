@@ -4,20 +4,29 @@ import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.entity.GameObject;
 import fr.snapgames.demo.gdemoapp.App;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Locale;
 
 /**
  * {@link PhysicEngine} is the class under test.
+ *
  * @author Frédéric Delorme
  */
 public class PhysicEngineTest {
 
     App game;
     PhysicEngine pe;
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("file.encoding", "UTF-8");
+        Locale.setDefault(Locale.US);
+    }
 
     @BeforeEach
     public void setup() {

@@ -21,12 +21,6 @@ public class EntityTest {
         Locale.setDefault(Locale.US);
     }
 
-    @BeforeAll
-    public static void beforeAll() {
-        System.setProperty("encoding", "UTF-8");
-        Locale.setDefault(Locale.US);
-    }
-
     @Test
     public void testEntityHasDefaultValue() {
         Entity<String> p = new Entity<>();

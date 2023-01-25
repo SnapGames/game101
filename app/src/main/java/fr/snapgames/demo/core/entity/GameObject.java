@@ -1,6 +1,5 @@
 package fr.snapgames.demo.core.entity;
 
-
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -41,7 +40,8 @@ public class GameObject extends Entity<GameObject> {
     }
 
     /**
-     * Create a new {@link GameObject} instance named name, and set all default values.
+     * Create a new {@link GameObject} instance named name, and set all default
+     * values.
      *
      * @param name name for that new {@link GameObject}.
      * @see Entity
@@ -55,7 +55,8 @@ public class GameObject extends Entity<GameObject> {
     /**
      * Define the {@link GameObject} type for its rendering and physic management.
      *
-     * @param t the type can be one of the following: Rectangle2D, Ellipse2D, BufferedImage. the bounding box will be updated accordingly.
+     * @param t the type can be one of the following: Rectangle2D, Ellipse2D,
+     *          BufferedImage. the bounding box will be updated accordingly.
      * @return the updated Entity according to fluent API pattern.
      */
     public Entity<GameObject> setType(ObjectType t) {
@@ -105,4 +106,14 @@ public class GameObject extends Entity<GameObject> {
         return infos;
     }
 
+    /**
+     * Set the {@link Entity} direction (-1 (left) to 1 (right))
+     *
+     * @param d the direction encoding
+     * @return the updated {@link Entity}.
+     */
+    public GameObject setDirection(double d) {
+        this.direction = d;
+        return this;
+    }
 }

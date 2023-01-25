@@ -46,8 +46,6 @@ public class Entity<T> {
 
     public double height;
 
-    private double direction;
-
     public Color fillColor;
 
     public Color borderColor;
@@ -159,17 +157,6 @@ public class Entity<T> {
     public Entity<T> setSize(double w, double h) {
         this.width = w;
         this.height = h;
-        return this;
-    }
-
-    /**
-     * Set the {@link Entity} direction (-1 (left)  to 1 (right))
-     *
-     * @param d the direction encoding
-     * @return the updated {@link Entity}.
-     */
-    public Entity<T> setDirection(double d) {
-        this.direction = d;
         return this;
     }
 

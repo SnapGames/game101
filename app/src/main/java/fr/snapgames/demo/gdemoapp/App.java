@@ -123,7 +123,7 @@ public class App implements Game {
     /**
      * Displayed application title on the screen/window.
      */
-    private String appTitle = "GDemoApp";
+    private String appTitle = "Game101";
 
     /**
      * Default application constructor.
@@ -160,7 +160,6 @@ public class App implements Game {
                 (int) config.get(ConfigAttribute.WINDOW_HEIGHT))
                 .setIcon("/images/sg-logo-image.png");
 
-
         inputHandler = new InputHandler();
         inputHandler.addListener(new CommonGameKeyListener(this));
         window.addListener(inputHandler);
@@ -175,7 +174,8 @@ public class App implements Game {
 
     /**
      * Request configuration file all the config values to initialize internals.
-     * It also parses the provided CLI args to override configuration value if necessary.
+     * It also parses the provided CLI args to override configuration value if
+     * necessary.
      *
      * @param args a String array containing the CLI arguments from the main method.
      * @return 0 is ok, other value is an issue.
@@ -245,7 +245,8 @@ public class App implements Game {
     }
 
     /**
-     * Create <code>nbBall</code> Ball GameObject with a <code>ballRadius</code> maximum radius and spread
+     * Create <code>nbBall</code> Ball GameObject with a <code>ballRadius</code>
+     * maximum radius and spread
      * randomly all over a <code>width</code> x <code>height</code> display area,
      * drawn with a <code>fillColor</code> and <code>borderColor</code>.
      *
@@ -253,14 +254,14 @@ public class App implements Game {
      * @param ballRadius  the ball maximum radius
      * @param width       the width of the area where to randomly generate ball
      * @param height      the height of the area where to randomly generate ball
-     * @param fillColor   the  fill color for the ball rendering
+     * @param fillColor   the fill color for the ball rendering
      * @param borderColor the border color for the ball rendering
      */
     private void createBlueBalls(String ballNamePrefix,
-                                 int nbBall,
-                                 double ballRadius,
-                                 int width, int height,
-                                 Color fillColor, Color borderColor) {
+            int nbBall,
+            double ballRadius,
+            int width, int height,
+            Color fillColor, Color borderColor) {
         for (int i = 0; i < nbBall; i++) {
             double radius = Math.random() * ballRadius;
             createBall(ballNamePrefix, width, height, fillColor, borderColor, radius);
@@ -293,7 +294,7 @@ public class App implements Game {
         if (inputHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
             requestExit(true);
             logger.log(Level.FINEST, "    - key {} has been released",
-                    new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
+                    new Object[] { KeyEvent.getKeyText(KeyEvent.VK_ESCAPE) });
         }
 
         boolean move = false;
@@ -427,14 +428,14 @@ public class App implements Game {
     @Override
     public void dispose() {
         if (debugMode > 0) {
-            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[]{
+            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[] {
                     debugMode,
                     updateTestCounter,
-                    exitValueTestCounter});
+                    exitValueTestCounter });
         }
         window.close();
         long duration = System.currentTimeMillis() - appStartTime;
-        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[]{duration, Utils.formatDuration(duration)});
+        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[] { duration, Utils.formatDuration(duration) });
         logger.log(Level.INFO, "End of {0}", getAppName());
     }
 

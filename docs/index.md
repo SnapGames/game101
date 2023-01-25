@@ -11,5 +11,8 @@ to a package organized project to provide Entity, physic, rendering, etc...
 5. [Bring Entity and its manager](chapter-05-bring_entity_and_its_manager.md)
 6. [Adding Physics](chapter-06-add_physic.md)
 7. [Upgrade with GameObject and Plugin](chapter-07-upgrade_with_gameobject_and_plugin.md)
+8. [Display Debugging information](chapter-08-display_debugging_layer.md)
+9. [Add Camera, Action !](chapter-09-add_camera_action.md)
+10. [Scene and Scene manager](chapter-10-adding_scene_and_scenemanager.md)
 
-![The latest chapter's screenshot: Renderer plugin and GridObject](illustrations/figure-add-gridobject-and-plugin.png "The latest chapter's screenshot:  Renderer plugin and GridObject")
+![The latest chapter's screenshot:  Adding Scenes and their manager](illustrations/figure-adding_scene_and_manager.png "The latest chapter's screenshot:  Adding Scenes and their manager")

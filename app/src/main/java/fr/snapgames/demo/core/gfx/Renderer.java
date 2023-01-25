@@ -105,13 +105,13 @@ public class Renderer {
                 .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                 .forEach(e -> {
                     // Move view to camera view
-                    if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                    if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
                         g.translate(-currentCamera.x, -currentCamera.y);
                     }
                     // draw objects
                     drawEntity(g, e);
                     // move back from camera view
-                    if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                    if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
                         g.translate(currentCamera.x, currentCamera.y);
                     }
 
@@ -123,13 +123,13 @@ public class Renderer {
                     .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                     .forEach(e -> {
                         // Move view to camera view
-                        if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                        if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
                             g.translate(-currentCamera.x, -currentCamera.y);
                         }
                         // draw Entity debug display information.
                         drawDebugInformation(g, e);
                         // move back from camera view
-                        if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                        if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
                             g.translate(currentCamera.x, currentCamera.y);
                         }
                     });
@@ -150,7 +150,7 @@ public class Renderer {
         int ups = (int) (attributes.getOrDefault("game.ups", -1));
         int fps = (int) (attributes.getOrDefault("game.fps", -1));
         double gameTime = (double) (attributes.getOrDefault("game.time", -1.0));
-        String debugLine = String.format("[ dbg:%d | f:%02d u:%02d |>:%s | scn:%s |o:%d | g:%1.3f | gtime: %04.3fs]",
+        String debugLine = String.format("[ dbg:%d | f:%02d u:%02d |>%s| scn:%s |o:%d | g:%1.3f | gtime: %04.3fs]",
                 game.getDebugMode(),
                 fps,
                 ups,

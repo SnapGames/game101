@@ -11,6 +11,7 @@ import fr.snapgames.demo.core.entity.Entity;
  */
 public class PhysicEngine {
 
+    public static final double TIME_FACTOR = 0.0045;
     /**
      * Parent game
      */
@@ -35,16 +36,29 @@ public class PhysicEngine {
     }
 
     /**
-     * Update all entity managed by the game.
+     * Update all {@link Entity} managed by the game, according to their own {@link Entity#physicType},
+     * the fact there are {@link Entity#stickToCamera} viewport and if there are {@link Entity#active}.
+     * <p>
+     * If an {@link Entity} is active, not stick to {@link fr.snapgames.demo.core.entity.Camera} and based on a physic
+     * type {@link PhysicType#DYNAMIC}, it is processed by the {@link PhysicEngine}.
+     * <p>
+     * <blockquote><em>IMPORTANT</em> A thing to take in account is the fact that a {@link PhysicEngine#TIME_FACTOR} is applied to
+     * the elapsed time before computation. This time factor is useful to tune thinly the physic computation processing.
+     * In a second step, it will be possible to accelerate or reduce the time speed on the game processing.
+     * </blockquote>
      *
-     * @param elapsed
+     * @param elapsed a double value for the elapsed time since previous call.
      */
     public void update(double elapsed) {
-        double time = elapsed * 0.0045;
-        game.getEntityManager().getEntities().forEach(e -> {
-            updateEntity(game, e, time);
-            constrained(game, e, time);
-        });
+        double time = elapsed * TIME_FACTOR;
+        game.getEntityManager().getEntities().stream()
+                .filter(e1 -> e1.isActive() &&
+                        e1.isNotStickToCamera() &&
+                        e1.physicType.equals(PhysicType.DYNAMIC))
+                .forEach(e2 -> {
+                    updateEntity(game, e2, time);
+                    constrained(game, e2, time);
+                });
     }
 
     /**

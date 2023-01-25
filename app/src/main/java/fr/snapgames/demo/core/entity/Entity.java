@@ -165,7 +165,6 @@ public class Entity<T> {
         return this;
     }
 
-
     /**
      * Set the {@link Entity} draw border color
      *

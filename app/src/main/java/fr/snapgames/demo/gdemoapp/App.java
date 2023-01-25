@@ -122,7 +122,7 @@ public class App implements Game {
     /**
      * Displayed application title on the screen/window.
      */
-    private String appTitle = "GDemoApp";
+    private String appTitle = "Game101";
 
 
     /**
@@ -160,7 +160,6 @@ public class App implements Game {
                 (int) config.get(ConfigAttribute.WINDOW_HEIGHT))
                 .setIcon("/images/sg-logo-image.png");
 
-
         inputHandler = new InputHandler();
         inputHandler.addListener(new CommonGameKeyListener(this));
         window.addListener(inputHandler);
@@ -177,7 +176,8 @@ public class App implements Game {
 
     /**
      * Request configuration file all the config values to initialize internals.
-     * It also parses the provided CLI args to override configuration value if necessary.
+     * It also parses the provided CLI args to override configuration value if
+     * necessary.
      *
      * @param args a String array containing the CLI arguments from the main method.
      * @return 0 is ok, other value is an issue.
@@ -230,7 +230,7 @@ public class App implements Game {
         if (inputHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
             requestExit(true);
             logger.log(Level.FINEST, "    - key {} has been released",
-                    new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
+                    new Object[] { KeyEvent.getKeyText(KeyEvent.VK_ESCAPE) });
         }
         sceneMgr.getCurrent().input(this);
     }
@@ -271,15 +271,15 @@ public class App implements Game {
     @Override
     public void dispose() {
         if (debugMode > 0) {
-            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[]{
+            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[] {
                     debugMode,
                     updateTestCounter,
-                    exitValueTestCounter});
+                    exitValueTestCounter });
         }
         sceneMgr.dispose();
         window.close();
         long duration = System.currentTimeMillis() - appStartTime;
-        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[]{duration, Utils.formatDuration(duration)});
+        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[] { duration, Utils.formatDuration(duration) });
         logger.log(Level.INFO, "End of {0}", getAppName());
     }
 

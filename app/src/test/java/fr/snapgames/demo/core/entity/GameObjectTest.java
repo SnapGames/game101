@@ -1,11 +1,13 @@
 package fr.snapgames.demo.core.entity;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@link fr.snapgames.demo.core.entity.GameObject} is the class under test in this file.
@@ -14,6 +16,11 @@ import java.util.List;
  * @since 0.0.9
  **/
 public class GameObjectTest {
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("file.encoding", "UTF-8");
+        Locale.setDefault(Locale.US);
+    }
 
     @Test
     public void testGameObjectDefaultValues() {
@@ -58,11 +65,12 @@ public class GameObjectTest {
         Assertions.assertTrue(debugInfo.get(1).startsWith("(1)name:entity_"));
         Assertions.assertEquals("(2)type:RECTANGLE", debugInfo.get(2));
         Assertions.assertEquals("(2)pos:0.00,0.00", debugInfo.get(3));
-        Assertions.assertEquals("(2)size:16.00,16.00", debugInfo.get(4));
-        Assertions.assertEquals("(3)spd:0.00,0.00", debugInfo.get(5));
-        Assertions.assertEquals("(3)acc:0.00,0.00", debugInfo.get(6));
-        Assertions.assertEquals("(4)l:1 p:1", debugInfo.get(7));
-        Assertions.assertTrue(debugInfo.get(8).startsWith("(4)map:default[d="));
+        Assertions.assertEquals("(2)d:R", debugInfo.get(4));
+        Assertions.assertEquals("(2)size:16x16", debugInfo.get(5));
+        Assertions.assertEquals("(3)spd:0.00,0.00", debugInfo.get(6));
+        Assertions.assertEquals("(3)acc:0.00,0.00", debugInfo.get(7));
+        Assertions.assertEquals("(4)l:1 p:1", debugInfo.get(8));
+        Assertions.assertTrue(debugInfo.get(9).startsWith("(4)map:default[d="));
 
     }
 }

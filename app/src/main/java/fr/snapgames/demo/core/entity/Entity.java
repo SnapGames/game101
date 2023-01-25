@@ -1,6 +1,7 @@
 package fr.snapgames.demo.core.entity;
 
 import fr.snapgames.demo.core.physic.Material;
+import fr.snapgames.demo.core.physic.PhysicType;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -41,6 +42,8 @@ public class Entity<T> {
      * (used by {@link fr.snapgames.demo.core.physic.PhysicEngine})
      */
     public List<Point2D> forces = new ArrayList<>();
+
+    public PhysicType physicType;
 
     public double width;
 
@@ -88,10 +91,12 @@ public class Entity<T> {
      * Define if the object must be stick to the camera viewport.
      */
     private boolean stickToCamera = false;
+    private boolean active = true;
 
     public Entity() {
         this.mass = 1.0;
         this.material = Material.DEFAULT;
+        this.physicType = PhysicType.DYNAMIC;
         this.width = 16.0;
         this.height = 16.0;
         this.fillColor = Color.RED;
@@ -221,6 +226,28 @@ public class Entity<T> {
     }
 
     /**
+     * Set the {@link Entity}'s physicType.
+     *
+     * @param pt a {@link PhysicType} values
+     * @return the updated {@link Entity}
+     */
+    public Entity<T> setPhysicType(PhysicType pt) {
+        this.physicType = pt;
+        return this;
+    }
+
+    /**
+     * Set the active flag for this {@link Entity}
+     *
+     * @param active a boolean value. if true, this entity is active and will be processed and displayed, else not.
+     * @return the updated {@link Entity}
+     */
+    public Entity<T> setActive(boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    /**
      * Apply a force f to that {@link Entity}
      *
      * @param f a {@link Point2D} force to be applied.
@@ -315,7 +342,11 @@ public class Entity<T> {
      *
      * @return true if this {@link Entity} is stick to {@link Camera} viewport else false.
      */
-    public boolean isStickToCamera() {
+    public boolean isNotStickToCamera() {
         return !stickToCamera;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

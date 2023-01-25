@@ -84,6 +84,11 @@ public class Entity<T> {
      */
     private int priority;
 
+    /**
+     * Define if the object must be stick to the camera viewport.
+     */
+    private boolean stickToCamera = false;
+
     public Entity() {
         this.mass = 1.0;
         this.material = Material.DEFAULT;
@@ -244,7 +249,7 @@ public class Entity<T> {
         List<String> infos = new ArrayList<>();
         infos.add(String.format("name:%s", name));
         infos.add(String.format("pos:%4.2f,%4.2f", x, y));
-        infos.add(String.format("size:%4.2f,%4.2f", width, height));
+        infos.add(String.format("size:%.0fx%.0f", width, height));
         infos.add(String.format("spd:%4.2f,%4.2f", dx, dy));
         infos.add(String.format("acc:%4.2f,%4.2f", ax, ay));
         infos.add(String.format("map:%s[d=%4.2f,e=%4.2f,f=%4.2f]",
@@ -303,5 +308,14 @@ public class Entity<T> {
     public Entity<T> setName(String entityName) {
         this.name = entityName;
         return this;
+    }
+
+    /**
+     * Return true if this {@link Entity} instance must be stick to the {@link Camera} viewport.
+     *
+     * @return true if this {@link Entity} is stick to {@link Camera} viewport else false.
+     */
+    public boolean isStickToCamera() {
+        return !stickToCamera;
     }
 }

@@ -2,8 +2,11 @@ package fr.snapgames.demo.core;
 
 import fr.snapgames.demo.core.configuration.Configuration;
 import fr.snapgames.demo.core.entity.EntityManager;
+import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
+import fr.snapgames.demo.core.io.InputHandler;
 import fr.snapgames.demo.core.physic.PhysicEngine;
+import fr.snapgames.demo.core.scene.SceneManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,9 +77,12 @@ public interface Game {
         double gameTime = 0;
         double elapsed;
         Map<String, Object> renderingAttributes = new HashMap<>();
+
         renderingAttributes.put("game.time", gameTime);
         renderingAttributes.put("game.fps", fps);
         renderingAttributes.put("game.ups", ups);
+
+        loadResources();
         create();
 
         while (!isExitRequested()) {
@@ -106,6 +112,13 @@ public interface Game {
             waitUntilNextFrame(elapsed);
             previousTime = currentTime;
         }
+    }
+
+    /**
+     * Load resources for the scene before {@link Game#create()}
+     */
+    default void loadResources() {
+
     }
 
 
@@ -171,6 +184,12 @@ public interface Game {
      * @return boolean value for pause mode.
      */
     boolean isPaused();
+
+    /**
+     * Reset everything from the current active Scene and recreate it.
+     */
+
+    void resetScene();
 
     /**
      * Return status ofr exit request:
@@ -246,4 +265,24 @@ public interface Game {
      */
     void requestPause(boolean pause);
 
+    /**
+     * Retrieve the {@link Renderer} instance for the {@link Game}.
+     *
+     * @return a {@link Renderer} instance
+     */
+    Renderer getRenderer();
+
+    /**
+     * Retrieve the {@link InputHandler} instance for the {@link Game}.
+     *
+     * @return an {@link InputHandler} instance
+     */
+    InputHandler getInputHandler();
+
+    /**
+     * Retrieve the {@link SceneManager} instance for the {@link Game}.
+     *
+     * @return a {@link SceneManager} instance.
+     */
+    SceneManager getSceneManager();
 }

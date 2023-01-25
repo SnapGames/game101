@@ -7,7 +7,18 @@ Gaz plant and an unmaintainable class.
 
 We also want to propose some specialized Entity to implement new graphical elements but also new behaviors and usages.
 
+The new coming `GameObject` could be
+
+- a POINT,
+- a LINE,
+- a RECTANGLE,
+- an ELLIPSE
+- or an IMAGE.
+
 Let's move to some interesting changes, opening to more features and fancy things.
+
+![The new coming `GameObject` could be point, line, rectangle, ellipse or image](https://docs.google.com/drawings/d/e/2PACX-1vRvvjadJjJdGu9WGHRp-a9KXr0LgmGAfoHF8pQYC1vwve_P6PGPMRjOgWFTV4nRFJ3PfzKFzOECUeIY/pub?w=619&h=404 "The new coming GameObject could be
+point, line, rectangle, ellipse or image")
 
 ## Proposed evolution
 
@@ -29,8 +40,8 @@ The GameObject class extending Entity intends to provide new attributes to offer
     - ELLIPSE
     - and IMAGE,
 - an `image` attribute to store the image to be displayed in cas of `type=IMAGE`.
-- the direction is added now but will be used at rendering time to draw the image in the right direction (Left=-1 or
-  Right=1).
+- the `direction` is added now but will be used at rendering time to draw the image in the right direction (LEFT<0 or
+  RIGHT>1).
 
 ```java
 public class GameObject extends Entity<GameObject> {
@@ -167,16 +178,26 @@ We need to define a clear process to draw each of the GameObject nature object:
   object:
 
 ```java
-  case POINT,RECTANGLE,ELLIPSE->{
-        if(Optional.ofNullable(go.fillColor).isPresent()){
-        g.setColor(go.fillColor);
-        g.fill(go.box);
+public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> {
+    //...
+    @Override
+    public void draw(Renderer r, Graphics2D g, Entity<?> entity) {
+        GameObject go = (GameObject) entity;
+        switch (go.type) {
+            case POINT, RECTANGLE, ELLIPSE -> {
+                if (Optional.ofNullable(go.fillColor).isPresent()) {
+                    g.setColor(go.fillColor);
+                    g.fill(go.box);
+                }
+                if (Optional.ofNullable(go.borderColor).isPresent()) {
+                    g.setColor(go.borderColor);
+                    g.draw(go.box);
+                }
+            }
+            //...
         }
-        if(Optional.ofNullable(go.borderColor).isPresent()){
-        g.setColor(go.borderColor);
-        g.draw(go.box);
-        }
-        }
+    }
+}
 ```
 
 - while drawing a LINE will delegate it to
@@ -184,31 +205,60 @@ We need to define a clear process to draw each of the GameObject nature object:
   API,
 
 ```java
-  case LINE->{
-        if(Optional.ofNullable(go.borderColor).isPresent()){
-        g.setColor(go.borderColor);
-        g.drawLine((int)go.x,(int)go.y,
-        (int)(go.x+go.width),(int)(go.y+go.height));
+public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> {
+    //...
+    @Override
+    public void draw(Renderer r, Graphics2D g, Entity<?> entity) {
+        GameObject go = (GameObject) entity;
+        switch (go.type) {
+            //...
+            case LINE -> {
+                if (Optional.ofNullable(go.borderColor).isPresent()) {
+                    g.setColor(go.borderColor);
+                    g.drawLine((int) go.x, (int) go.y,
+                            (int) (go.x + go.width), (int) (go.y + go.height));
+                }
+            }
         }
-        }
+        //...
+    }
+
+}
+
 ```
 
 - and the IMAGE will call
   the [drawImage](https://download.java.net/java/early_access/panama/docs/api/java.desktop/java/awt/Graphics2D.html#drawImage(java.awt.image.BufferedImage,java.awt.image.BufferedImageOp,int,int))
   Graphics2D API to draw the image with the right direction:
 
-```java
-  case IMAGE->{
-        if(go.direction>0){
-        g.drawImage(go.image,(int)go.x,(int)go.y,null);
-        }else{
-        g.drawImage(go.image,
-        (int)(go.x+go.width),(int)go.y,(int)go.x,(int)(go.y+go.height),
-        (int)go.x,(int)go.y,(int)go.width,(int)go.height,
-        null);
+> _**NOTE**_ _You certainly noticed that the image rendering use the direction attribute to define the drawing direction
+> of the image: LEFT is for `direction<0`, RIGHT for `direction>0`._
 
+```java
+public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> {
+    //...
+    @Override
+    public void draw(Renderer r, Graphics2D g, Entity<?> entity) {
+        GameObject go = (GameObject) entity;
+        switch (go.type) {
+            //...
+            case IMAGE -> {
+                if (go.direction > 0) {
+                    g.drawImage(go.image,
+                            (int) go.x, (int) go.y,
+                            null);
+                } else {
+                    g.drawImage(go.image,
+                            (int) (go.x + go.width), (int) go.y,
+                            (int) -go.width, (int) go.height,
+                            null);
+
+                }
+            }
         }
-        }
+    }
+}
+
 ```
 
 ## The App adaptation.
@@ -257,7 +307,8 @@ Executing our new Plugin architecture will show the following window:
 
 ## Adding Interaction
 
-To add more fun and test capabilities, I want the App implmentation offers the opportunity to manage the number of Ball objects on the play area.
+To add more fun and test capabilities, I want the App implmentation offers the opportunity to manage the number of Ball
+objects on the play area.
 
 | Key                 | Action                              | 
 |---------------------|-------------------------------------|
@@ -266,7 +317,6 @@ To add more fun and test capabilities, I want the App implmentation offers the o
 | <kbd>DELETE</kbd>   | Remove all Balls from the play Area |
 
 So in the App class code:
-
 
 ```java
 public class App implements Game {
@@ -290,52 +340,54 @@ public class App implements Game {
     //...
 }
 ```
+
 And the required corresponding methods:
 
 ```java
 public class App implements Game {
- //...
- private void removeNbObjectByNameFilter(String objectName, int nb) {
-    List<Entity<?>> toBeRemoved = new ArrayList<>();
-    int count = 0;
-    for (Entity<?> e : getEntityManager().getEntities()) {
-      if (e.getName().contains(objectName)) {
-        toBeRemoved.add(e);
-        count++;
-        if (count > nb) {
-          break;
+    //...
+    private void removeNbObjectByNameFilter(String objectName, int nb) {
+        List<Entity<?>> toBeRemoved = new ArrayList<>();
+        int count = 0;
+        for (Entity<?> e : getEntityManager().getEntities()) {
+            if (e.getName().contains(objectName)) {
+                toBeRemoved.add(e);
+                count++;
+                if (count > nb) {
+                    break;
+                }
+            }
         }
-      }
+        toBeRemoved.forEach(e -> {
+            getEntityManager().getEntityMap().remove(e.getName());
+        });
     }
-    toBeRemoved.forEach(e -> {
-      getEntityManager().getEntityMap().remove(e.getName());
-    });
-  }
-  // (1)
-  private void addNewBalls(String objectName, int nb) {
-    int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
-    int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
-    createBlueBalls(objectName, nb,
-            24.0,
-            screenWidth,
-            screenHeight,
-            Color.CYAN,
-            Color.BLUE);
-  }
-    
-  // (2)
-  private void removeAllObjectByNameFilter(String objectName) {
-    List<Entity<?>> toBeRemoved = new ArrayList<>();
-    for (Entity<?> e : getEntityManager().getEntities()) {
-      if (e.getName().contains(objectName)) {
-        toBeRemoved.add(e);
-      }
+
+    // (1)
+    private void addNewBalls(String objectName, int nb) {
+        int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
+        int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
+        createBlueBalls(objectName, nb,
+                24.0,
+                screenWidth,
+                screenHeight,
+                Color.CYAN,
+                Color.BLUE);
     }
-    toBeRemoved.forEach(e -> {
-      getEntityManager().getEntityMap().remove(e.getName());
-    });
-  }
-  //...
+
+    // (2)
+    private void removeAllObjectByNameFilter(String objectName) {
+        List<Entity<?>> toBeRemoved = new ArrayList<>();
+        for (Entity<?> e : getEntityManager().getEntities()) {
+            if (e.getName().contains(objectName)) {
+                toBeRemoved.add(e);
+            }
+        }
+        toBeRemoved.forEach(e -> {
+            getEntityManager().getEntityMap().remove(e.getName());
+        });
+    }
+    //...
 }
 ```
 
@@ -346,7 +398,6 @@ public class App implements Game {
 2. Removing all balls
 
 ![](illustrations/figure-gameobject-no-ball.png)
-
 
 ## Debugging Usage
 
@@ -445,20 +496,144 @@ public class App implements Game {
 }
 ```
 
+### Global enhancement
+
+We will add more colors to the rendering and add some images to the scene:
+
+#### Ball creation
+
+In the createBall method, let's add some color and radius randomness :
+
+```java
+class App implements Game {
+    //...
+    private void createBlueBalls(String ballNamePrefix,
+                                 int nbBall,
+                                 double ballRadius,
+                                 int width, int height,
+                                 Color fillColor, Color borderColor) {
+
+        for (int i = 0; i < nbBall; i++) {
+            // randomize the radius with a max to ballRadius.
+            double radius = Math.random() * ballRadius;
+            // create the ball with random color.
+            createBall(ballNamePrefix,
+                    width, height,
+                    (fillColor == null
+                            ? RandomColor.get(
+                            0.0f, 0.0f, 0.0f, 0.5f,
+                            1.0f, 1.0f, 1.0f, 1.0f)
+                            : fillColor),
+                    borderColor,
+                    radius);
+        }
+    }
+//...
+}
+```
+
+#### Add a background image
+
+As we need some image resources, we are going to use a new `Game#loadResources()`
+interface to let the main `GameLoop` require the resources loading before `create()`.
+
+```java
+public interface Game {
+    //...
+    default void loadResources() {
+
+    }
+
+    //...
+    default void loop() {
+        //...
+        loadResources();
+        create();
+
+        while (!isExitRequested()) {
+            //...
+        }
+    }
+}
+```
+
+And then in the `App` class, the corresponding implementation:
+
+```java
+class App implements Game {
+    //...
+    @Override
+    public void loadResources() {
+        imageBackground = loadImage("/images/backgrounds/forest.jpg");
+        imagePlayer = loadImage("/images/sprites01.png");
+    }
+
+    // loading an Image resource from a path file.
+    private BufferedImage loadImage(String pathToImage) {
+        try {
+            return ImageIO.read(this.getClass().getResourceAsStream(pathToImage));
+        } catch (IOException e) {
+            logger.severe("Unable to read image resource from " + pathToImage);
+        }
+        return null;
+    }
+
+    //...
+    public void create() {
+        //...
+        var background = (GameObject) new GameObject("background")
+                .setImage(imageBackground)
+                .setLayer(1)
+                .setPriority(2);
+        entityMgr.add(background);
+
+        // Create the main player entity.
+        BufferedImage playerFrame1 = imagePlayer.getSubimage(0, 0, 32, 32);
+        var player = (GameObject) new GameObject("player")
+                .setImage(playerFrame1)
+                .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
+                .setSpeed(0.0, 0.0)
+                .setAcceleration(0.0, 0.0)
+                .setMass(80.0)
+                .setDebug(1)
+                .setMaterial(Material.STEEL)
+                .setLayer(10)
+                .setPriority(1);
+        entityMgr.add(player);
+        //...
+    }
+}
+```
+
 Then, executing the new enhanced App class :
 
 ```bash
 gradle run
 ```
 
-You must see the following animated window :
+You must see the following animated window with :
 
-![a gray GridObject drawn at background](illustrations/figure-add-gridobject-and-plugin.png "a gray GridObject drawn at background")
+- a background `GameObject` displaying an image,
+- a main `GameObject` that is an image,
+- and a bunch of multicolor `GameObject`s acting as ball:
+
+![a gray GridObject drawn at background](illustrations/figure-new-balls-images.png "a gray GridObject drawn at background")
 
 ## Conclusion
 
 Finally, executing our new Renderer implementation is able to satisfy any new need without change the core Renderer draw
 processing, and take benefits from all future GameObject descendants.
 
+You can notice that the corresponding code will be found on the GitHub
+repository [Game101](https://github.com/SnapGames/game101/ "go and visit the corresponding Game101 project") :
+
+- on the [create-gameobject-and-plugin](https://github.com/SnapGames/game101/releases/tag/create-gameobject-and-plugin)
+  tag for the `GameObject` and `Renderer` plugin architecture,
+- at the [create-grid-object](https://github.com/SnapGames/game101/releases/tag/create-grid-object) tag for the
+  new `GridObject` implementation, used for debug purpose (mainly).
+
+That's All Folk !
+
+McGivrer.
 
 

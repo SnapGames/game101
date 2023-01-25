@@ -2,6 +2,7 @@ package fr.snapgames.demo.core.gfx;
 
 
 import fr.snapgames.demo.core.Game;
+import fr.snapgames.demo.core.entity.Camera;
 import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.gfx.plugins.DrawHelperPlugin;
 import fr.snapgames.demo.core.gfx.plugins.GameObjectDrawHelperPlugin;
@@ -9,10 +10,9 @@ import fr.snapgames.demo.core.gfx.plugins.GridObjectDrawHelperPlugin;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * {@link Renderer} is the Rendering service for our game.
@@ -33,11 +33,8 @@ public class Renderer {
     /**
      * Window width
      */
-    int windowWidth;
-    /**
-     * Window height
-     */
-    int windowHeight;
+    private final Rectangle2D playArea;
+
     /**
      * Screen width
      */
@@ -47,22 +44,30 @@ public class Renderer {
      */
     int screenHeight;
 
+    /**
+     * The current active camera for this rendering.
+     */
+    private Camera currentCamera;
+
     private Map<Class<? extends Entity<?>>, DrawHelperPlugin<? extends Entity<?>>> plugins = new HashMap<>();
     private String filterWhiteList;
     private String filterBlackList;
+    private boolean rendering;
 
     /**
-     * Initialize the Renderer service with its parent game.
+     * Initialize the {@link Renderer} service with its parent {@link Game} instance.
      *
-     * @param g
+     * @param g the parent Game for the {@link Renderer} service
      */
     public Renderer(Game g) {
         this.game = g;
         // retrieve mandatory configuration
-        windowWidth = (int) game.getConfiguration().get(ConfigAttribute.WINDOW_WIDTH);
-        windowHeight = (int) game.getConfiguration().get(ConfigAttribute.WINDOW_HEIGHT);
+
         screenWidth = (int) game.getConfiguration().get(ConfigAttribute.SCREEN_WIDTH);
         screenHeight = (int) game.getConfiguration().get(ConfigAttribute.SCREEN_HEIGHT);
+        double playAreaWidth = (double) game.getConfiguration().get(ConfigAttribute.PLAY_AREA_WIDTH);
+        double playAreaHeight = (double) game.getConfiguration().get(ConfigAttribute.PLAY_AREA_HEIGHT);
+        playArea = new Rectangle2D.Double(0, 0, playAreaWidth, playAreaHeight);
 
         // Debug information draw Entity's filtering list
         filterWhiteList = (String) game.getConfiguration().get(ConfigAttribute.DEBUG_WHILE_LIST);
@@ -87,6 +92,7 @@ public class Renderer {
      * @param attributes a Map of object to be used at rendering time, provisioned by the engine itself (information from the {@link Game#loop()})
      */
     public void draw(Map<String, Object> attributes) {
+        rendering = true;
         Graphics2D g = (Graphics2D) buffer.getGraphics();
         // clear buffer with default color;
         g.setColor(Color.BLACK);
@@ -98,9 +104,16 @@ public class Renderer {
                 .stream()
                 .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                 .forEach(e -> {
+                    // Move view to camera view
+                    if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                        g.translate(-currentCamera.x, -currentCamera.y);
+                    }
                     // draw objects
                     drawEntity(g, e);
-
+                    // move back from camera view
+                    if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                        g.translate(currentCamera.x, currentCamera.y);
+                    }
 
                 });
         // draw entity's display debug information
@@ -109,7 +122,16 @@ public class Renderer {
                     .stream()
                     .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                     .forEach(e -> {
+                        // Move view to camera view
+                        if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                            g.translate(-currentCamera.x, -currentCamera.y);
+                        }
+                        // draw Entity debug display information.
                         drawDebugInformation(g, e);
+                        // move back from camera view
+                        if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
+                            g.translate(currentCamera.x, currentCamera.y);
+                        }
                     });
             // draw some debug information.
             drawDisplayDebugLine(g, attributes);
@@ -117,6 +139,7 @@ public class Renderer {
 
         // release Graphics API
         g.dispose();
+        rendering = false;
     }
 
     private void drawDisplayDebugLine(Graphics2D g, Map<String, Object> attributes) {
@@ -124,14 +147,15 @@ public class Renderer {
         g.setColor(new Color(0.3f, 0.0f, 0.0f, 0.5f));
         g.fillRect(0, buffer.getHeight() - 20, buffer.getWidth(), 20);
         g.setColor(Color.ORANGE);
-        int ups = (int) (attributes.containsKey("game.ups") ? attributes.get("game.ups") : -1);
-        int fps = (int) (attributes.containsKey("game.fps") ? attributes.get("game.fps") : -1);
-        double gameTime = (double) (attributes.containsKey("game.time") ? attributes.get("game.time") : -1.0);
-        String debugLine = String.format("[ dbg:%d | fps:%02d | ups:%02d |pause:%s | obj:%d | g:%1.3f | gtime: %04.3fs]",
+        int ups = (int) (attributes.getOrDefault("game.ups", -1));
+        int fps = (int) (attributes.getOrDefault("game.fps", -1));
+        double gameTime = (double) (attributes.getOrDefault("game.time", -1.0));
+        String debugLine = String.format("[ dbg:%d | f:%02d u:%02d |>:%s | scn:%s |o:%d | g:%1.3f | gtime: %04.3fs]",
                 game.getDebugMode(),
                 fps,
                 ups,
-                game.isPaused() ? "on" : "off",
+                game.isPaused() ? "off" : "on",
+                game.getSceneManager().getCurrent().getName(),
                 game.getEntityManager().getEntities().size(),
                 game.getPhysicEngine().getWorld().getGravity().getY(),
                 Math.abs(gameTime / 1000.0));
@@ -141,8 +165,8 @@ public class Renderer {
     private void drawDebugInformation(Graphics2D g, Entity<?> e) {
 
         if (game.getDebugMode() >= e.debug
-                && filterWhiteList.contains(e.name)
-                && !filterBlackList.contains(e.name)) {
+                && filteredName(filterWhiteList, e.name)
+                && !filteredName(filterBlackList, e.name)) {
             g.setColor(Color.ORANGE);
             g.draw(e.box);
             if (game.getDebugMode() > 1) {
@@ -152,14 +176,14 @@ public class Renderer {
                 long nbLines = e.getDebugInfo().stream().filter(s -> game.getDebugMode() >= Integer.parseInt(s.substring(1, 2))).count();
                 int hh = (int) (g.getFontMetrics().getHeight()
                         * (nbLines - 1));
-                if (e.y + hh > buffer.getHeight()) {
-                    offY = buffer.getHeight() - hh;
+                if (e.y + hh > playArea.getHeight()) {
+                    offY = (int) playArea.getHeight() - hh;
                 }
 
                 int ww = g.getFontMetrics().stringWidth(e.getDebugInfo().stream().max(Comparator.comparingInt(String::length)).get());
 
-                if (e.x + ww > buffer.getWidth()) {
-                    offX = buffer.getWidth() - ww;
+                if (e.x + ww > playArea.getWidth()) {
+                    offX = (int) playArea.getWidth() - ww;
                 }
 
                 int l = 0;
@@ -179,6 +203,14 @@ public class Renderer {
                 }
                 g.drawLine((int) (e.x + e.width + 1.0), (int) e.y, (int) (offX + e.width + 3.0), offY);
             }
+        }
+    }
+
+    private boolean filteredName(String filter, String entityName) {
+        if (!filter.equals("")) {
+            return Arrays.stream(filter.split(",")).anyMatch(entityName::contains);
+        } else {
+            return false;
         }
     }
 
@@ -206,5 +238,23 @@ public class Renderer {
 
     public BufferedImage getBuffer() {
         return buffer;
+    }
+
+    /**
+     * Set the active {@link Camera} for the rendering process.
+     *
+     * @param currentCamera a {@link Camera} instance.
+     */
+    public void setCurrentCamera(Camera currentCamera) {
+        this.currentCamera = currentCamera;
+    }
+
+    /**
+     * Return the rendering flag value.
+     *
+     * @return a boolean value, if true, the rendering is now processing, if false, it is not currently processing.
+     */
+    public boolean isRendering() {
+        return rendering;
     }
 }

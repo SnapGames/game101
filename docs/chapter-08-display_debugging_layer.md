@@ -6,6 +6,8 @@ The goal of the Display Debug Information layer consists in offering a new way t
 about some entities. By configuration, the developer will be able to set a level of details, and define on wich entities
 he wants to get the info.
 
+![The red square player GameObject is displayed with debug info](https://docs.google.com/drawings/d/e/2PACX-1vQ20cHHoPkdXLwmCKX-t1CM3xbDa-6EqKC8FItscfjh6T560XSZzOZiYsufCCQJesx0NRR5J1djxYNE/pub?w=619&h=404 "The red square player GameObject is displayed with debug info")
+
 ## Rendering debug !
 
 This is possible through the Renderer system, and with some prepared data in the `Entity` itself.
@@ -21,7 +23,7 @@ public class Entity<T> {
         List<String> infos = new ArrayList<>();
         infos.add(String.format("name:%s", name));
         infos.add(String.format("pos:%4.2f,%4.2f", x, y));
-        infos.add(String.format("size:%4.2f,%4.2f", width, height));
+        infos.add(String.format("size:%4.0fx%4.0f", width, height));
         infos.add(String.format("spd:%4.2f,%4.2f", dx, dy));
         infos.add(String.format("acc:%4.2f,%4.2f", ax, ay));
         infos.add(String.format("map:%s[d=%4.2f,e=%4.2f,f=%4.2f]",
@@ -139,3 +141,27 @@ public class Renderer {
     }
 }
 ```
+
+This is now displaying the following information with debug mode level 2 to 5:
+
+![Level 1](illustrations/figure-debug_display_level_1.png "Level 1")
+
+![Level 2](illustrations/figure-debug_display_level_2.png "Level 2")
+
+![Level 3](illustrations/figure-debug_display_level_3.png "Level 3")
+
+![Level 4](illustrations/figure-debug_display_level_4.png "Level 4")
+
+## Conclusion
+
+According to our last development and changes, we are now able to display some valuable display debug information.
+
+The corresponding code will be found on GitHub
+project [Game101](https://github.com/SnapGames/game101/ "go and visit the GitHut project Gam101").
+
+THs specific add wil lbe linked by tha
+tag [create-debug-info](https://github.com/SnapGames/game101/release/tag/create-debug-info).
+
+That's all Folk !
+
+McG.

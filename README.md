@@ -25,7 +25,7 @@ gradle run
 
 And a new window will appear:
 
-![Current chapter is about Entity](docs/illustrations/figure-adding-balls.png "Current chapter is about Entity")
+![Current chapter is about Entity](docs/illustrations/figure-adding_scene_and_manager.png "Current chapter is about Entity")
 
 ## develop
 

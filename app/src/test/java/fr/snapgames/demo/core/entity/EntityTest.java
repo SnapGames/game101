@@ -2,10 +2,12 @@ package fr.snapgames.demo.core.entity;
 
 import fr.snapgames.demo.core.physic.Material;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@link Entity} is the class under test.
@@ -13,6 +15,12 @@ import java.util.List;
  * @author : Frédéric Delorme
  **/
 public class EntityTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("encoding", "UTF-8");
+        Locale.setDefault(Locale.US);
+    }
 
     @Test
     public void testEntityHasDefaultValue() {
@@ -35,10 +43,10 @@ public class EntityTest {
         Entity<String> p = new Entity<>();
         List<String> debugInfo = p.getDebugInfo();
         Assertions.assertTrue(debugInfo.get(0).startsWith("name:entity_"));
-        Assertions.assertEquals("pos:0,00,0,00", debugInfo.get(1).trim());
+        Assertions.assertEquals("pos:0.00,0.00", debugInfo.get(1).trim());
         Assertions.assertEquals("size:16x16", debugInfo.get(2).trim());
-        Assertions.assertEquals("spd:0,00,0,00", debugInfo.get(3).trim());
-        Assertions.assertEquals("acc:0,00,0,00", debugInfo.get(4).trim());
+        Assertions.assertEquals("spd:0.00,0.00", debugInfo.get(3).trim());
+        Assertions.assertEquals("acc:0.00,0.00", debugInfo.get(4).trim());
         Assertions.assertTrue(debugInfo.get(5).startsWith("map:default[d="));
 
     }

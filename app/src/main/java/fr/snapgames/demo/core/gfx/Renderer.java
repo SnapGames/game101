@@ -88,6 +88,10 @@ public class Renderer {
 
     /**
      * Draw operation on the internal image buffer.
+     * <p>
+     * All the {@link Entity} are drawn by the Renderer,  according to their {@link Entity#isActive()} status,
+     * and following their own {@link Entity#getLayer()} and {@link Entity#getPriority()} in this layer
+     * for a good rendering sort order. are drawn
      *
      * @param attributes a Map of object to be used at rendering time, provisioned by the engine itself (information from the {@link Game#loop()})
      */
@@ -102,6 +106,7 @@ public class Renderer {
         // draw all the things you need.
         game.getEntityManager().getEntities()
                 .stream()
+                .filter(e1 -> e1.isActive())
                 .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                 .forEach(e -> {
                     // Move view to camera view
@@ -152,8 +157,7 @@ public class Renderer {
         double gameTime = (double) (attributes.getOrDefault("game.time", -1.0));
         String debugLine = String.format("[ dbg:%d | f:%02d u:%02d |>%s| scn:%s |o:%d | g:%1.3f | gtime: %04.3fs]",
                 game.getDebugMode(),
-                fps,
-                ups,
+                fps, ups,
                 game.isPaused() ? "off" : "on",
                 game.getSceneManager().getCurrent().getName(),
                 game.getEntityManager().getEntities().size(),
@@ -162,6 +166,13 @@ public class Renderer {
         g.drawString(debugLine, 8, buffer.getHeight() - 8);
     }
 
+    /**
+     * The debug information are drawn line by line and applying the concept of priority. if the line starts with
+     * an '(#)' where # is a number from 1 to 9, the line will be displayed according to the debug level value.
+     *
+     * @param g Graphics2D API to draw things
+     * @param e the entity to draw debug information for.
+     */
     private void drawDebugInformation(Graphics2D g, Entity<?> e) {
 
         if (game.getDebugMode() >= e.debug
@@ -206,6 +217,13 @@ public class Renderer {
         }
     }
 
+    /**
+     * Return true if the entityName is containing one of the filtered string (coma separated).
+     *
+     * @param filter     the filter list (coma separated) to check entityName with
+     * @param entityName the name of the entity to check against the filter list.
+     * @return true if the entityName correspond to one of the filter's string, else false.
+     */
     private boolean filteredName(String filter, String entityName) {
         if (!filter.equals("")) {
             return Arrays.stream(filter.split(",")).anyMatch(entityName::contains);
@@ -214,6 +232,12 @@ public class Renderer {
         }
     }
 
+    /**
+     * Draw an {@link Entity} using the corresponding instance of the {@link DrawHelperPlugin}.
+     *
+     * @param g the {@link Graphics2D} API to draw anything in Java.
+     * @param e the {@link Entity} to be drawn by its corresponding {@link DrawHelperPlugin}
+     */
     private void drawEntity(Graphics2D g, Entity<?> e) {
         if (plugins.containsKey(e.getClass())) {
             DrawHelperPlugin<? extends Entity<?>> dhp = plugins.get(e.getClass());
@@ -236,6 +260,11 @@ public class Renderer {
         }
     }
 
+    /**
+     * Retrieve the drawing buffer where the {@link Renderer} draws everything.
+     *
+     * @return a {@link BufferedImage} instance.
+     */
     public BufferedImage getBuffer() {
         return buffer;
     }

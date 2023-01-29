@@ -70,8 +70,9 @@ public class GameObject extends Entity<GameObject> {
     @Override
     public void updateBox() {
         switch (type) {
-            case RECTANGLE, IMAGE, LINE, POINT -> this.box = new Rectangle2D.Double(x, y, width, height);
-            case ELLIPSE -> this.box = new Ellipse2D.Double(x, y, width, height);
+            case RECTANGLE, IMAGE, LINE, POINT ->
+                    this.box = new Rectangle2D.Double(position.x, position.y, size.x, size.y);
+            case ELLIPSE -> this.box = new Ellipse2D.Double(position.x, position.y, size.x, size.y);
             default -> {
                 // nothing to do !
             }
@@ -87,19 +88,15 @@ public class GameObject extends Entity<GameObject> {
         List<String> infos = new ArrayList<>();
         infos.add(String.format("(1)id:%04d", this.id));
         infos.add(String.format("(1)name:%s", this.name));
-        infos.add(String.format("(2)type:%s", type.toString()));
-        infos.add(String.format("(2)pos:%4.2f,%4.2f", x, y));
+        infos.add(String.format("(1)type:%s", type.toString()));
+        infos.add(String.format("(2)pos:%s", position));
+        infos.add(String.format("(2)size:%s", size));
         infos.add(String.format("(2)d:%s", direction < 0 ? "L" : "R"));
-        infos.add(String.format("(2)size:%.0fx%.0f", width, height));
-        infos.add(String.format("(3)spd:%4.2f,%4.2f", dx, dy));
-        infos.add(String.format("(3)acc:%4.2f,%4.2f", ax, ay));
+        infos.add(String.format("(3)spd:%s", velocity));
+        infos.add(String.format("(3)acc:%s", acceleration));
         infos.add(String.format("(4)l:%d p:%d", getLayer(), getPriority()));
         if (Optional.ofNullable(material).isPresent()) {
-            infos.add(String.format("(4)map:%s[d=%4.2f,e=%4.2f,f=%4.2f]",
-                    material.name,
-                    material.density,
-                    material.elasticity,
-                    material.friction));
+            infos.add(String.format("(4)mat:%s", material));
         }
 
         return infos;

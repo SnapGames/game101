@@ -110,15 +110,11 @@ public class Renderer {
                 .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                 .forEach(e -> {
                     // Move view to camera view
-                    if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
-                        g.translate(-currentCamera.x, -currentCamera.y);
-                    }
+                    moveCameraViewTo(g, e, -1);
                     // draw objects
                     drawEntity(g, e);
                     // move back from camera view
-                    if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
-                        g.translate(currentCamera.x, currentCamera.y);
-                    }
+                    moveCameraViewTo(g, e, 1);
 
                 });
         // draw entity's display debug information
@@ -128,15 +124,13 @@ public class Renderer {
                     .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                     .forEach(e -> {
                         // Move view to camera view
-                        if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
-                            g.translate(-currentCamera.x, -currentCamera.y);
-                        }
+                        moveCameraViewTo(g, e, -1);
+
                         // draw Entity debug display information.
                         drawDebugInformation(g, e);
                         // move back from camera view
-                        if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
-                            g.translate(currentCamera.x, currentCamera.y);
-                        }
+                        moveCameraViewTo(g, e, 1);
+
                     });
             // draw some debug information.
             drawDisplayDebugLine(g, attributes);
@@ -145,6 +139,12 @@ public class Renderer {
         // release Graphics API
         g.dispose();
         rendering = false;
+    }
+
+    private void moveCameraViewTo(Graphics2D g, Entity<?> e, double moveDirection) {
+        if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
+            g.translate(moveDirection * currentCamera.position.x, moveDirection * currentCamera.position.y);
+        }
     }
 
     private void drawDisplayDebugLine(Graphics2D g, Map<String, Object> attributes) {
@@ -161,7 +161,7 @@ public class Renderer {
                 game.isPaused() ? "off" : "on",
                 game.getSceneManager().getCurrent().getName(),
                 game.getEntityManager().getEntities().size(),
-                game.getPhysicEngine().getWorld().getGravity().getY(),
+                game.getPhysicEngine().getWorld().getGravity().y,
                 Math.abs(gameTime / 1000.0));
         g.drawString(debugLine, 8, buffer.getHeight() - 8);
     }
@@ -181,19 +181,19 @@ public class Renderer {
             g.setColor(Color.ORANGE);
             g.draw(e.box);
             if (game.getDebugMode() > 1) {
-                int offX = (int) e.x + 4;
-                int offY = (int) e.y;
+                int offX = (int) e.position.x + 4;
+                int offY = (int) e.position.y;
                 g.setFont(g.getFont().deriveFont(8.5f));
                 long nbLines = e.getDebugInfo().stream().filter(s -> game.getDebugMode() >= Integer.parseInt(s.substring(1, 2))).count();
                 int hh = (int) (g.getFontMetrics().getHeight()
                         * (nbLines - 1));
-                if (e.y + hh > playArea.getHeight()) {
+                if (e.position.y + hh > playArea.getHeight()) {
                     offY = (int) playArea.getHeight() - hh;
                 }
 
                 int ww = g.getFontMetrics().stringWidth(e.getDebugInfo().stream().max(Comparator.comparingInt(String::length)).get());
 
-                if (e.x + ww > playArea.getWidth()) {
+                if (e.position.x + ww > playArea.getWidth()) {
                     offX = (int) playArea.getWidth() - ww;
                 }
 
@@ -203,16 +203,16 @@ public class Renderer {
                         if (game.getDebugMode() >= Integer.parseInt(s.substring(1, 2))) {
                             l += 10;
                             g.setColor(new Color(0.0f, 0.0f, 0.4f, 0.5f));
-                            g.fillRect((int) (offX + e.width + 1), offY - 10 + l, ww + 2, 10);
+                            g.fillRect((int) (offX + e.size.x + 1), offY - 10 + l, ww + 2, 10);
                             g.setColor(Color.WHITE);
-                            g.drawString(s.substring(3), (int) (offX + e.width + 4), offY + l);
+                            g.drawString(s.substring(3), (int) (offX + e.size.x + 4), offY + l);
                         }
                     } else {
                         l += 10;
-                        g.drawString(s, (int) (offX + e.width + 4), offY + l);
+                        g.drawString(s, (int) (offX + e.size.x + 4), offY + l);
                     }
                 }
-                g.drawLine((int) (e.x + e.width + 1.0), (int) e.y, (int) (offX + e.width + 3.0), offY);
+                g.drawLine((int) (e.position.x + e.size.x + 1.0), (int) e.position.y, (int) (offX + e.size.x + 3.0), offY);
             }
         }
     }

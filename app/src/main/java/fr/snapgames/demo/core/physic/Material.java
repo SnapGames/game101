@@ -103,4 +103,12 @@ public class Material {
         this.density = density;
         return this;
     }
+
+    public String toString() {
+        return String.format("[n=%s,d=%4.2f,e=%4.2f,f=%4.2f]",
+                name,
+                density,
+                elasticity,
+                friction);
+    }
 }

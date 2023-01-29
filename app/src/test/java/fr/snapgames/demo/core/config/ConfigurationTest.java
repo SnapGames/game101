@@ -1,6 +1,7 @@
 package fr.snapgames.demo.core.config;
 
 import fr.snapgames.demo.core.configuration.Configuration;
+import fr.snapgames.demo.core.math.Vector2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,6 @@ public class ConfigurationTest {
         Assertions.assertEquals(1, config.get(ConfigAttributeForTest.INTEGER_VALUE));
         Assertions.assertEquals(1.0, config.get(ConfigAttributeForTest.DOUBLE_VALUE));
         Assertions.assertEquals("test", config.get(ConfigAttributeForTest.TEXT_VALUE));
-        Assertions.assertEquals(new Point2D.Double(123.45, 456.78), config.get(ConfigAttributeForTest.VECTOR2D_VALUE));
+        Assertions.assertEquals(new Vector2D(123.45, 456.78), config.get(ConfigAttributeForTest.VECTOR2D_VALUE));
     }
 }

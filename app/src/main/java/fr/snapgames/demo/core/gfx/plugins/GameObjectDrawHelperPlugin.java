@@ -29,10 +29,10 @@ public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> 
         switch (go.type) {
             case IMAGE -> {
                 if (go.direction > 0) {
-                    g.drawImage(go.image, (int) go.x, (int) go.y, null);
+                    g.drawImage(go.image, (int) go.position.x, (int) go.position.y, null);
                 } else {
                     g.drawImage(go.image,
-                            (int) (go.x + go.width), (int) go.y, -(int) go.width, (int) go.height,
+                            (int) (go.position.x + go.size.x), (int) go.position.y, -(int) go.size.x, (int) go.size.y,
                             null);
 
                 }
@@ -50,8 +50,8 @@ public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> 
             case LINE -> {
                 if (Optional.ofNullable(go.borderColor).isPresent()) {
                     g.setColor(go.borderColor);
-                    g.drawLine((int) go.x, (int) go.y,
-                            (int) (go.x + go.width), (int) (go.y + go.height));
+                    g.drawLine((int) go.position.x, (int) go.position.y,
+                            (int) (go.position.x + go.size.x), (int) (go.position.y + go.size.y));
                 }
             }
             default -> {

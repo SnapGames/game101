@@ -1,5 +1,6 @@
 package fr.snapgames.demo.core.physic;
 
+import fr.snapgames.demo.core.math.Vector2D;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ public class WorldTest {
     @Test
     public void testWorldHasDefaultValues() {
         World world = new World();
-        Assertions.assertEquals(new Point2D.Double(0, 0.981), world.gravity);
+        Assertions.assertEquals(new Vector2D(0, 0.981), world.gravity);
         Assertions.assertEquals(Material.AIR, world.material);
         Assertions.assertEquals(new Rectangle2D.Double(0, 0, 320, 200), world.playArea);
         Assertions.assertEquals(0.001, world.minSpeed);

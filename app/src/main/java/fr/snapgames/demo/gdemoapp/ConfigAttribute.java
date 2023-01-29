@@ -1,8 +1,8 @@
 package fr.snapgames.demo.gdemoapp;
 
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
+import fr.snapgames.demo.core.math.Vector2D;
 
-import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -122,8 +122,8 @@ public enum ConfigAttribute implements IConfigAttribute {
             "physicGravity",
             "app.physic.world.gravity",
             "set the 2D vector for gravity applied by physic engine",
-            new Point2D.Double(0.0, 0.0),
-            v -> stringToPoint2D(v, new Point2D.Double(0.0, 0.0))
+            new Vector2D(0.0, 0.0),
+            v -> IConfigAttribute.stringToVector2D(v, new Vector2D(0.0, 0.0))
     ),
     PHYSIC_MIN_SPEED(
             "physicSpeedMin",
@@ -191,27 +191,6 @@ public enum ConfigAttribute implements IConfigAttribute {
             "Force used to reshuffle balls' acceleration and move",
             200.00,
             Double::valueOf);
-
-    /**
-     * Convert String "v([double],[double])" to Point2D.
-     *
-     * @param value        the formatted String value to be converted
-     * @param defaultValue the default value if no conversion possible.
-     * @return Point2D value corresponding to the converted string.
-     */
-    private static Point2D stringToPoint2D(String value, Point2D defaultValue) {
-        if (value == null || value.equals("")) {
-            return defaultValue;
-        }
-        String[] interpretedValue = value
-                .substring(
-                        "v(".length(),
-                        value.length() - ")".length())
-                .split(",");
-        return new Point2D.Double(
-                Double.parseDouble(interpretedValue[0]),
-                Double.parseDouble(interpretedValue[1]));
-    }
 
     private final String attrName;
     private final String attrDescription;

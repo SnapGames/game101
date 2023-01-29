@@ -30,7 +30,11 @@ class RendererTest {
     @Test
     void testRendererGetItsConfiguration() {
         renderer = new Renderer(game);
-        Assertions.assertEquals(renderer.getBuffer().getWidth(), game.getConfiguration().get(ConfigAttribute.SCREEN_WIDTH), "Internal renderer buffer has not been correctly set.");
-        Assertions.assertEquals(renderer.getBuffer().getHeight(), game.getConfiguration().get(ConfigAttribute.SCREEN_HEIGHT), "Internal renderer buffer has not been correctly set.");
+        Assertions.assertEquals(renderer.getBuffer().getWidth(),
+                game.getConfiguration().get(ConfigAttribute.SCREEN_WIDTH),
+                "Internal renderer buffer has not been correctly set.");
+        Assertions.assertEquals(renderer.getBuffer().getHeight(),
+                game.getConfiguration().get(ConfigAttribute.SCREEN_HEIGHT),
+                "Internal renderer buffer has not been correctly set.");
     }
 }

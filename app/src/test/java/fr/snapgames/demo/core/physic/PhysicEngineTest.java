@@ -1,5 +1,6 @@
 package fr.snapgames.demo.core.physic;
 
+import com.google.common.base.Charsets;
 import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.entity.GameObject;
 import fr.snapgames.demo.core.math.Vector2D;
@@ -11,6 +12,10 @@ import org.junit.jupiter.api.Test;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 /**
@@ -32,7 +37,7 @@ public class PhysicEngineTest {
     @BeforeEach
     public void setup() {
         game = new App("/config-physicengine.properties");
-        game.applyConfiguration(new String[]{});
+        game.applyConfiguration(new String[] {});
         this.pe = new PhysicEngine(game);
     }
 
@@ -65,7 +70,7 @@ public class PhysicEngineTest {
     @Test
     public void testPhysicWorldUpdateEntities() {
         // initialize Game services
-        game.initialize(new String[]{});
+        game.initialize(new String[] {});
         World world = pe.getWorld();
         world.setGravity(new Vector2D(0.0, 0.0));
         // create some test entities
@@ -86,10 +91,11 @@ public class PhysicEngineTest {
         for (int i = 0; i < 10; i++) {
             pe.update(1600);
         }
+        String output = "";
         // check entities position
         for (int i = 0; i < 10; i++) {
             Entity<?> e = game.getEntityManager().get("TestEntity_" + i);
-            System.out.printf("- Entity[name:%s;pos:%s;spd:%s;acc: %s]%n",
+            output += String.format("- Entity[name:%s;pos:%s;spd:%s;acc: %s]%n",
                     e.getName(),
                     e.position,
                     e.velocity,
@@ -98,5 +104,16 @@ public class PhysicEngineTest {
                     "Entity " + i + " has not been updated: x="
                             + e.position.x + ",y=" + e.position.y);
         }
+        try {
+            Path contentPath = Paths.get("./content_target/physictests_results.txt");
+            String compareContent = new String(Files.readAllBytes(contentPath));
+
+            Assertions.assertEquals(compareContent, output,
+                    "Entities has not been correctly updated by the PhysicEngine.");
+        } catch (IOException e) {
+            System.err.println("Unable to read comparison file 'physictests_results.txt'");
+            Assertions.fail("Unable to read comparison file 'physictests_results.txt'");
+        }
+
     }
 }

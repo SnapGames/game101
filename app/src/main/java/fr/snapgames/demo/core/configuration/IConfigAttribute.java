@@ -1,6 +1,7 @@
 package fr.snapgames.demo.core.configuration;
 
 import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.physic.Material;
 
 import java.util.function.Function;
 
@@ -11,6 +12,7 @@ import java.util.function.Function;
  * @since 0.0.2
  **/
 public interface IConfigAttribute {
+
 
     String getAttrName();
 
@@ -41,5 +43,28 @@ public interface IConfigAttribute {
         return new Vector2D(
                 Double.parseDouble(interpretedValue[0]),
                 Double.parseDouble(interpretedValue[1]));
+    }
+
+    /**
+     * Convert String "mat([String],[double],[double],[double])" to {@link Material}.
+     *
+     * @param value        the formatted String value to be converted
+     * @param defaultValue the default value if no conversion possible.
+     * @return a {@link Material} value corresponding to the converted string.
+     */
+    static Material stringToMaterial(String value, Material defaultValue) {
+        if (value == null || value.equals("")) {
+            return defaultValue;
+        }
+        String[] interpretedValue = value
+                .substring(
+                        "mat(".length(),
+                        value.length() - ")".length())
+                .split(",");
+        return new Material(
+                interpretedValue[0],
+                Double.parseDouble(interpretedValue[1]),
+                Double.parseDouble(interpretedValue[2]),
+                Double.parseDouble(interpretedValue[3]));
     }
 }

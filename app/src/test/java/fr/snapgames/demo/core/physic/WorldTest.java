@@ -8,7 +8,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * {@link World} is the class under test, part of the  {@link PhysicEngine} system.
+ * {@link World} is the class under test, part of the {@link PhysicEngine}
+ * system.
  *
  * @author : Frédéric Delorme
  * @since 0.0.9
@@ -27,5 +28,6 @@ public class WorldTest {
         Assertions.assertEquals(0.00001, world.minAcc);
         Assertions.assertEquals(600.0, world.maxAccX);
         Assertions.assertEquals(600.0, world.maxAccY);
+        Assertions.assertEquals(Material.AIR, world.material);
     }
 }

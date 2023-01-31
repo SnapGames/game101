@@ -155,7 +155,7 @@ public class DemoScene extends AbstractScene {
                 .setSize(radius, radius)
                 .setPosition((width - 32) * Math.random(), (height - 32) * Math.random())
                 .setSpeed(10.0 * Math.random(), 10.0 * Math.random())
-                .setMass(20.0 * Math.random())
+                .setMass(20000.0 * Math.random())
                 .setAcceleration(0.0, 0.0)
                 .setDebug(4)
                 .setMaterial(Material.SUPER_BALL)
@@ -225,7 +225,7 @@ public class DemoScene extends AbstractScene {
 
 
         boolean move = false;
-        double accelerationStep = 200.0;
+        double accelerationStep = 2000.0;
         double jumpFactor = 0.5 * accelerationStep;
 
         GameObject player = (GameObject) entityMgr.get("player");
@@ -249,11 +249,11 @@ public class DemoScene extends AbstractScene {
             move = true;
         }
 
-        if (!move) {
+        /*if (!move) {
             if (Optional.ofNullable(player.material).isPresent()) {
                 player.velocity = player.velocity.multiply(player.material.friction);
             }
-        }
+        }*/
 
         // Managing Balls
         if (inputHandler.getKey(KeyEvent.VK_PAGE_UP)) {

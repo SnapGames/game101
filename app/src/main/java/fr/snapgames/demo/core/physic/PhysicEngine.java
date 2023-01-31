@@ -72,15 +72,13 @@ public class PhysicEngine {
     private void updateEntity(Game game, Entity<?> e, double elapsed) {
         double friction = 1.0;
         e.acceleration = new Vector2D(0, 0);
-        e.addForce(world.gravity);
-        e.forces.forEach(f -> {
-            e.acceleration = e.acceleration.add(f);
-        });
+        e.addForce(world.gravity.multiply(e.mass));
+        e.acceleration = e.acceleration.addAll(e.forces);
 
         e.acceleration.ceil(world.minAcc);
         e.acceleration.maximize(world.maxAccX);
 
-        e.velocity = e.acceleration.multiply(0.5 * (elapsed * elapsed));
+        e.velocity = e.acceleration.multiply(0.5 * (elapsed));
         e.velocity.ceil(world.minSpeed);
         e.velocity.maximize(world.maxSpeedX);
 

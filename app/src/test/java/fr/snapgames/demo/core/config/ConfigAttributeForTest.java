@@ -2,6 +2,7 @@ package fr.snapgames.demo.core.config;
 
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
 import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.physic.Material;
 
 import java.util.function.Function;
 
@@ -47,7 +48,13 @@ public enum ConfigAttributeForTest implements IConfigAttribute {
             "app.config.vector2d",
             "set a Vector2D value",
             new Vector2D(0.0, 0.0),
-            v -> IConfigAttribute.stringToVector2D(v, new Vector2D(0.0, 0.0))
+            v -> IConfigAttribute.stringToVector2D(v, new Vector2D(0.0, 0.0))),
+    MATERIAL_VALUE(
+            "materialValue",
+            "app.config.material",
+            "set a Material value",
+            Material.DEFAULT,
+            v -> IConfigAttribute.stringToMaterial(v, Material.DEFAULT)
     );
 
 

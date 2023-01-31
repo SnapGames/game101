@@ -2,6 +2,7 @@ package fr.snapgames.demo.gdemoapp;
 
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
 import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.physic.Material;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -125,6 +126,13 @@ public enum ConfigAttribute implements IConfigAttribute {
             new Vector2D(0.0, 0.0),
             v -> IConfigAttribute.stringToVector2D(v, new Vector2D(0.0, 0.0))
     ),
+    PHYSIC_MATERIAL(
+            "worldMaterial",
+            "app.physic.world.material",
+            "Set the default Material for the world context",
+            Material.AIR,
+            v->IConfigAttribute.stringToMaterial(v, Material.DEFAULT)
+        ),
     PHYSIC_MIN_SPEED(
             "physicSpeedMin",
             "app.physic.world.speed.min",

@@ -1,5 +1,9 @@
 package fr.snapgames.demo.core.physic;
 
+import fr.snapgames.demo.core.math.Vector2D;
+
+import java.util.Objects;
+
 /**
  * A {@link Material} describes a set of Physic attributes to ba applied to an
  * {@link fr.snapgames.demo.core.entity.Entity} to feed {@link PhysicEngine} processing.
@@ -110,5 +114,22 @@ public class Material {
                 density,
                 elasticity,
                 friction);
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        Material vo = (Material) o;
+        return Objects.equals(name, vo.name)
+                && Objects.equals(density, vo.density)
+                && Objects.equals(elasticity, vo.elasticity)
+                && Objects.equals(friction, vo.friction);
     }
 }

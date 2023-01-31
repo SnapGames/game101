@@ -1,9 +1,9 @@
 package fr.snapgames.demo.core.physic;
 
 import fr.snapgames.demo.core.configuration.Configuration;
+import fr.snapgames.demo.core.math.Vector2D;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -31,7 +31,7 @@ public class World {
     /**
      * The default World gravity
      */
-    public Point2D gravity = new Point2D.Double(0, 0.981);
+    public Vector2D gravity = new Vector2D(0, 0.981);
 
     public Material material = Material.AIR;
 
@@ -48,7 +48,7 @@ public class World {
      */
     public World(Configuration configuration) {
         // get Gravity from the configuration file.
-        gravity = (Point2D) configuration.get(ConfigAttribute.PHYSIC_GRAVITY);
+        gravity = (Vector2D) configuration.get(ConfigAttribute.PHYSIC_GRAVITY);
         // get speed physic attribute limits
         minSpeed = (double) configuration.get(ConfigAttribute.PHYSIC_MIN_SPEED);
         maxSpeedX = (double) configuration.get(ConfigAttribute.PHYSIC_MAX_SPEED_X);
@@ -66,19 +66,19 @@ public class World {
     /**
      * Retrieve gravity for this {@link World}.
      *
-     * @return a Point2D value corresponding to the World's gravity.
+     * @return a {@link Vector2D} value corresponding to the World's gravity.
      */
-    public Point2D getGravity() {
+    public Vector2D getGravity() {
         return gravity;
     }
 
     /**
-     * Define the {@link World}'s gravity with the provided {@link Point2D} value.
+     * Define the {@link World}'s gravity with the provided {@link Vector2D} value.
      *
-     * @param g the {@link Point2D} gravity value to be set to that {@link World} object.
+     * @param g the {@link Vector2D} gravity value to be set to that {@link World} object.
      * @return the updated {@link World} object (Fluent API)
      */
-    public World setGravity(Point2D g) {
+    public World setGravity(Vector2D g) {
         this.gravity = g;
         return this;
     }

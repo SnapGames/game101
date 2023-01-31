@@ -1,8 +1,9 @@
 package fr.snapgames.demo.core.config;
 
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
+import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.physic.Material;
 
-import java.awt.geom.Point2D;
 import java.util.function.Function;
 
 /**
@@ -46,30 +47,16 @@ public enum ConfigAttributeForTest implements IConfigAttribute {
             "vetor2dValue",
             "app.config.vector2d",
             "set a Vector2D value",
-            new Point2D.Double(0.0, 0.0),
-            v -> stringToPoint2D(v, new Point2D.Double(0.0, 0.0))
+            new Vector2D(0.0, 0.0),
+            v -> IConfigAttribute.stringToVector2D(v, new Vector2D(0.0, 0.0))),
+    MATERIAL_VALUE(
+            "materialValue",
+            "app.config.material",
+            "set a Material value",
+            Material.DEFAULT,
+            v -> IConfigAttribute.stringToMaterial(v, Material.DEFAULT)
     );
 
-    /**
-     * Convert String "v([double],[double])" to Point2D.
-     *
-     * @param value        the formatted String value to be converted
-     * @param defaultValue the default value if no conversion possible.
-     * @return Point2D value corresponding to the converted string.
-     */
-    private static Point2D stringToPoint2D(String value, Point2D defaultValue) {
-        if (value == null || value.equals("")) {
-            return defaultValue;
-        }
-        String[] interpretedValue = value
-                .substring(
-                        "v(".length(),
-                        value.length() - ")".length())
-                .split(",");
-        return new Point2D.Double(
-                Double.parseDouble(interpretedValue[0]),
-                Double.parseDouble(interpretedValue[1]));
-    }
 
     private final String attrName;
     private final String attrDescription;

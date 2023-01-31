@@ -27,13 +27,13 @@ public class EntityTest {
         // Entity's level default values
         Assertions.assertTrue(p.getName().startsWith("entity_"));
         Assertions.assertEquals(1.0, p.mass);
-        Assertions.assertEquals(p.getLayer(), 1);
-        Assertions.assertEquals(p.getPriority(), 1);
-        Assertions.assertEquals(p.width, 16);
-        Assertions.assertEquals(p.height, 16);
-        Assertions.assertEquals(p.fillColor, Color.RED);
-        Assertions.assertEquals(p.borderColor, Color.BLACK);
-        Assertions.assertEquals(p.material, Material.DEFAULT);
+        Assertions.assertEquals(1, p.getLayer());
+        Assertions.assertEquals(1, p.getPriority());
+        Assertions.assertEquals(0, p.size.x);
+        Assertions.assertEquals(0, p.size.y);
+        Assertions.assertEquals(Color.RED, p.fillColor);
+        Assertions.assertEquals(Color.BLACK, p.borderColor);
+        Assertions.assertEquals(Material.DEFAULT, p.material);
 
     }
 
@@ -42,11 +42,11 @@ public class EntityTest {
         Entity<String> p = new Entity<>();
         List<String> debugInfo = p.getDebugInfo();
         Assertions.assertTrue(debugInfo.get(0).startsWith("name:entity_"));
-        Assertions.assertEquals("pos:0.00,0.00", debugInfo.get(1).trim());
-        Assertions.assertEquals("size:16x16", debugInfo.get(2).trim());
-        Assertions.assertEquals("spd:0.00,0.00", debugInfo.get(3).trim());
-        Assertions.assertEquals("acc:0.00,0.00", debugInfo.get(4).trim());
-        Assertions.assertTrue(debugInfo.get(5).startsWith("map:default[d="));
+        Assertions.assertEquals("pos:{x:0.00,y:0.00}", debugInfo.get(1).trim());
+        Assertions.assertEquals("size:{x:0.00,y:0.00}", debugInfo.get(2).trim());
+        Assertions.assertEquals("spd:{x:0.00,y:0.00}", debugInfo.get(3).trim());
+        Assertions.assertEquals("acc:{x:0.00,y:0.00}", debugInfo.get(4).trim());
+        Assertions.assertEquals("mat:"+Material.DEFAULT.toString(), debugInfo.get(5));
 
     }
 }

@@ -72,7 +72,7 @@ public interface Game {
         int fps = getTargetFps();
         int ups = getTargetUps();
         double internalTime = 0;
-        double previousTime = System.currentTimeMillis();
+        double previousTime = System.nanoTime() / 1000000.0;
         double currentTime = previousTime;
         double gameTime = 0;
         double elapsed;
@@ -86,7 +86,7 @@ public interface Game {
         create();
 
         while (!isExitRequested()) {
-            currentTime = System.currentTimeMillis();
+            currentTime = System.nanoTime() / 1000000.0;
             input(this);
             elapsed = currentTime - previousTime;
             if (!isPaused()) {
@@ -110,7 +110,7 @@ public interface Game {
                 upsCount = 0;
             }
             waitUntilNextFrame(elapsed);
-            previousTime = currentTime;
+            previousTime = System.nanoTime() / 1000000.0;
         }
     }
 

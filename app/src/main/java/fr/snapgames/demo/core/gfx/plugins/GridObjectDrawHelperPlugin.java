@@ -27,11 +27,11 @@ public class GridObjectDrawHelperPlugin implements DrawHelperPlugin<GridObject> 
             backPreviousStrokeValue = g.getStroke();
             g.setStroke(go.getStroke());
         }
-        for (double x = 0; x < go.width; x += go.getStepX()) {
-            g.drawRect((int) x, 0, (int) go.getStepX(), (int) go.height);
+        for (double x = 0; x < go.size.x; x += go.getStepX()) {
+            g.drawRect((int) x, 0, (int) go.getStepX(), (int) go.size.y);
         }
-        for (double y = 0; y < go.height; y += go.getStepY()) {
-            g.drawRect(0, (int) y, (int) go.width, (int) go.getStepY());
+        for (double y = 0; y < go.size.y; y += go.getStepY()) {
+            g.drawRect(0, (int) y, (int) go.size.x, (int) go.getStepY());
         }
         if (go.getStroke() != null && backPreviousStrokeValue != null) {
             g.setStroke(backPreviousStrokeValue);

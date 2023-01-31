@@ -14,5 +14,7 @@ to a package organized project to provide Entity, physic, rendering, etc...
 8. [Display Debugging information](chapter-08-display_debugging_layer.md)
 9. [Add Camera, Action !](chapter-09-add_camera_action.md)
 10. [Scene and Scene manager](chapter-10-adding_scene_and_scenemanager.md)
+11. [Adding a Resource manager](chapter-11-add_a_resource_manager.md)
+12. [Moving with Vector2D](chapter-12-moving_with_vector2D.md)
 
 ![The latest chapter's screenshot:  Adding Scenes and their manager](illustrations/figure-adding_scene_and_manager.png "The latest chapter's screenshot:  Adding Scenes and their manager")

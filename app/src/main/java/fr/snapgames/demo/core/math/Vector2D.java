@@ -4,7 +4,26 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Internal Class to manipulate simple Vector2D.
+ * {@link Vector2D} class is to define, manage and operate  2D Vector.
+ * <p>
+ * eg.usage :
+ *
+ * <pre>
+ *     // create a vector
+ *     Vector2D v1 = new Vector2D(0.0,0.0);
+ *     // apply some common operation
+ *     Vector2D v2 = v1.multiply(12.0).ceil(0.001).maximize(2000.0);
+ *     // normalize the resulting vector
+ *     double norm = v2.normalize();
+ *     // compute length of the vector
+ *     double l = v2.length();
+ *     // define distance between 2 vector
+ *     double distance = v1.distance(v2);
+ *     // get the opposite vector
+ *     Vector2D v3 = v2.negate();
+ *     // compute dot product between v1 and v2.
+ *     double d = v1.dot(v2);
+ * </pre>
  *
  * @author Frédéric Delorme
  * @since 0.1.3

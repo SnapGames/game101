@@ -71,11 +71,11 @@ public interface Game {
         int upsCount = 0;
         int fps = getTargetFps();
         int ups = getTargetUps();
-        double internalTime = 0;
+        double internalTime = 0.0;
         double previousTime = System.nanoTime() / 1000000.0;
         double currentTime = previousTime;
-        double gameTime = 0;
-        double elapsed;
+        double gameTime = 0.0;
+        double elapsed = 0.0;
         Map<String, Object> renderingAttributes = new HashMap<>();
 
         renderingAttributes.put("game.time", gameTime);
@@ -88,7 +88,6 @@ public interface Game {
         while (!isExitRequested()) {
             currentTime = System.nanoTime() / 1000000.0;
             input(this);
-            elapsed = currentTime - previousTime;
             if (!isPaused()) {
                 update(this, renderingAttributes, elapsed);
                 gameTime += elapsed;
@@ -111,6 +110,8 @@ public interface Game {
             }
             waitUntilNextFrame(elapsed);
             previousTime = System.nanoTime() / 1000000.0;
+
+            elapsed = previousTime - currentTime;
         }
     }
 

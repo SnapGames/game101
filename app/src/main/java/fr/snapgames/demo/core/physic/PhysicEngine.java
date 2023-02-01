@@ -12,7 +12,7 @@ import fr.snapgames.demo.core.math.Vector2D;
  */
 public class PhysicEngine {
 
-    public static final double TIME_FACTOR = 0.0045;
+    public static final double TIME_FACTOR = 0.04;
     /**
      * Parent game
      */
@@ -58,7 +58,7 @@ public class PhysicEngine {
                         e1.physicType.equals(PhysicType.DYNAMIC))
                 .forEach(e2 -> {
                     updateEntity(game, e2, time);
-                    constrained(game, e2, time);
+                    constrained(game, e2);
                 });
     }
 
@@ -69,35 +69,41 @@ public class PhysicEngine {
      * @param e       the concerned entity.
      * @param elapsed the elapsed time since previous call.
      */
-    private void updateEntity(Game game, Entity<?> e, double elapsed) {
+    private void updateEntity(Game game, Entity<?> entity, double elapsed) {
         double friction = 1.0;
-        e.acceleration = new Vector2D(0, 0);
-        e.addForce(world.gravity.multiply(e.mass));
-        e.acceleration = e.acceleration.addAll(e.forces);
+// apply gravity
+        entity.forces.add(world.getGravity().negate());
 
-        e.acceleration.ceil(world.minAcc);
-        e.acceleration.maximize(world.maxAccX);
+        // compute acceleration
 
-        e.velocity = e.acceleration.multiply(0.5 * (elapsed));
-        e.velocity.ceil(world.minSpeed);
-        e.velocity.maximize(world.maxSpeedX);
+        double density = entity.material != null ? entity.material.density : world.getMaterial().density;
+        entity.acceleration = entity.acceleration.addAll(entity.forces).multiply(density);
+        entity.acceleration = entity.acceleration.multiply((double) entity.mass);
 
-        friction = e.contact == 0 ? world.material.friction : e.material.friction;
+        entity.acceleration.maximize((double) entity.getAttribute("maxAcceleration", world.maxAccX));
 
-        e.position = e.position.add(e.velocity.multiply(elapsed * friction));
+        // compute velocity
 
-        e.updateBox();
-        e.forces.clear();
+        entity.velocity = entity.velocity.add(entity.acceleration.multiply(elapsed));
+        if (entity.contact == 0) {
+            entity.velocity = entity.velocity.multiply(world.getMaterial().friction);
+        } else {
+            entity.velocity = entity.velocity.multiply(entity.material.friction * world.getMaterial().friction);
+        }
+        entity.velocity.maximize((double) entity.getAttribute("maxVelocity", world.maxSpeedX));
+
+        // compute position
+        entity.position = entity.position.add(entity.velocity.multiply(elapsed));
+        entity.forces.clear();
     }
 
     /**
      * Apply the play area constrains to the Entity e.
      *
-     * @param game    the parent Game instance.
-     * @param e       the concerned entity.
-     * @param elapsed the elapsed time since previous call.
+     * @param game the parent Game instance.
+     * @param e    the concerned entity.
      */
-    private void constrained(Game game, Entity<?> e, double elapsed) {
+    private void constrained(Game game, Entity<?> e) {
         e.contact = 0;
         if (e.position.x + e.size.x > world.playArea.getWidth()) {
             e.position.x = world.playArea.getWidth() - e.size.x;

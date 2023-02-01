@@ -82,7 +82,7 @@ public class DemoScene extends AbstractScene {
                 .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
                 .setSpeed(0.0, 0.0)
                 .setAcceleration(0.0, 0.0)
-                .setMass(80.0)
+                .setMass(800.0)
                 .setDebug(1)
                 .setMaterial(Material.STEEL)
                 .setLayer(10)
@@ -225,8 +225,8 @@ public class DemoScene extends AbstractScene {
 
 
         boolean move = false;
-        double accelerationStep = 2000.0;
-        double jumpFactor = 0.5 * accelerationStep;
+        double accelerationStep = 1.0;
+        double jumpFactor = 4.0 * accelerationStep;
 
         GameObject player = (GameObject) entityMgr.get("player");
 
@@ -248,12 +248,6 @@ public class DemoScene extends AbstractScene {
             player.setDirection(1.0);
             move = true;
         }
-
-        /*if (!move) {
-            if (Optional.ofNullable(player.material).isPresent()) {
-                player.velocity = player.velocity.multiply(player.material.friction);
-            }
-        }*/
 
         // Managing Balls
         if (inputHandler.getKey(KeyEvent.VK_PAGE_UP)) {

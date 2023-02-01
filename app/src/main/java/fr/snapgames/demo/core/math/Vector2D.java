@@ -96,9 +96,10 @@ public class Vector2D {
         return this;
     }
 
-    public void ceil(double ceilThreshod) {
-        x = Math.copySign((Math.abs(x) < ceilThreshod ? 0 : x), x);
-        y = Math.copySign((Math.abs(x) < ceilThreshod ? 0 : y), y);
+    public Vector2D ceil(double ceilThreshod) {
+        x = Math.copySign((Math.abs(x) < ceilThreshod ? 0.0 : x), x);
+        y = Math.copySign((Math.abs(x) < ceilThreshod ? 0.0 : y), y);
+        return this;
     }
 
     public boolean equals(Object o) {

@@ -9,7 +9,9 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An Entity is a minimum game object to be managed by the Game on its moves and its display.
@@ -105,6 +107,7 @@ public class Entity<T> {
      */
     private boolean stickToCamera = false;
     private boolean active = true;
+    private Map<String, Object> attributes = new HashMap<>();
 
     public Entity() {
         this.mass = 1.0;
@@ -351,5 +354,9 @@ public class Entity<T> {
 
     public boolean isActive() {
         return active;
+    }
+
+    public Object getAttribute(String key, double defaultValue) {
+        return this.attributes.containsKey(key) ? attributes.get(key) : defaultValue;
     }
 }

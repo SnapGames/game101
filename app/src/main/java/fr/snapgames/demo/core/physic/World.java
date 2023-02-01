@@ -98,4 +98,8 @@ public class World {
     public Rectangle2D getPlayArea() {
         return playArea;
     }
+
+    public Material getMaterial() {
+        return material;
+    }
 }

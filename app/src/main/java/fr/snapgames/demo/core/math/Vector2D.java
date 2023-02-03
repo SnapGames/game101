@@ -96,9 +96,23 @@ public class Vector2D {
         return this;
     }
 
+    public Vector2D maximize(double maxX, double maxY) {
+        if (Math.abs(x) > maxX) {
+            x = Math.signum(x) * maxX;
+        }
+        if (Math.abs(y) > maxY) {
+            y = Math.signum(y) * maxY;
+        }
+        return this;
     public Vector2D ceil(double ceilThreshod) {
         x = Math.copySign((Math.abs(x) < ceilThreshod ? 0.0 : x), x);
         y = Math.copySign((Math.abs(x) < ceilThreshod ? 0.0 : y), y);
+        return this;
+    }
+
+    public Vector2D ceil(double ceilThreshod) {
+        x = Math.copySign((Math.abs(x) < ceilThreshod ? 0.0 : x), x);
+        y = Math.copySign((Math.abs(y) < ceilThreshod ? 0.0 : y), y);
         return this;
     }
 

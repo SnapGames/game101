@@ -66,34 +66,41 @@ public class PhysicEngine {
      * Update one entity.
      *
      * @param game    the parent Game instance.
-     * @param e       the concerned entity.
+     * @param entity  the concerned entity.
      * @param elapsed the elapsed time since previous call.
      */
     private void updateEntity(Game game, Entity<?> entity, double elapsed) {
-        double friction = 1.0;
-// apply gravity
-        entity.forces.add(world.getGravity().negate());
 
-        // compute acceleration
-
+        double friction = entity.contact == 0 ? world.getMaterial().friction : entity.material.friction * world.getMaterial().friction;
         double density = entity.material != null ? entity.material.density : world.getMaterial().density;
-        entity.acceleration = entity.acceleration.addAll(entity.forces).multiply(density);
-        entity.acceleration = entity.acceleration.multiply((double) entity.mass);
 
-        entity.acceleration.maximize((double) entity.getAttribute("maxAcceleration", world.maxAccX));
+        //
+        // compute acceleration and apply gravity (negate because of AWT/Swing display coordinates origin)
+        entity.acceleration = entity.acceleration.addAll(entity.forces);
+        entity.acceleration = entity.acceleration.add(world.getGravity().negate())
+                .multiply(entity.getMass()).multiply(density);
+        entity.acceleration = entity.acceleration
+                .ceil((double) entity.getAttribute("minAcceleration", world.minAcc))
+                .maximize(
+                        (double) entity.getAttribute("maxAcceleration", world.maxAccX),
+                        (double) entity.getAttribute("maxAcceleration", world.maxAccY));
 
         // compute velocity
 
-        entity.velocity = entity.velocity.add(entity.acceleration.multiply(elapsed));
-        if (entity.contact == 0) {
-            entity.velocity = entity.velocity.multiply(world.getMaterial().friction);
-        } else {
-            entity.velocity = entity.velocity.multiply(entity.material.friction * world.getMaterial().friction);
-        }
-        entity.velocity.maximize((double) entity.getAttribute("maxVelocity", world.maxSpeedX));
+        entity.velocity = entity.velocity.add(entity.acceleration.multiply(elapsed))
+                .multiply(friction)
+                .ceil((double) entity.getAttribute("minSpeed", world.minSpeed))
+                .maximize(
+                        (double) entity.getAttribute("maxVelocity", world.maxSpeedX),
+                        (double) entity.getAttribute("maxVelocity", world.maxSpeedY));
 
         // compute position
         entity.position = entity.position.add(entity.velocity.multiply(elapsed));
+
+        // Update the bounding box accordingly to last position changes
+        entity.updateBox();
+
+        // clear forces for that entity.
         entity.forces.clear();
     }
 

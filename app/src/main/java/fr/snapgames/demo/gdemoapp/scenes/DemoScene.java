@@ -79,10 +79,10 @@ public class DemoScene extends AbstractScene {
         BufferedImage playerFrame1 = imagePlayer.getSubimage(0, 0, 32, 32);
         var player = (GameObject) new GameObject("player")
                 .setImage(playerFrame1)
-                .setPosition((screenWidth - 32) * 0.5, (screenHeight - 32) * 0.5)
-                .setSpeed(0.0, 0.0)
-                .setAcceleration(0.0, 0.0)
-                .setMass(800.0)
+                .setPosition(
+                        (screenWidth - playerFrame1.getWidth()) * 0.5,
+                        (screenHeight - playerFrame1.getHeight()) * 0.5)
+                .setMass(80.0)
                 .setDebug(1)
                 .setMaterial(Material.STEEL)
                 .setLayer(10)
@@ -125,7 +125,7 @@ public class DemoScene extends AbstractScene {
      * @param ballRadius  the ball maximum radius
      * @param width       the width of the area where to randomly generate ball
      * @param height      the height of the area where to randomly generate ball
-     * @param fillColor   the  fill color for the ball rendering
+     * @param fillColor   the  fill color for the ball rendering, if null generate a random transparent color.
      * @param borderColor the border color for the ball rendering
      */
     private void createBalls(String ballNamePrefix,
@@ -155,7 +155,7 @@ public class DemoScene extends AbstractScene {
                 .setSize(radius, radius)
                 .setPosition((width - 32) * Math.random(), (height - 32) * Math.random())
                 .setSpeed(10.0 * Math.random(), 10.0 * Math.random())
-                .setMass(20000.0 * Math.random())
+                .setMass(20.0 * Math.random())
                 .setAcceleration(0.0, 0.0)
                 .setDebug(4)
                 .setMaterial(Material.SUPER_BALL)

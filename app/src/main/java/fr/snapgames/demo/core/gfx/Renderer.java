@@ -255,12 +255,16 @@ public class Renderer {
         if (w.isDisplayable()) {
             double ratio = 16.0 / 9.0;
             double scale = w.getFrame().getWidth() / screenWidth;
-            double dx = (w.getFrame().getWidth() - screenWidth * scale) * 0.25;
-            double dy = (w.getFrame().getHeight() - (screenHeight * scale * ratio)) * 0.25;
+            double maxWidth = screenWidth * scale;
+            double maxHeight = screenHeight * ratio * scale;
+            if (maxHeight > w.getFrame().getHeight()) {
+                maxHeight = w.getFrame().getHeight();
+                maxWidth = w.getFrame().getHeight() / ratio * scale;
+            }
 
             g.drawImage(buffer,
-                    (int) dx, (int) dy,
-                    w.getFrame().getWidth(), (int) (w.getFrame().getHeight()),
+                    0, 0,
+                    (int) maxWidth, (int) maxHeight,
                     0, 0,
                     screenWidth, screenHeight,
                     null);

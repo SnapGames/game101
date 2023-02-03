@@ -56,7 +56,7 @@ public class Entity<T> {
     /**
      * Mass for that entity.
      */
-    public double mass;
+    private double mass;
     /**
      * List of forces applied on this {@link Entity}.
      */
@@ -358,5 +358,9 @@ public class Entity<T> {
 
     public Object getAttribute(String key, double defaultValue) {
         return this.attributes.containsKey(key) ? attributes.get(key) : defaultValue;
+    }
+
+    public double getMass() {
+        return mass;
     }
 }

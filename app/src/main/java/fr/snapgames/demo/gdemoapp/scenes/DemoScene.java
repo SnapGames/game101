@@ -84,7 +84,10 @@ public class DemoScene extends AbstractScene {
                         (screenHeight - playerFrame1.getHeight()) * 0.5)
                 .setMass(80.0)
                 .setDebug(1)
-                .setMaterial(Material.STEEL)
+                .setMaterial(Material.RUBBER)
+                .setAttribute("maxAccelerationX", 6.0)
+                .setAttribute("maxAccelerationY", 4.0)
+                .setAttribute("maxVelocity", 8.0)
                 .setLayer(10)
                 .setPriority(1);
         entityMgr.add(player);
@@ -223,9 +226,8 @@ public class DemoScene extends AbstractScene {
     @Override
     public void input(Game g) {
 
-
         boolean move = false;
-        double accelerationStep = 1.0;
+        double accelerationStep = 0.4;
         double jumpFactor = 4.0 * accelerationStep;
 
         GameObject player = (GameObject) entityMgr.get("player");

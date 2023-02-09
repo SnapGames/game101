@@ -363,4 +363,9 @@ public class Entity<T> {
     public double getMass() {
         return mass;
     }
+
+    public Entity<T> setAttribute(String key, Object defaultValue) {
+        this.attributes.put(key, defaultValue);
+        return this;
+    }
 }

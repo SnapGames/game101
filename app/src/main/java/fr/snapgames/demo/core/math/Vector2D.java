@@ -71,7 +71,6 @@ public class Vector2D {
         if (vDot > 1.0)
             vDot = 1.0;
         return Math.acos(vDot);
-
     }
 
     public Vector2D addAll(List<Vector2D> forces) {
@@ -103,10 +102,6 @@ public class Vector2D {
         if (Math.abs(y) > maxY) {
             y = Math.signum(y) * maxY;
         }
-        return this;
-    public Vector2D ceil(double ceilThreshod) {
-        x = Math.copySign((Math.abs(x) < ceilThreshod ? 0.0 : x), x);
-        y = Math.copySign((Math.abs(x) < ceilThreshod ? 0.0 : y), y);
         return this;
     }
 

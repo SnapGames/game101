@@ -82,8 +82,8 @@ public class PhysicEngine {
         entity.acceleration = entity.acceleration
                 .ceil((double) entity.getAttribute("minAcceleration", world.minAcc))
                 .maximize(
-                        (double) entity.getAttribute("maxAcceleration", world.maxAccX),
-                        (double) entity.getAttribute("maxAcceleration", world.maxAccY));
+                        (double) entity.getAttribute("maxAccelerationX", world.maxAccX),
+                        (double) entity.getAttribute("maxAccelerationY", world.maxAccY));
 
         // compute velocity
 

@@ -253,22 +253,12 @@ public class Renderer {
     public void drawToWindow(Window w) {
         Graphics2D g = w.getGraphics2D();
         if (w.isDisplayable()) {
-            double ratio = 16.0 / 9.0;
-            double scale = w.getFrame().getWidth() / screenWidth;
-            double maxWidth = screenWidth * scale;
-            double maxHeight = screenHeight * ratio * scale;
-            if (maxHeight > w.getFrame().getHeight()) {
-                maxHeight = w.getFrame().getHeight();
-                maxWidth = w.getFrame().getHeight() / ratio * scale;
-            }
-
             g.drawImage(buffer,
                     0, 0,
-                    (int) maxWidth, (int) maxHeight,
+                    (int) w.getFrame().getWidth(), (int) w.getFrame().getHeight(),
                     0, 0,
                     screenWidth, screenHeight,
                     null);
-
         }
     }
 

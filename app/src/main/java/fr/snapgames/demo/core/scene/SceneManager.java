@@ -69,7 +69,7 @@ public class SceneManager {
     public void initialize(Game g) {
         this.game = g;
         config = g.getConfiguration();
-        List<String> scenesList = (List<String>) config.get(ConfigAttribute.SCENE_LIST);
+        List<String> scenesList = (List) config.get(ConfigAttribute.SCENE_LIST);
         if (Optional.ofNullable(scenesList).isPresent() && !scenesList.isEmpty()) {
             scenesList.forEach(s -> {
                 String[] kv = s.split(":");

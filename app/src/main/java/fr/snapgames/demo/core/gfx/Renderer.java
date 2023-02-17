@@ -88,6 +88,10 @@ public class Renderer {
 
     /**
      * Draw operation on the internal image buffer.
+     * <p>
+     * All the {@link Entity} are drawn by the Renderer,  according to their {@link Entity#isActive()} status,
+     * and following their own {@link Entity#getLayer()} and {@link Entity#getPriority()} in this layer
+     * for a good rendering sort order. are drawn
      *
      * @param attributes a Map of object to be used at rendering time, provisioned by the engine itself (information from the {@link Game#loop()})
      */
@@ -102,18 +106,15 @@ public class Renderer {
         // draw all the things you need.
         game.getEntityManager().getEntities()
                 .stream()
+                .filter(e1 -> e1.isActive())
                 .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                 .forEach(e -> {
                     // Move view to camera view
-                    if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
-                        g.translate(-currentCamera.x, -currentCamera.y);
-                    }
+                    moveCameraViewTo(g, e, -1);
                     // draw objects
                     drawEntity(g, e);
                     // move back from camera view
-                    if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
-                        g.translate(currentCamera.x, currentCamera.y);
-                    }
+                    moveCameraViewTo(g, e, 1);
 
                 });
         // draw entity's display debug information
@@ -123,15 +124,13 @@ public class Renderer {
                     .sorted((o1, o2) -> o1.getLayer() > o2.getLayer() ? 1 : (o1.getPriority() > o1.getPriority() ? 1 : -1))
                     .forEach(e -> {
                         // Move view to camera view
-                        if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
-                            g.translate(-currentCamera.x, -currentCamera.y);
-                        }
+                        moveCameraViewTo(g, e, -1);
+
                         // draw Entity debug display information.
                         drawDebugInformation(g, e);
                         // move back from camera view
-                        if (Optional.ofNullable(currentCamera).isPresent() && e.isStickToCamera()) {
-                            g.translate(currentCamera.x, currentCamera.y);
-                        }
+                        moveCameraViewTo(g, e, 1);
+
                     });
             // draw some debug information.
             drawDisplayDebugLine(g, attributes);
@@ -142,6 +141,12 @@ public class Renderer {
         rendering = false;
     }
 
+    private void moveCameraViewTo(Graphics2D g, Entity<?> e, double moveDirection) {
+        if (Optional.ofNullable(currentCamera).isPresent() && e.isNotStickToCamera()) {
+            g.translate(moveDirection * currentCamera.position.x, moveDirection * currentCamera.position.y);
+        }
+    }
+
     private void drawDisplayDebugLine(Graphics2D g, Map<String, Object> attributes) {
         g.setFont(g.getFont().deriveFont(10.0f));
         g.setColor(new Color(0.3f, 0.0f, 0.0f, 0.5f));
@@ -150,18 +155,24 @@ public class Renderer {
         int ups = (int) (attributes.getOrDefault("game.ups", -1));
         int fps = (int) (attributes.getOrDefault("game.fps", -1));
         double gameTime = (double) (attributes.getOrDefault("game.time", -1.0));
-        String debugLine = String.format("[ dbg:%d | f:%02d u:%02d |>:%s | scn:%s |o:%d | g:%1.3f | gtime: %04.3fs]",
+        String debugLine = String.format("[ dbg:%d | f:%02d u:%02d |>%s| scn:%s |o:%d | g:%1.3f | gtime: %04.3fs]",
                 game.getDebugMode(),
-                fps,
-                ups,
+                fps, ups,
                 game.isPaused() ? "off" : "on",
                 game.getSceneManager().getCurrent().getName(),
                 game.getEntityManager().getEntities().size(),
-                game.getPhysicEngine().getWorld().getGravity().getY(),
+                game.getPhysicEngine().getWorld().getGravity().y,
                 Math.abs(gameTime / 1000.0));
         g.drawString(debugLine, 8, buffer.getHeight() - 8);
     }
 
+    /**
+     * The debug information are drawn line by line and applying the concept of priority. if the line starts with
+     * an '(#)' where # is a number from 1 to 9, the line will be displayed according to the debug level value.
+     *
+     * @param g Graphics2D API to draw things
+     * @param e the entity to draw debug information for.
+     */
     private void drawDebugInformation(Graphics2D g, Entity<?> e) {
 
         if (game.getDebugMode() >= e.debug
@@ -170,19 +181,19 @@ public class Renderer {
             g.setColor(Color.ORANGE);
             g.draw(e.box);
             if (game.getDebugMode() > 1) {
-                int offX = (int) e.x + 4;
-                int offY = (int) e.y;
+                int offX = (int) e.position.x + 4;
+                int offY = (int) e.position.y;
                 g.setFont(g.getFont().deriveFont(8.5f));
                 long nbLines = e.getDebugInfo().stream().filter(s -> game.getDebugMode() >= Integer.parseInt(s.substring(1, 2))).count();
                 int hh = (int) (g.getFontMetrics().getHeight()
                         * (nbLines - 1));
-                if (e.y + hh > playArea.getHeight()) {
+                if (e.position.y + hh > playArea.getHeight()) {
                     offY = (int) playArea.getHeight() - hh;
                 }
 
                 int ww = g.getFontMetrics().stringWidth(e.getDebugInfo().stream().max(Comparator.comparingInt(String::length)).get());
 
-                if (e.x + ww > playArea.getWidth()) {
+                if (e.position.x + ww > playArea.getWidth()) {
                     offX = (int) playArea.getWidth() - ww;
                 }
 
@@ -192,20 +203,27 @@ public class Renderer {
                         if (game.getDebugMode() >= Integer.parseInt(s.substring(1, 2))) {
                             l += 10;
                             g.setColor(new Color(0.0f, 0.0f, 0.4f, 0.5f));
-                            g.fillRect((int) (offX + e.width + 1), offY - 10 + l, ww + 2, 10);
+                            g.fillRect((int) (offX + e.size.x + 1), offY - 10 + l, ww + 2, 10);
                             g.setColor(Color.WHITE);
-                            g.drawString(s.substring(3), (int) (offX + e.width + 4), offY + l);
+                            g.drawString(s.substring(3), (int) (offX + e.size.x + 4), offY + l);
                         }
                     } else {
                         l += 10;
-                        g.drawString(s, (int) (offX + e.width + 4), offY + l);
+                        g.drawString(s, (int) (offX + e.size.x + 4), offY + l);
                     }
                 }
-                g.drawLine((int) (e.x + e.width + 1.0), (int) e.y, (int) (offX + e.width + 3.0), offY);
+                g.drawLine((int) (e.position.x + e.size.x + 1.0), (int) e.position.y, (int) (offX + e.size.x + 3.0), offY);
             }
         }
     }
 
+    /**
+     * Return true if the entityName is containing one of the filtered string (coma separated).
+     *
+     * @param filter     the filter list (coma separated) to check entityName with
+     * @param entityName the name of the entity to check against the filter list.
+     * @return true if the entityName correspond to one of the filter's string, else false.
+     */
     private boolean filteredName(String filter, String entityName) {
         if (!filter.equals("")) {
             return Arrays.stream(filter.split(",")).anyMatch(entityName::contains);
@@ -214,6 +232,12 @@ public class Renderer {
         }
     }
 
+    /**
+     * Draw an {@link Entity} using the corresponding instance of the {@link DrawHelperPlugin}.
+     *
+     * @param g the {@link Graphics2D} API to draw anything in Java.
+     * @param e the {@link Entity} to be drawn by its corresponding {@link DrawHelperPlugin}
+     */
     private void drawEntity(Graphics2D g, Entity<?> e) {
         if (plugins.containsKey(e.getClass())) {
             DrawHelperPlugin<? extends Entity<?>> dhp = plugins.get(e.getClass());
@@ -236,6 +260,11 @@ public class Renderer {
         }
     }
 
+    /**
+     * Retrieve the drawing buffer where the {@link Renderer} draws everything.
+     *
+     * @return a {@link BufferedImage} instance.
+     */
     public BufferedImage getBuffer() {
         return buffer;
     }

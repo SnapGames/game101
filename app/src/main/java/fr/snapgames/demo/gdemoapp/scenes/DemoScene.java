@@ -4,6 +4,7 @@ import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.entity.*;
 import fr.snapgames.demo.core.gfx.RandomColor;
 import fr.snapgames.demo.core.gfx.Renderer;
+import fr.snapgames.demo.core.math.Vector2D;
 import fr.snapgames.demo.core.physic.Material;
 import fr.snapgames.demo.core.scene.AbstractScene;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
@@ -154,7 +155,7 @@ public class DemoScene extends AbstractScene {
                 .setSize(radius, radius)
                 .setPosition((width - 32) * Math.random(), (height - 32) * Math.random())
                 .setSpeed(10.0 * Math.random(), 10.0 * Math.random())
-                .setMass(20.0 * Math.random())
+                .setMass(20000.0 * Math.random())
                 .setAcceleration(0.0, 0.0)
                 .setDebug(4)
                 .setMaterial(Material.SUPER_BALL)
@@ -224,36 +225,35 @@ public class DemoScene extends AbstractScene {
 
 
         boolean move = false;
-        double accelerationStep = 200.0;
+        double accelerationStep = 2000.0;
         double jumpFactor = 0.5 * accelerationStep;
 
         GameObject player = (GameObject) entityMgr.get("player");
 
         if (inputHandler.getKey(KeyEvent.VK_UP)) {
-            player.addForce(new Point2D.Double(0.0, -jumpFactor));
+            player.addForce(new Vector2D(0.0, -jumpFactor));
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_DOWN)) {
-            player.addForce(new Point2D.Double(0.0, accelerationStep));
+            player.addForce(new Vector2D(0.0, accelerationStep));
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_LEFT)) {
-            player.addForce(new Point2D.Double(-accelerationStep, 0.0));
+            player.addForce(new Vector2D(-accelerationStep, 0.0));
             player.setDirection(-1.0);
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_RIGHT)) {
-            player.addForce(new Point2D.Double(accelerationStep, 0.0));
+            player.addForce(new Vector2D(accelerationStep, 0.0));
             player.setDirection(1.0);
             move = true;
         }
 
-        if (!move) {
+        /*if (!move) {
             if (Optional.ofNullable(player.material).isPresent()) {
-                player.dx *= player.material.friction;
-                player.dy *= player.material.friction;
+                player.velocity = player.velocity.multiply(player.material.friction);
             }
-        }
+        }*/
 
         // Managing Balls
         if (inputHandler.getKey(KeyEvent.VK_PAGE_UP)) {
@@ -280,7 +280,7 @@ public class DemoScene extends AbstractScene {
                 .stream()
                 .filter(o -> o.name.contains(filterEntities))
                 .forEach(go -> go.forces.add(
-                        new Point2D.Double(
+                        new Vector2D(
                                 (maxForce * 2.0 * Math.random()) - maxForce,
                                 (maxForce * 10.0 * Math.random()) - (maxForce * 5.0))));
     }

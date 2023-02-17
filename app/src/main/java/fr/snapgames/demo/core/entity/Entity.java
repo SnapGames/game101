@@ -1,6 +1,9 @@
 package fr.snapgames.demo.core.entity;
 
+import fr.snapgames.demo.core.math.Vector2D;
 import fr.snapgames.demo.core.physic.Material;
+import fr.snapgames.demo.core.physic.PhysicType;
+import org.checkerframework.checker.units.qual.Acceleration;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -26,39 +29,41 @@ public class Entity<T> {
     public int debug;
 
     // Position.
-    public double x;
-    public double y;
+    public Vector2D position = new Vector2D();
+    ;
 
-    // Speed
-    public double dx;
-    public double dy;
-
-    // Acceleration
-    public double ax;
-    public double ay;
+    // size
+    public Vector2D size = new Vector2D();
+    ;
+    // -- Physic Attributes --
     /**
-     * List of forces applied to this entity.
-     * (used by {@link fr.snapgames.demo.core.physic.PhysicEngine})
+     * Physic Type for this {@link Entity}.
      */
-    public List<Point2D> forces = new ArrayList<>();
-
-    public double width;
-
-    public double height;
-
-    public Color fillColor;
-
-    public Color borderColor;
-
+    public PhysicType physicType;
     /**
-     * The {@link Material} defining physic attributes for that {@link Entity}.
+     * Speed
      */
-    public Material material;
+    public Vector2D velocity = new Vector2D();
+    ;
+    /**
+     * Acceleration
+     */
+    public Vector2D acceleration = new Vector2D();
+    ;
 
     /**
      * Mass for that entity.
      */
     public double mass;
+    /**
+     * List of forces applied on this {@link Entity}.
+     */
+    public List<Vector2D> forces = new ArrayList<>();
+    /**
+     * The physic characteristic's {@link Material} used by {@link fr.snapgames.demo.core.physic.PhysicEngine}
+     * to compute {@link Entity} behavior.
+     */
+    public Material material;
 
     /**
      * Define contact sides if contact exists:
@@ -75,6 +80,17 @@ public class Entity<T> {
      * The bounding box for that entity.
      */
     public Shape box;
+
+    // -- Graphics attributes --
+    /**
+     * Drawing Filling color
+     */
+    public Color fillColor;
+    /**
+     * Drawing border color
+     */
+    public Color borderColor;
+
     /**
      * Rendering layer for that object
      */
@@ -88,12 +104,12 @@ public class Entity<T> {
      * Define if the object must be stick to the camera viewport.
      */
     private boolean stickToCamera = false;
+    private boolean active = true;
 
     public Entity() {
         this.mass = 1.0;
         this.material = Material.DEFAULT;
-        this.width = 16.0;
-        this.height = 16.0;
+        this.physicType = PhysicType.DYNAMIC;
         this.fillColor = Color.RED;
         this.borderColor = Color.BLACK;
         layer = 1;
@@ -120,8 +136,7 @@ public class Entity<T> {
      * @return the updated {@link Entity}.
      */
     public Entity<T> setPosition(double x, double y) {
-        this.x = x;
-        this.y = y;
+        this.position = new Vector2D(x, y);
         return this;
     }
 
@@ -133,8 +148,7 @@ public class Entity<T> {
      * @return the updated {@link Entity}.
      */
     public Entity<T> setSpeed(double dx, double dy) {
-        this.dx = dx;
-        this.dy = dy;
+        this.velocity = new Vector2D(dx, dy);
         return this;
     }
 
@@ -146,8 +160,7 @@ public class Entity<T> {
      * @return the updated {@link Entity}.
      */
     public Entity<T> setAcceleration(double ax, double ay) {
-        this.ax = ax;
-        this.ay = ay;
+        this.acceleration = new Vector2D(ax, ay);
         return this;
     }
 
@@ -160,11 +173,9 @@ public class Entity<T> {
      */
 
     public Entity<T> setSize(double w, double h) {
-        this.width = w;
-        this.height = h;
+        this.size = new Vector2D(w, h);
         return this;
     }
-
 
     /**
      * Set the {@link Entity} draw border color
@@ -222,12 +233,34 @@ public class Entity<T> {
     }
 
     /**
+     * Set the {@link Entity}'s physicType.
+     *
+     * @param pt a {@link PhysicType} values
+     * @return the updated {@link Entity}
+     */
+    public Entity<T> setPhysicType(PhysicType pt) {
+        this.physicType = pt;
+        return this;
+    }
+
+    /**
+     * Set the active flag for this {@link Entity}
+     *
+     * @param active a boolean value. if true, this entity is active and will be processed and displayed, else not.
+     * @return the updated {@link Entity}
+     */
+    public Entity<T> setActive(boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    /**
      * Apply a force f to that {@link Entity}
      *
      * @param f a {@link Point2D} force to be applied.
      * @return the updated {@link Entity}.
      */
-    public Entity<T> addForce(Point2D f) {
+    public Entity<T> addForce(Vector2D f) {
         this.forces.add(f);
         return this;
     }
@@ -249,15 +282,11 @@ public class Entity<T> {
     public List<String> getDebugInfo() {
         List<String> infos = new ArrayList<>();
         infos.add(String.format("name:%s", name));
-        infos.add(String.format("pos:%4.2f,%4.2f", x, y));
-        infos.add(String.format("size:%.0fx%.0f", width, height));
-        infos.add(String.format("spd:%4.2f,%4.2f", dx, dy));
-        infos.add(String.format("acc:%4.2f,%4.2f", ax, ay));
-        infos.add(String.format("map:%s[d=%4.2f,e=%4.2f,f=%4.2f]",
-                material.name,
-                material.density,
-                material.elasticity,
-                material.friction));
+        infos.add(String.format("pos:%s", position));
+        infos.add(String.format("size:%s", size));
+        infos.add(String.format("spd:%s", velocity));
+        infos.add(String.format("acc:%s", acceleration));
+        infos.add(String.format("mat:%s", material));
 
         return infos;
     }
@@ -267,7 +296,7 @@ public class Entity<T> {
      * and size of the {@link Entity}.
      */
     public void updateBox() {
-        this.box = new Rectangle2D.Double(x, y, width, height);
+        this.box = new Rectangle2D.Double(position.x, position.y, size.x, size.y);
     }
 
     public int getLayer() {
@@ -316,7 +345,15 @@ public class Entity<T> {
      *
      * @return true if this {@link Entity} is stick to {@link Camera} viewport else false.
      */
-    public boolean isStickToCamera() {
+    public boolean isNotStickToCamera() {
         return !stickToCamera;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public double getMass() {
+        return mass;
     }
 }

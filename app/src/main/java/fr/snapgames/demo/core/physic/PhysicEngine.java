@@ -2,6 +2,7 @@ package fr.snapgames.demo.core.physic;
 
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.entity.Entity;
+import fr.snapgames.demo.core.math.Vector2D;
 
 /**
  * Create a Physic Engine to compute Entity moves and behaviors.
@@ -11,6 +12,7 @@ import fr.snapgames.demo.core.entity.Entity;
  */
 public class PhysicEngine {
 
+    public static final double TIME_FACTOR = 0.0045;
     /**
      * Parent game
      */
@@ -35,16 +37,29 @@ public class PhysicEngine {
     }
 
     /**
-     * Update all entity managed by the game.
+     * Update all {@link Entity} managed by the game, according to their own {@link Entity#physicType},
+     * the fact there are {@link Entity#stickToCamera} viewport and if there are {@link Entity#active}.
+     * <p>
+     * If an {@link Entity} is active, not stick to {@link fr.snapgames.demo.core.entity.Camera} and based on a physic
+     * type {@link PhysicType#DYNAMIC}, it is processed by the {@link PhysicEngine}.
+     * <p>
+     * <blockquote><em>IMPORTANT</em> A thing to take in account is the fact that a {@link PhysicEngine#TIME_FACTOR} is applied to
+     * the elapsed time before computation. This time factor is useful to tune thinly the physic computation processing.
+     * In a second step, it will be possible to accelerate or reduce the time speed on the game processing.
+     * </blockquote>
      *
-     * @param elapsed
+     * @param elapsed a double value for the elapsed time since previous call.
      */
     public void update(double elapsed) {
-        double time = elapsed * 0.0045;
-        game.getEntityManager().getEntities().forEach(e -> {
-            updateEntity(game, e, time);
-            constrained(game, e, time);
-        });
+        double time = elapsed * TIME_FACTOR;
+        game.getEntityManager().getEntities().stream()
+                .filter(e1 -> e1.isActive() &&
+                        e1.isNotStickToCamera() &&
+                        e1.physicType.equals(PhysicType.DYNAMIC))
+                .forEach(e2 -> {
+                    updateEntity(game, e2, time);
+                    constrained(game, e2, time);
+                });
     }
 
     /**
@@ -56,26 +71,20 @@ public class PhysicEngine {
      */
     private void updateEntity(Game game, Entity<?> e, double elapsed) {
         double friction = 1.0;
-        e.ax = 0;
-        e.ay = 0;
-        e.addForce(world.gravity);
-        e.forces.forEach(f -> {
-            e.ax += f.getX();
-            e.ay += f.getY();
-        });
+        e.acceleration = new Vector2D(0, 0);
+        e.addForce(world.gravity.multiply(e.mass));
+        e.acceleration = e.acceleration.addAll(e.forces);
 
-        e.ax = thresholdMinMax(e.ax, world.minAcc, world.maxAccX);
-        e.ay = thresholdMinMax(e.ay, world.minAcc, world.maxAccY);
+        e.acceleration.ceil(world.minAcc);
+        e.acceleration.maximize(world.maxAccX);
 
-        e.dx += (e.ax * (0.5 * (elapsed * elapsed)));
-        e.dy += (e.ay * (0.5 * (elapsed * elapsed)) * e.mass);
-        e.dx = thresholdMinMax(e.dx, world.minSpeed, world.maxSpeedX);
-        e.dy = thresholdMinMax(e.dy, world.minSpeed, world.maxSpeedY);
+        e.velocity = e.acceleration.multiply(0.5 * (elapsed));
+        e.velocity.ceil(world.minSpeed);
+        e.velocity.maximize(world.maxSpeedX);
 
         friction = e.contact == 0 ? world.material.friction : e.material.friction;
 
-        e.x += e.dx * elapsed * friction;
-        e.y += e.dy * elapsed * friction;
+        e.position = e.position.add(e.velocity.multiply(elapsed * friction));
 
         e.updateBox();
         e.forces.clear();
@@ -90,42 +99,42 @@ public class PhysicEngine {
      */
     private void constrained(Game game, Entity<?> e, double elapsed) {
         e.contact = 0;
-        if (e.x + e.width > world.playArea.getWidth()) {
-            e.x = world.playArea.getWidth() - e.width;
+        if (e.position.x + e.size.x > world.playArea.getWidth()) {
+            e.position.x = world.playArea.getWidth() - e.size.x;
             e.contact = 1;
-            e.dx = thresholdMinMax(
-                    -e.dx * e.material.elasticity,
+            e.velocity.x = thresholdMinMax(
+                    -e.velocity.x * e.material.elasticity,
                     world.minSpeed,
                     world.maxSpeedX);
-            e.ax = 0.0;
+            e.acceleration.x = 0.0;
         }
-        if (e.y + e.height > world.playArea.getHeight()) {
-            e.y = world.playArea.getHeight() - e.height;
+        if (e.position.y + e.size.y > world.playArea.getHeight()) {
+            e.position.y = world.playArea.getHeight() - e.size.y;
             e.contact += 2;
-            e.dy = thresholdMinMax(
-                    -e.dy * e.material.elasticity,
+            e.velocity.y = thresholdMinMax(
+                    -e.velocity.y * e.material.elasticity,
                     world.minSpeed,
                     world.maxSpeedY);
-            e.ay = 0.0;
+            e.acceleration.y = 0.0;
         }
-        if (e.x < 0.0) {
-            e.x = 0.0;
+        if (e.position.x < 0.0) {
+            e.position.x = 0.0;
             e.contact += 4;
-            e.dx = thresholdMinMax(
-                    -e.dx * e.material.elasticity,
+            e.velocity.x = thresholdMinMax(
+                    -e.velocity.x * e.material.elasticity,
                     world.minSpeed,
                     world.maxSpeedX);
-            e.ax = 0.0;
+            e.acceleration.x = 0.0;
 
         }
-        if (e.y < 0.0) {
-            e.y = 0.0;
+        if (e.position.y < 0.0) {
+            e.position.y = 0.0;
             e.contact += 8;
-            e.dy = thresholdMinMax(
-                    -e.dy * e.material.elasticity,
+            e.velocity.y = thresholdMinMax(
+                    -e.velocity.y * e.material.elasticity,
                     world.minSpeed,
                     world.maxSpeedY);
-            e.ay = 0.0;
+            e.acceleration.y = 0.0;
         }
     }
 

@@ -20,6 +20,8 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.0.1-jre")
+    testImplementation("junit:junit:4.13.1")
+    testImplementation("junit:junit:4.13.1")
 }
 
 testing {
@@ -39,8 +41,8 @@ application {
 }
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(18))
+        languageVersion.set(JavaLanguageVersion.of(19))
     }
 }
 
-version = "0.1.1"
+version = "0.1.3"

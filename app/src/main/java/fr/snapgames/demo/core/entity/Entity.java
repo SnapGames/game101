@@ -352,4 +352,8 @@ public class Entity<T> {
     public boolean isActive() {
         return active;
     }
+
+    public double getMass() {
+        return mass;
+    }
 }

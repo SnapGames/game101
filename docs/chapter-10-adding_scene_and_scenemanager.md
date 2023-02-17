@@ -8,7 +8,7 @@ manage all its items.
 
 It will also be the main play screen where everything happen !
 
-![An hypothetical implementation of a game with scenes](https://www.plantuml.com/plantuml/png/LO_12i8m38RlVOeSjyDUOCBOpPCep1SexaSBNJlJLDtRcrKdU4k-BtoGFebboPCtPJ14xTc9nt11mCuOnWnRy04XRvJenzMSl5q6iQ9c4_IyEG-ghdP2JIvH5Q9GV81hqgEcezMeAAmKsxsIesxVr7y8BoUV44DuqKhJhOmOz-mOepQInDdq2AE-ymO0 "An hypothetical implementation of a game with scenes")
+![An hypothetical implementation of a game with scenes](http://www.plantuml.com/plantuml/png/LOz12i8m44NtESLVjejUe4BfpfKew0M2_MWWJUjqglRs9h4LtCsy1mz-EwaLdNjlyc60-kBKytnbuCuOuKYRyO5XtYZmuz6Sl5rMimcyxiuJnStsBE4c565G34zA2GDK3P998h5ShFUH7EEtflv3V3lzXeGgIwnKJM8GFcOdx69Zqc4qBKCNvtm0 "An hypothetical implementation of a game with scenes")
 
 ## Proposed implementation
 
@@ -16,7 +16,7 @@ The following diagram propose an implementation layering on a `Scene` interface,
 provide
 internal mechanism, and a `SceneManager`.
 
-![Implementation class diagram](https://www.plantuml.com/plantuml/png/TP11RkCm34NtEeLcby5CBk15aQ85kkgcEG4Z_Te295aWgQHeqRlNhemuJT0DORx_QDhSYH9hJT7yqG49jaGAsGp1moReC7ff3QboE5I561T9n3vHWWbPmQ_aOFVWOt1Omhr3nZDbwi4sf1AHa5NEbWpZgKdBblLD3NyO-o_ae85YUCUcx-PrVxlZ6FoK54OXli6EGNf3GovLhs4jVbN_MqGg0j_viHxYQdccqzdXxWNPWy5h7gICWiqPzD27IMQQK7imdyRGGPJ9gMt7kL_Qzl-Nrvc1QT8ZqjW4l2colnepypVPxVRknwdDPVETpbhNJ-KgMkOwcQly4hhAZAncX-nhYby0)
+![Implementation class diagram](http://www.plantuml.com/plantuml/png/XP3DJiCm48JlVWfpAuA-G0weY0EdIWXuWMqy99PinzfTKtx4kvFWAgbQ0PULP-ORoRiRKM8jCPWBxH5XSo2VJEyTR8JsWvCgI9NzhYZ4j854x3r569yK_48jx5EBX4zZhtpowYdu3wowPe8kczV1kp79Z4nyPhSCqZFNfrpqr2pPBUYrHQ0iS8qRoYuib6FQpmmtZqWE35voBtaGh6QZWzwDCDDerOVvCj8F-xhLV0ZQYJArQki5RW-oGZxcW8YaKbkcGizU0og1DqLoI-yOsoAL_wc7GEz_KTFAThs-gJ_OKg8ER8x5JpfXJJUEa-ZGQsIQyalO5cOaDHiaLsBu1W00 "The class diagram for Scene AbstractScene and SceneManager")
 
 ## Scene interface
 
@@ -41,7 +41,7 @@ And finally the ending operation :
 
 ## The Scene manager
 
-![The SceneManager class implementation with its dependencies](http://www.plantuml.com/plantuml/png/VPB1Rjim44Jl_0hsvgBn3_1Gf4Y0dd9flc0jZkK5o1MnN3f5W_vx7L5GOWlDZJFpEEAAlAz6QYqdzyLEoF0b4OixSOJFiDCKQnTafdneXkg6HBNwdvInB1ycEVBOb8mdSVKqlVZd0O8d4XgXQz4csRHUfQ_ExqVA2FEd_9xEn8aE2JDKmnELYri_2efn9-7Pb6Mygs46luRpnD7vRoniJ8d_O3VEdMj2W_6P33kXZ6Nx9dp4aLgokNEtff5hcUfg_Er_QuQMkHsBGOyqBFRhfqSfYaAwiGS5sSPbASrkpLRYEthdaQXKn12dTaZlL5HwMHaDlo0H2jtCjHeZx84ob2vMNro6TNIefZIOxzVtOv5zViub8KDikLVNeKVagGFuRP1uiyszdSdlzz-l7eFxAERqwjM5OLPRwgqiZ9Hn4otjeJ-V_uH3KuMOkuV4bjC_ "The SceneManager class implementation with its dependencies")
+![The SceneManager class implementation with its dependencies](http://www.plantuml.com/plantuml/png/VP91RXin34NtEeMwSz7u0beKAHAWgsoQ4z0IFIOWKG95EKM3tBrZQJ2nFMXtm_yV2P7p7wk2Q4lHVD4J9hGb0h4vKK2RK4yvr560gj2XALRZ8zHgVqB2vVCfyv6c9g2KUT5UFJA-0CE4ycxiVffnrtli7iv04GuHErJT2vHPhTS5XB1Zzwf2F3rKry6lxfmf6FkDc9GWqX_SJNtcwe1NEeFYZcTrQT-OptY45hNFtArke5foNOKFKq_vxMQDzI0Rv_ewn8fo18-3UF_lUujW0Td8NX1qenANflTYA-4JVR0OeLGCBkHsY9zK47XR6N6_a0CAocRvLPXGdsPOO9R6X_deGHXRBQSm1WvL1RpQyTT_BEM0A9M82LcNE9W1FMFA0y3VYXpksipbbNQ__tvpOdDTTFScTSxtQajTXhbB-EwiPReRgVk7wPi8iff7vD1I_0i0 "The SceneManager class implementation with its dependencies")
 
 ### loading configuration
 

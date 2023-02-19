@@ -301,3 +301,8 @@ And if required, offers the opportunity for the Scene implementation to create i
 Here we are !
 
 ![Displaying the scene name in debug mode](illustrations/figure-adding_scene_and_manager.png "Displaying the scene name in debug mode")
+
+## Conclusion
+
+With this new chapter, we implemented a `Camera` object that tracks a `GameObject` with a certain delay in the following moves.
+According to our project, you will find this corresponding code with the tag [create-camera](https://github.com/SnapGames/game101/releases/tag/create-camera) in the [Game101](https://github.com/SnapGames/game101/) GitHub repository.

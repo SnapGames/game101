@@ -96,3 +96,55 @@ public class ResourceManager {
     }
 }
 ```
+## Using the ResourceManager
+
+In your own `Scene` implementation, you can now preload some resources in the `prepare()`
+method:
+
+```java
+class MyScene extends AbstractScene{
+
+    //...
+    @Override
+    public void prepare(Game g) {
+        // load resources int cache
+        ResourceManager.getImage("/images/backgrounds/forest.jpg");
+        ResourceManager.getImage("/images/sprites01.png");
+    }
+    //...
+}
+```
+
+And during the Scene creation using the `create()` method, you can get the preloaded resources :
+
+```java
+class MyScene extends AbstractScene {
+    //...
+    @Override
+    public void create(Game g) {
+        //...
+        // Create the main player entity.
+        var playerFrame1 = ResoureManager.getImage("/images/sprites01.png"); 
+        var playerFrame1 = imagePlayer.getSubimage(0, 0, 32, 32);
+        var player = (GameObject) new GameObject("player")
+                .setImage(playerFrame1);
+        //...
+    }
+    //...
+}
+```
+
+So each time you re-activate this scene, resources are already in cache, so no wait to display the scene.
+
+## Conclusion
+
+We add hee avery useful service to load and cache some resources. Then, those resources can be used or reused by mulitple scene,
+reducing the loading time.
+
+Like in the 10 previous episodes, you can access the code from the GitHub repository you already know
+now: https://github.com/SnapGames/game101 on
+tag [create-resource-manager](https://github.com/SnapGames/game101/releases/tag/create-resource-manager).
+
+That’s all falk!
+
+McG.

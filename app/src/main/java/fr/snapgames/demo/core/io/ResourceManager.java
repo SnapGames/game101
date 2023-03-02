@@ -58,7 +58,8 @@ public class ResourceManager {
         if (!path.contains(".")) {
             return;
         }
-        switch (path.substring(path.lastIndexOf(".") + 1, path.length() - (path.lastIndexOf(".") + 1)).toUpperCase()) {
+        String ext = path.substring(path.lastIndexOf(".") + 1, path.length()).toUpperCase();
+        switch (ext) {
             case "PNG", "JPG", "GIF" -> {
                 BufferedImage img = null;
                 if (!cache.containsKey(path)) {

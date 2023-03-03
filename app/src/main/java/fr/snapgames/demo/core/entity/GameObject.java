@@ -1,5 +1,8 @@
 package fr.snapgames.demo.core.entity;
 
+import fr.snapgames.demo.core.behavior.Behavior;
+import fr.snapgames.demo.core.physic.Material;
+
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -28,6 +31,9 @@ public class GameObject extends Entity<GameObject> {
      */
     public BufferedImage image;
 
+
+    private List<Behavior<GameObject>> behaviors = new ArrayList<>();
+
     /**
      * Create a brand new {@link GameObject} instance with only default values.
      *
@@ -51,6 +57,28 @@ public class GameObject extends Entity<GameObject> {
         setMass(1.0);
         setDirection(1.0);
         setType(ObjectType.RECTANGLE);
+    }
+
+
+    /**
+     * Add a new {@link Behavior} to this entity.
+     *
+     * @param be the {@link Behavior} to be applied to this {@link GameObject} for input, update or draw operation.
+     * @return the updated {@link GameObject}.
+     * @see fr.snapgames.demo.core.physic.PhysicEngine
+     */
+    public GameObject add(Behavior<GameObject> be) {
+        behaviors.add(be);
+        return this;
+    }
+
+    /**
+     * Retrieve the list of applied {@link Behavior}s on this {@link GameObject}
+     *
+     * @return
+     */
+    public List<Behavior<GameObject>> getBehaviors() {
+        return this.behaviors;
     }
 
     /**
@@ -86,8 +114,8 @@ public class GameObject extends Entity<GameObject> {
      */
     public List<String> getDebugInfo() {
         List<String> infos = new ArrayList<>();
-        infos.add(String.format("(1)id:%04d", this.id));
-        infos.add(String.format("(1)name:%s", this.name));
+        infos.add(String.format("(1)id:%04d", this.getId()));
+        infos.add(String.format("(1)name:%s", this.getName()));
         infos.add(String.format("(1)type:%s", type.toString()));
         infos.add(String.format("(2)pos:%s", position));
         infos.add(String.format("(2)size:%s", size));
@@ -125,5 +153,9 @@ public class GameObject extends Entity<GameObject> {
     public GameObject setDirection(double d) {
         this.direction = d;
         return this;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }

@@ -1,6 +1,6 @@
 package fr.snapgames.demo.core.configuration;
 
-import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.math.Vector2d;
 import fr.snapgames.demo.core.physic.Material;
 
 import java.util.function.Function;
@@ -25,13 +25,13 @@ public interface IConfigAttribute {
     String getConfigKey();
 
     /**
-     * Convert String "v([double],[double])" to {@link Vector2D}.
+     * Convert String "v([double],[double])" to {@link Vector2d}.
      *
      * @param value        the formatted String value to be converted
      * @param defaultValue the default value if no conversion possible.
-     * @return a {@link Vector2D} value corresponding to the converted string.
+     * @return a {@link Vector2d} value corresponding to the converted string.
      */
-    static Vector2D stringToVector2D(String value, Vector2D defaultValue) {
+    static Vector2d stringToVector2D(String value, Vector2d defaultValue) {
         if (value == null || value.equals("")) {
             return defaultValue;
         }
@@ -40,7 +40,7 @@ public interface IConfigAttribute {
                         "v(".length(),
                         value.length() - ")".length())
                 .split(",");
-        return new Vector2D(
+        return new Vector2d(
                 Double.parseDouble(interpretedValue[0]),
                 Double.parseDouble(interpretedValue[1]));
     }

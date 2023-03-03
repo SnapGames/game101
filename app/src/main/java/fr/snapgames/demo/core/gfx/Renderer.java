@@ -2,6 +2,7 @@ package fr.snapgames.demo.core.gfx;
 
 
 import fr.snapgames.demo.core.Game;
+import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.entity.Camera;
 import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.gfx.plugins.DrawHelperPlugin;
@@ -152,18 +153,7 @@ public class Renderer {
         g.setColor(new Color(0.3f, 0.0f, 0.0f, 0.5f));
         g.fillRect(0, buffer.getHeight() - 20, buffer.getWidth(), 20);
         g.setColor(Color.ORANGE);
-        int ups = (int) (attributes.getOrDefault("game.ups", -1));
-        int fps = (int) (attributes.getOrDefault("game.fps", -1));
-        double gameTime = (double) (attributes.getOrDefault("game.time", -1.0));
-        String debugLine = String.format("[ dbg:%d | f:%02d u:%02d |>%s| scn:%s |o:%d | g:%1.3f | gtime: %04.3fs]",
-                game.getDebugMode(),
-                fps, ups,
-                game.isPaused() ? "off" : "on",
-                game.getSceneManager().getCurrent().getName(),
-                game.getEntityManager().getEntities().size(),
-                game.getPhysicEngine().getWorld().getGravity().y,
-                Math.abs(gameTime / 1000.0));
-        g.drawString(debugLine, 8, buffer.getHeight() - 8);
+        g.drawString(Utils.prepareStatsString(attributes), 8, buffer.getHeight() - 8);
     }
 
     /**
@@ -175,11 +165,11 @@ public class Renderer {
      */
     private void drawDebugInformation(Graphics2D g, Entity<?> e) {
 
-        if (game.getDebugMode() >= e.debug
-                && filteredName(filterWhiteList, e.name)
-                && !filteredName(filterBlackList, e.name)) {
+        if (game.getDebugMode() >= e.getDebug()
+                && filteredName(filterWhiteList, e.getName())
+                && !filteredName(filterBlackList, e.getName())) {
             g.setColor(Color.ORANGE);
-            g.draw(e.box);
+            g.draw(e.getBox());
             if (game.getDebugMode() > 1) {
                 int offX = (int) e.position.x + 4;
                 int offY = (int) e.position.y;

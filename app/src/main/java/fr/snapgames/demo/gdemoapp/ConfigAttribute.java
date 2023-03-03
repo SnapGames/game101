@@ -1,7 +1,7 @@
 package fr.snapgames.demo.gdemoapp;
 
 import fr.snapgames.demo.core.configuration.IConfigAttribute;
-import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.math.Vector2d;
 import fr.snapgames.demo.core.physic.Material;
 
 import java.util.Arrays;
@@ -123,8 +123,8 @@ public enum ConfigAttribute implements IConfigAttribute {
             "physicGravity",
             "app.physic.world.gravity",
             "set the 2D vector for gravity applied by physic engine",
-            new Vector2D(0.0, 0.0),
-            v -> IConfigAttribute.stringToVector2D(v, new Vector2D(0.0, 0.0))
+            new Vector2d(0.0, 0.0),
+            v -> IConfigAttribute.stringToVector2D(v, new Vector2d(0.0, 0.0))
     ),
     PHYSIC_MATERIAL(
             "worldMaterial",

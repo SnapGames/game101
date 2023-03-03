@@ -49,10 +49,10 @@ public class Camera extends GameObject {
     @Override
     public List<String> getDebugInfo() {
         List<String> info = new ArrayList<>();
-        info.add(String.format("(1)id:%04d", this.id));
-        info.add(String.format("(1)name:%s", this.name));
+        info.add(String.format("(1)id:%04d", this.getId()));
+        info.add(String.format("(1)name:%s", this.getName()));
         info.add(String.format("(1)pos:%s", position));
-        info.add(String.format("(2)tgt:%s", this.target.name));
+        info.add(String.format("(2)tgt:%s", this.target.getName()));
         info.add(String.format("(2)twn:%f", this.tween));
         return info;
     }

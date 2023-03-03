@@ -1,14 +1,14 @@
 package fr.snapgames.demo.core.entity;
 
-import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.math.Vector2d;
 import fr.snapgames.demo.core.physic.Material;
 import fr.snapgames.demo.core.physic.PhysicType;
-import org.checkerframework.checker.units.qual.Acceleration;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,43 +22,42 @@ import java.util.List;
 public class Entity<T> {
 
     private static int index = 1;
-    public int id = index++;
-    public String name = "entity_" + String.format("entity_%03d", id);
+    protected int id = index++;
+    protected String name = "entity_" + String.format("entity_%03d", id);
 
     // debug level
-    public int debug;
+    protected int debug;
 
     // Position.
-    public Vector2D position = new Vector2D();
-    ;
+    public Vector2d position = new Vector2d();
 
     // size
-    public Vector2D size = new Vector2D();
-    ;
+    public Vector2d size = new Vector2d();
+
     // -- Physic Attributes --
     /**
      * Physic Type for this {@link Entity}.
      */
-    public PhysicType physicType;
+    protected PhysicType physicType;
     /**
      * Speed
      */
-    public Vector2D velocity = new Vector2D();
+    public Vector2d velocity = new Vector2d();
     ;
     /**
      * Acceleration
      */
-    public Vector2D acceleration = new Vector2D();
+    public Vector2d acceleration = new Vector2d();
     ;
 
     /**
      * Mass for that entity.
      */
-    public double mass;
+    protected double mass;
     /**
      * List of forces applied on this {@link Entity}.
      */
-    public List<Vector2D> forces = new ArrayList<>();
+    protected List<Vector2d> forces = new ArrayList<>();
     /**
      * The physic characteristic's {@link Material} used by {@link fr.snapgames.demo.core.physic.PhysicEngine}
      * to compute {@link Entity} behavior.
@@ -74,31 +73,31 @@ public class Entity<T> {
      *     <li>+8 : contact on TOP side</li>
      * </ul>
      */
-    public int contact;
+    protected int contact;
 
     /**
      * The bounding box for that entity.
      */
-    public Shape box;
+    protected Shape box;
 
     // -- Graphics attributes --
     /**
      * Drawing Filling color
      */
-    public Color fillColor;
+    protected Color fillColor;
     /**
      * Drawing border color
      */
-    public Color borderColor;
+    protected Color borderColor;
 
     /**
      * Rendering layer for that object
      */
-    private int layer;
+    protected int layer;
     /**
      * rendering priority in the entity's layer.
      */
-    private int priority;
+    protected int priority;
 
     /**
      * Define if the object must be stick to the camera viewport.
@@ -136,7 +135,7 @@ public class Entity<T> {
      * @return the updated {@link Entity}.
      */
     public Entity<T> setPosition(double x, double y) {
-        this.position = new Vector2D(x, y);
+        this.position = new Vector2d(x, y);
         return this;
     }
 
@@ -148,7 +147,7 @@ public class Entity<T> {
      * @return the updated {@link Entity}.
      */
     public Entity<T> setSpeed(double dx, double dy) {
-        this.velocity = new Vector2D(dx, dy);
+        this.velocity = new Vector2d(dx, dy);
         return this;
     }
 
@@ -160,7 +159,7 @@ public class Entity<T> {
      * @return the updated {@link Entity}.
      */
     public Entity<T> setAcceleration(double ax, double ay) {
-        this.acceleration = new Vector2D(ax, ay);
+        this.acceleration = new Vector2d(ax, ay);
         return this;
     }
 
@@ -173,7 +172,7 @@ public class Entity<T> {
      */
 
     public Entity<T> setSize(double w, double h) {
-        this.size = new Vector2D(w, h);
+        this.size = new Vector2d(w, h);
         return this;
     }
 
@@ -260,7 +259,7 @@ public class Entity<T> {
      * @param f a {@link Point2D} force to be applied.
      * @return the updated {@link Entity}.
      */
-    public Entity<T> addForce(Vector2D f) {
+    public Entity<T> addForce(Vector2d f) {
         this.forces.add(f);
         return this;
     }
@@ -355,5 +354,82 @@ public class Entity<T> {
 
     public double getMass() {
         return mass;
+    }
+
+    public PhysicType getPhysicType() {
+        return physicType;
+    }
+
+    public Entity setContact(int c) {
+        this.contact = c;
+        return this;
+    }
+
+    public int getContact() {
+        return contact;
+    }
+
+    public int getDebug() {
+        return debug;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public List<Vector2d> getForces() {
+        return this.forces;
+    }
+
+    public Color getFillColor() {
+        return this.fillColor;
+    }
+
+    public Shape getBox() {
+        return this.box;
+    }
+
+    public Color getBorderColor() {
+        return borderColor;
+    }
+
+    public Vector2d getPosition() {
+        return this.position;
+    }
+
+    public Shape getCollisionBox() {
+        return box;
+    }
+
+    public Vector2d getSize() {
+        return size;
+    }
+
+    public Vector2d getAcceleration() {
+        return acceleration;
+    }
+
+    public Entity<T> setAcceleration(Vector2d a) {
+        this.acceleration = a;
+        return this;
+    }
+
+    public Vector2d getVelocity() {
+        return velocity;
+    }
+
+    public Entity<T> setVelocity(Vector2d v) {
+        this.velocity = v;
+        return this;
+    }
+
+    public Entity<T> setVelocity(double vx, double vy) {
+        this.velocity = new Vector2d(vx, vy);
+        return this;
+    }
+
+    public Entity<T> setPosition(Vector2d p) {
+        this.position = p;
+        return this;
     }
 }

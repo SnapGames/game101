@@ -78,10 +78,6 @@ public interface Game {
         double elapsed;
         Map<String, Object> renderingAttributes = new HashMap<>();
 
-        renderingAttributes.put("game.time", gameTime);
-        renderingAttributes.put("game.fps", fps);
-        renderingAttributes.put("game.ups", ups);
-
         loadResources();
         create();
 
@@ -89,15 +85,23 @@ public interface Game {
             currentTime = System.nanoTime() / 1000000.0;
             input(this);
             elapsed = currentTime - previousTime;
+
+            renderingAttributes.put("0_dbg", getDebugMode());
+            renderingAttributes.put("1_obj", getEntityManager().getEntities().size());
+            renderingAttributes.put("2_p", isPaused() ? "ON" : "OFF");
+            renderingAttributes.put("3_t", gameTime);
+            renderingAttributes.put("4_fps", fps);
+            renderingAttributes.put("5_ups", ups);
+            renderingAttributes.put("6_g", getPhysicEngine().getWorld().getGravity().y);
+            renderingAttributes.put("7_f", elapsed * 1000.0);
+
+
             if (!isPaused()) {
                 update(this, renderingAttributes, elapsed);
                 gameTime += elapsed;
                 upsCount += 1;
             }
 
-            renderingAttributes.put("game.time", gameTime);
-            renderingAttributes.put("game.fps", fps);
-            renderingAttributes.put("game.ups", ups);
             render(this, renderingAttributes);
             frames += 1;
 

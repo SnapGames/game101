@@ -1,7 +1,5 @@
 package fr.snapgames.demo.core.physic;
 
-import fr.snapgames.demo.core.math.Vector2D;
-
 import java.util.Objects;
 
 /**
@@ -116,6 +114,20 @@ public class Material {
                 friction);
     }
 
+    public Material merge(Material material) {
+        return new Material(this.name + ">" + material.name,
+                Math.min(this.elasticity, material.elasticity),
+                Math.min(this.density, material.density),
+                Math.min(this.friction, material.friction)
+        );
+
+    }
+
+    public Material copy() {
+        return new Material(name, elasticity, density, friction);
+    }
+
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -131,5 +143,17 @@ public class Material {
                 && Objects.equals(density, vo.density)
                 && Objects.equals(elasticity, vo.elasticity)
                 && Objects.equals(friction, vo.friction);
+    }
+
+    public double getDensity() {
+        return density;
+    }
+
+    public double getFriction() {
+        return friction;
+    }
+
+    public double getElasticity() {
+        return elasticity;
     }
 }

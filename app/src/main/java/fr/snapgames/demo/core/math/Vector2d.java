@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * {@link Vector2D} class is to define, manage and operate  2D Vector.
+ * {@link Vector2d} class is to define, manage and operate  2D Vector.
  * <p>
  * eg.usage :
  *
@@ -28,10 +28,10 @@ import java.util.Objects;
  * @author Frédéric Delorme
  * @since 0.1.3
  */
-public class Vector2D {
+public class Vector2d {
     public double x, y;
 
-    public Vector2D() {
+    public Vector2d() {
         x = 0.0f;
         y = 0.0f;
     }
@@ -40,25 +40,25 @@ public class Vector2D {
      * @param x
      * @param y
      */
-    public Vector2D(double x, double y) {
+    public Vector2d(double x, double y) {
         super();
         this.x = x;
         this.y = y;
     }
 
-    public Vector2D add(Vector2D v) {
-        return new Vector2D(x + v.x, y + v.y);
+    public Vector2d add(Vector2d v) {
+        return new Vector2d(x + v.x, y + v.y);
     }
 
-    public Vector2D substract(Vector2D v1) {
-        return new Vector2D(x - v1.x, y - v1.y);
+    public Vector2d substract(Vector2d v1) {
+        return new Vector2d(x - v1.x, y - v1.y);
     }
 
-    public Vector2D multiply(double f) {
-        return new Vector2D(x * f, y * f);
+    public Vector2d multiply(double f) {
+        return new Vector2d(x * f, y * f);
     }
 
-    public double dot(Vector2D v1) {
+    public double dot(Vector2d v1) {
 
         return v1.x * y + v1.y * x;
     }
@@ -67,23 +67,23 @@ public class Vector2D {
         return Math.sqrt(x * x + y * y);
     }
 
-    public double distance(Vector2D v1) {
+    public double distance(Vector2d v1) {
         return substract(v1).length();
     }
 
-    public Vector2D divide(double f) {
-        return new Vector2D(x / f, y / f);
+    public Vector2d divide(double f) {
+        return new Vector2d(x / f, y / f);
     }
 
-    public Vector2D normalize() {
+    public Vector2d normalize() {
         return divide(length());
     }
 
-    public Vector2D negate() {
-        return new Vector2D(-x, -y);
+    public Vector2d negate() {
+        return new Vector2d(-x, -y);
     }
 
-    public double angle(Vector2D v1) {
+    public double angle(Vector2d v1) {
         double vDot = this.dot(v1) / (this.length() * v1.length());
         if (vDot < -1.0)
             vDot = -1.0;
@@ -93,9 +93,9 @@ public class Vector2D {
 
     }
 
-    public Vector2D addAll(List<Vector2D> forces) {
-        Vector2D sum = new Vector2D();
-        for (Vector2D f : forces) {
+    public Vector2d addAll(List<Vector2d> forces) {
+        Vector2d sum = new Vector2d();
+        for (Vector2d f : forces) {
             sum = sum.add(f);
         }
         return sum;
@@ -105,7 +105,7 @@ public class Vector2D {
         return String.format("{x:%04.2f,y:%04.2f}", x, y);
     }
 
-    public Vector2D maximize(double maxAccel) {
+    public Vector2d maximize(double maxAccel) {
         if (Math.abs(x) > maxAccel) {
             x = Math.signum(x) * maxAccel;
         }
@@ -115,9 +115,20 @@ public class Vector2D {
         return this;
     }
 
-    public void ceil(double ceilThreshod) {
+    public Vector2d maximize(double maxAccelX, double maxAccelY) {
+        if (Math.abs(x) > maxAccelX) {
+            x = Math.signum(x) * maxAccelX;
+        }
+        if (Math.abs(y) > maxAccelY) {
+            y = Math.signum(y) * maxAccelY;
+        }
+        return this;
+    }
+
+    public Vector2d ceil(double ceilThreshod) {
         x = Math.copySign((Math.abs(x) < ceilThreshod ? 0 : x), x);
         y = Math.copySign((Math.abs(x) < ceilThreshod ? 0 : y), y);
+        return this;
     }
 
     public boolean equals(Object o) {
@@ -130,7 +141,15 @@ public class Vector2D {
         if (getClass() != o.getClass()) {
             return false;
         }
-        Vector2D vo = (Vector2D) o;
+        Vector2d vo = (Vector2d) o;
         return Objects.equals(x, vo.x) && Objects.equals(y, vo.y);
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getX() {
+        return x;
     }
 }

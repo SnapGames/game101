@@ -230,15 +230,13 @@ public class App implements Game {
         if (inputHandler.isKeyPressed(KeyEvent.VK_ESCAPE)) {
             requestExit(true);
             logger.log(Level.FINEST, "    - key {} has been released",
-                    new Object[] { KeyEvent.getKeyText(KeyEvent.VK_ESCAPE) });
+                    new Object[]{KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)});
         }
         sceneMgr.getCurrent().input(this);
     }
 
     @Override
     public void update(Game g, Map<String, Object> attributes, double elapsed) {
-        int ups = (int) attributes.get("game.ups");
-        logger.log(Level.FINEST, "  - update thing {0} at {1} u/s", new Object[]{elapsed, ups});
         updateTestCounter += 1;
         physicEngine.update(elapsed);
         if (Optional.ofNullable(sceneMgr.getCurrent().getCamera()).isPresent()) {
@@ -250,9 +248,6 @@ public class App implements Game {
 
     @Override
     public void render(Game g, Map<String, Object> attributes) {
-        int fps = (int) attributes.get("game.fps");
-        logger.log(Level.FINEST, "  - render thing at {0} FPS", fps);
-        logger.log(Level.FINEST, "  - render thing at {0} FPS", fps);
         renderer.draw(attributes);
         sceneMgr.getCurrent().draw(this, renderer);
         renderer.drawToWindow(window);
@@ -271,15 +266,15 @@ public class App implements Game {
     @Override
     public void dispose() {
         if (debugMode > 0) {
-            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[] {
+            logger.log(Level.INFO, "debugMode={0}: Main game loop executed {1} times (as required {2}).", new Object[]{
                     debugMode,
                     updateTestCounter,
-                    exitValueTestCounter });
+                    exitValueTestCounter});
         }
         sceneMgr.dispose();
         window.close();
         long duration = System.currentTimeMillis() - appStartTime;
-        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[] { duration, Utils.formatDuration(duration) });
+        logger.log(Level.INFO, "executed in {0} ms ({1})", new Object[]{duration, Utils.formatDuration(duration)});
         logger.log(Level.INFO, "End of {0}", getAppName());
     }
 

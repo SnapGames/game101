@@ -2,7 +2,7 @@ package fr.snapgames.demo.core.physic;
 
 import fr.snapgames.demo.core.entity.Entity;
 import fr.snapgames.demo.core.entity.GameObject;
-import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.math.Vector2d;
 import fr.snapgames.demo.gdemoapp.App;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,7 +38,7 @@ public class PhysicEngineTest {
     @Test
     public void testPhysicEngineIsInitialized() {
         Assertions.assertEquals(
-                new Vector2D(0.0, 0.000981),
+                new Vector2d(0.0, 0.000981),
                 pe.getWorld().getGravity(),
                 "World's gravity has not been correctly setup");
     }
@@ -66,7 +66,7 @@ public class PhysicEngineTest {
         // initialize Game services
         game.initialize(new String[] {});
         World world = pe.getWorld();
-        world.setGravity(new Vector2D(0.0, 0.0));
+        world.setGravity(new Vector2d(0.0, 0.0));
         // create some test entities
         for (int i = 0; i < 10; i++) {
             game.getEntityManager().add(
@@ -77,7 +77,7 @@ public class PhysicEngineTest {
                                     world.playArea.getHeight() * 0.5)
                             .setMass(1.0)
                             .setMaterial(Material.RUBBER)
-                            .addForce(new Vector2D(
+                            .addForce(new Vector2d(
                                     (Math.random() * 2.0) - 1.0,
                                     (Math.random() * 2.0) - 1.0)));
         }

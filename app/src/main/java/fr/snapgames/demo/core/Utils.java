@@ -3,6 +3,8 @@ package fr.snapgames.demo.core;
 import java.awt.geom.Point2D;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Add some utilities and helpers to convert values to String.
@@ -68,5 +70,26 @@ public class Utils {
                 Double.parseDouble(interpretedValue[0]),
                 Double.parseDouble(interpretedValue[1]));
         return convertedValue;
+    }
+
+    public static String prepareStatsString(Map<String, Object> attributes) {
+        return "[ " + attributes.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(entry -> {
+            String value = "";
+            switch (entry.getValue().getClass().getSimpleName()) {
+                case "Double", "double", "Float", "float" -> {
+                    value = String.format("%04.2f", entry.getValue());
+                }
+                case "Integer", "int" -> {
+                    value = String.format("%5d", entry.getValue());
+                }
+                default -> {
+                    value = entry.getValue().toString();
+                }
+            }
+            return
+                    entry.getKey().substring(((String) entry.getKey().toString()).indexOf('_') + 1)
+                            + ":"
+                            + value;
+        }).collect(Collectors.joining(" | ")) + " ]";
     }
 }

@@ -1,10 +1,9 @@
 package fr.snapgames.demo.core.physic;
 
-import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.math.Vector2d;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -19,7 +18,7 @@ public class WorldTest {
     @Test
     public void testWorldHasDefaultValues() {
         World world = new World();
-        Assertions.assertEquals(new Vector2D(0, 0.981), world.gravity);
+        Assertions.assertEquals(new Vector2d(0, 0.981), world.gravity);
         Assertions.assertEquals(Material.AIR, world.material);
         Assertions.assertEquals(new Rectangle2D.Double(0, 0, 320, 200), world.playArea);
         Assertions.assertEquals(0.001, world.minSpeed);

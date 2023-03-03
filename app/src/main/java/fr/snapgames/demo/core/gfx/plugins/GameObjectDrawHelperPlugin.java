@@ -38,18 +38,18 @@ public class GameObjectDrawHelperPlugin implements DrawHelperPlugin<GameObject> 
                 }
             }
             case POINT, RECTANGLE, ELLIPSE -> {
-                if (Optional.ofNullable(go.fillColor).isPresent()) {
-                    g.setColor(go.fillColor);
-                    g.fill(go.box);
+                if (Optional.ofNullable(go.getFillColor()).isPresent()) {
+                    g.setColor(go.getFillColor());
+                    g.fill(go.getBox());
                 }
-                if (Optional.ofNullable(go.borderColor).isPresent()) {
-                    g.setColor(go.borderColor);
-                    g.draw(go.box);
+                if (Optional.ofNullable(go.getBorderColor()).isPresent()) {
+                    g.setColor(go.getBorderColor());
+                    g.draw(go.getBox());
                 }
             }
             case LINE -> {
-                if (Optional.ofNullable(go.borderColor).isPresent()) {
-                    g.setColor(go.borderColor);
+                if (Optional.ofNullable(go.getBorderColor()).isPresent()) {
+                    g.setColor(go.getBorderColor());
                     g.drawLine((int) go.position.x, (int) go.position.y,
                             (int) (go.position.x + go.size.x), (int) (go.position.y + go.size.y));
                 }

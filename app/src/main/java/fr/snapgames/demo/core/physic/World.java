@@ -1,10 +1,13 @@
 package fr.snapgames.demo.core.physic;
 
 import fr.snapgames.demo.core.configuration.Configuration;
-import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.math.Vector2d;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The {@link World} object intends to provide some world default attribute to configure the {@link PhysicEngine}
@@ -31,9 +34,10 @@ public class World {
     /**
      * The default World gravity
      */
-    public Vector2D gravity = new Vector2D(0, 0.981);
+    public Vector2d gravity = new Vector2d(0, 0.981);
 
     public Material material = Material.AIR;
+    private List<Vector2d> forces = new ArrayList<>();
 
     /**
      * Initialization of the World object with only default values.
@@ -48,7 +52,7 @@ public class World {
      */
     public World(Configuration configuration) {
         // get Gravity from the configuration file.
-        gravity = (Vector2D) configuration.get(ConfigAttribute.PHYSIC_GRAVITY);
+        gravity = (Vector2d) configuration.get(ConfigAttribute.PHYSIC_GRAVITY);
         // get speed physic attribute limits
         minSpeed = (double) configuration.get(ConfigAttribute.PHYSIC_MIN_SPEED);
         maxSpeedX = (double) configuration.get(ConfigAttribute.PHYSIC_MAX_SPEED_X);
@@ -66,19 +70,19 @@ public class World {
     /**
      * Retrieve gravity for this {@link World}.
      *
-     * @return a {@link Vector2D} value corresponding to the World's gravity.
+     * @return a {@link Vector2d} value corresponding to the World's gravity.
      */
-    public Vector2D getGravity() {
+    public Vector2d getGravity() {
         return gravity;
     }
 
     /**
-     * Define the {@link World}'s gravity with the provided {@link Vector2D} value.
+     * Define the {@link World}'s gravity with the provided {@link Vector2d} value.
      *
-     * @param g the {@link Vector2D} gravity value to be set to that {@link World} object.
+     * @param g the {@link Vector2d} gravity value to be set to that {@link World} object.
      * @return the updated {@link World} object (Fluent API)
      */
-    public World setGravity(Vector2D g) {
+    public World setGravity(Vector2d g) {
         this.gravity = g;
         return this;
     }
@@ -95,7 +99,31 @@ public class World {
         return this;
     }
 
+    /**
+     * Retrieve the {@link World} play area.
+     *
+     * @return a {@link Rectangle2D} corresponding to the play area for this {@link World} instance
+     */
     public Rectangle2D getPlayArea() {
         return playArea;
+    }
+
+    /**
+     * Retrieve all the forces applied to this {@link World}.
+     * Typically used for wind applied to the {@link World#playArea} contained objects.
+     *
+     * @return the list of World's play area applied forces.
+     */
+    public List<Vector2d> getForces() {
+        return forces;
+    }
+
+    /**
+     * Retrieve the ambient {@link World} {@link Material}.
+     *
+     * @return the ambient {@link Material} for this {@link World} instance
+     */
+    public Material getMaterial() {
+        return material;
     }
 }

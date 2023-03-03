@@ -21,7 +21,7 @@ public class GridObjectDrawHelperPlugin implements DrawHelperPlugin<GridObject> 
     @Override
     public void draw(Renderer r, Graphics2D g, Entity e) {
         GridObject go = (GridObject) e;
-        g.setColor(go.borderColor);
+        g.setColor(go.getBorderColor());
         Stroke backPreviousStrokeValue = null;
         if (go.getStroke() != null) {
             backPreviousStrokeValue = g.getStroke();

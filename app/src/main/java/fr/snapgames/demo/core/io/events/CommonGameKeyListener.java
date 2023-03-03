@@ -2,11 +2,10 @@ package fr.snapgames.demo.core.io.events;
 
 
 import fr.snapgames.demo.core.Game;
-import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.math.Vector2d;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.Point2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,7 +57,7 @@ public class CommonGameKeyListener implements KeyListener {
             }
             // switch gravity effect
             case KeyEvent.VK_G -> {
-                Vector2D g = game.getPhysicEngine().getWorld().getGravity();
+                Vector2d g = game.getPhysicEngine().getWorld().getGravity();
                 game.getPhysicEngine().getWorld().setGravity(g.negate());
                 logger.log(Level.FINEST, "Reverse gravity: {}", new Object[]{game.getPhysicEngine().getWorld().getGravity()});
             }

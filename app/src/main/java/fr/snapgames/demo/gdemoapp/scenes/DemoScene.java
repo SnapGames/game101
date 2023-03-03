@@ -5,21 +5,16 @@ import fr.snapgames.demo.core.entity.*;
 import fr.snapgames.demo.core.gfx.RandomColor;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.io.ResourceManager;
-import fr.snapgames.demo.core.math.Vector2D;
+import fr.snapgames.demo.core.math.Vector2d;
 import fr.snapgames.demo.core.physic.Material;
 import fr.snapgames.demo.core.scene.AbstractScene;
 import fr.snapgames.demo.gdemoapp.ConfigAttribute;
+import fr.snapgames.demo.gdemoapp.io.events.DemoKeyListener;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,7 +71,7 @@ public class DemoScene extends AbstractScene {
         entityMgr.add(player);
 
         // Add some balls
-        addNewBalls(
+        DemoKeyListener.addNewBalls(game,
                 "ball_#",
                 10);
 
@@ -99,8 +94,10 @@ public class DemoScene extends AbstractScene {
                 .setViewport(new Rectangle2D.Double(
                         0.0, 0.0,
                         screenWidth, screenHeight)));
-    }
 
+        // add specific Listener for this Demo.
+        game.getInputHandler().addListener(new DemoKeyListener(game));
+    }
 
     /**
      * Create <code>nbBall</code> Ball GameObject with a <code>ballRadius</code> maximum radius and spread
@@ -114,14 +111,14 @@ public class DemoScene extends AbstractScene {
      * @param fillColor   the  fill color for the ball rendering
      * @param borderColor the border color for the ball rendering
      */
-    private void createBalls(String ballNamePrefix,
-                             int nbBall,
-                             double ballRadius,
-                             int width, int height,
-                             Color fillColor, Color borderColor) {
+    public static void createBalls(Game game, String ballNamePrefix,
+                                   int nbBall,
+                                   double ballRadius,
+                                   int width, int height,
+                                   Color fillColor, Color borderColor) {
         for (int i = 0; i < nbBall; i++) {
             double radius = Math.random() * ballRadius;
-            createBall(ballNamePrefix,
+            game.getEntityManager().add(createBall(ballNamePrefix,
                     width, height,
                     (fillColor == null
                             ? RandomColor.get(
@@ -129,11 +126,11 @@ public class DemoScene extends AbstractScene {
                             1.0f, 1.0f, 1.0f, 1.0f)
                             : fillColor),
                     borderColor,
-                    radius);
+                    radius));
         }
     }
 
-    private void createBall(String name, int width, int height, Color fillColor, Color borderColor, double radius) {
+    public static GameObject createBall(String name, int width, int height, Color fillColor, Color borderColor, double radius) {
         GameObject go = (GameObject) new GameObject()
                 .setType(ObjectType.ELLIPSE)
                 .setFillColor(fillColor)
@@ -141,68 +138,15 @@ public class DemoScene extends AbstractScene {
                 .setSize(radius, radius)
                 .setPosition((width - 32) * Math.random(), (height - 32) * Math.random())
                 .setSpeed(10.0 * Math.random(), 10.0 * Math.random())
-                .setMass(20000.0 * Math.random())
+                .setMass(5.0 + 20.0 * Math.random())
                 .setAcceleration(0.0, 0.0)
                 .setDebug(4)
                 .setMaterial(Material.SUPER_BALL)
                 .setLayer(3)
                 .setPriority(2);
-        String ballName = name.replace("#", "" + go.id);
+        String ballName = name.replace("#", "" + go.getId());
         go.setName(ballName);
-        entityMgr.add(go);
-    }
-
-    /**
-     * Remove a number of {@link Entity} based on a filtering name.
-     *
-     * @param objectName the name to filter entities on.
-     * @param nb         the number of object to be removed.
-     */
-    private void removeNbObjectByNameFilter(String objectName, int nb) {
-        java.util.List<Entity<?>> toBeRemoved = new ArrayList<>();
-        int count = 0;
-        for (Entity<?> e : game.getEntityManager().getEntities()) {
-            if (e.getName().contains(objectName)) {
-                toBeRemoved.add(e);
-                count++;
-                if (count > nb) {
-                    break;
-                }
-            }
-        }
-        toBeRemoved.forEach(e -> game.getEntityManager().getEntityMap().remove(e.getName()));
-    }
-
-    /**
-     * Add new Balls in the view
-     *
-     * @param objectName base name for the new balls
-     * @param nb         the number of balls to create.
-     */
-    private void addNewBalls(String objectName, int nb) {
-        int screenWidth = (int) config.get(ConfigAttribute.SCREEN_WIDTH);
-        int screenHeight = (int) config.get(ConfigAttribute.SCREEN_HEIGHT);
-        createBalls(objectName, nb,
-                24.0,
-                screenWidth,
-                screenHeight,
-                null,
-                Color.BLACK);
-    }
-
-    /**
-     * Remove all {@link Entity} based on a filtering name.
-     *
-     * @param objectNameFilter the object name filter used to remove corresponding {@link GameObject}.
-     */
-    private void removeAllObjectByNameFilter(String objectNameFilter) {
-        List<Entity<?>> toBeRemoved = new ArrayList<>();
-        for (Entity<?> e : game.getEntityManager().getEntities()) {
-            if (e.getName().contains(objectNameFilter)) {
-                toBeRemoved.add(e);
-            }
-        }
-        toBeRemoved.forEach(e -> game.getEntityManager().getEntityMap().remove(e.getName()));
+        return go;
     }
 
 
@@ -211,65 +155,32 @@ public class DemoScene extends AbstractScene {
 
 
         boolean move = false;
-        double accelerationStep = 2000.0;
+        double accelerationStep = 50.0;
         double jumpFactor = 0.5 * accelerationStep;
 
         GameObject player = (GameObject) entityMgr.get("player");
 
         if (inputHandler.getKey(KeyEvent.VK_UP)) {
-            player.addForce(new Vector2D(0.0, -jumpFactor));
+            player.addForce(new Vector2d(0.0, -jumpFactor));
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_DOWN)) {
-            player.addForce(new Vector2D(0.0, accelerationStep));
+            player.addForce(new Vector2d(0.0, accelerationStep));
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_LEFT)) {
-            player.addForce(new Vector2D(-accelerationStep, 0.0));
+            player.addForce(new Vector2d(-accelerationStep, 0.0));
             player.setDirection(-1.0);
             move = true;
         }
         if (inputHandler.getKey(KeyEvent.VK_RIGHT)) {
-            player.addForce(new Vector2D(accelerationStep, 0.0));
+            player.addForce(new Vector2d(accelerationStep, 0.0));
             player.setDirection(1.0);
             move = true;
         }
 
-        /*if (!move) {
-            if (Optional.ofNullable(player.material).isPresent()) {
-                player.velocity = player.velocity.multiply(player.material.friction);
-            }
-        }*/
-
-        // Managing Balls
-        if (inputHandler.getKey(KeyEvent.VK_PAGE_UP)) {
-            // maximize number of managed entities.
-            if (game.getEntityManager().getEntities().size() < 2000) {
-                addNewBalls("ball_#", 10);
-            }
-        }
-        if (inputHandler.getKey(KeyEvent.VK_PAGE_DOWN)) {
-            removeNbObjectByNameFilter("ball_", 10);
-        }
-        if (inputHandler.getKey(KeyEvent.VK_DELETE)) {
-            removeAllObjectByNameFilter("ball_");
-        }
-        if (inputHandler.getKey(KeyEvent.VK_R)) {
-            reshuffleEntityByName("ball_", (Double) config.get(ConfigAttribute.GAME_RESHUFFLE_FORCE));
-        }
     }
 
-    private void reshuffleEntityByName(String filterEntities, double maxForce) {
-
-        EntityManager emgr = game.getEntityManager();
-        emgr.getEntities()
-                .stream()
-                .filter(o -> o.name.contains(filterEntities))
-                .forEach(go -> go.forces.add(
-                        new Vector2D(
-                                (maxForce * 2.0 * Math.random()) - maxForce,
-                                (maxForce * 10.0 * Math.random()) - (maxForce * 5.0))));
-    }
 
     @Override
     public void update(Game g, double elapsed) {

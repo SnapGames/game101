@@ -1,5 +1,7 @@
 # README
 
+[![pages-build-deployment](https://github.com/SnapGames/game101/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/SnapGames/game101/actions/workflows/pages/pages-build-deployment) [![Build](https://github.com/SnapGames/game101/actions/workflows/gradle.yml/badge.svg)](https://github.com/SnapGames/game101/actions/workflows/gradle.yml)
+
 This a test project to discover Gradle as a build tool through a playful game project.
 
 The project bring some structured code with good patterns with only JDK 18 is used (see [.sdkmanrc](.sdkmanrc) file for

@@ -4,6 +4,7 @@ import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.entity.*;
 import fr.snapgames.demo.core.gfx.RandomColor;
 import fr.snapgames.demo.core.gfx.Renderer;
+import fr.snapgames.demo.core.io.ResourceManager;
 import fr.snapgames.demo.core.math.Vector2D;
 import fr.snapgames.demo.core.physic.Material;
 import fr.snapgames.demo.core.scene.AbstractScene;
@@ -41,25 +42,10 @@ public class DemoScene extends AbstractScene {
     }
 
 
-    /**
-     * Load a {@link BufferedImage} from a file path.
-     *
-     * @param pathToImage path to the image file.
-     * @return the corresponding {@link BufferedImage} instance.
-     */
-    private BufferedImage loadImage(String pathToImage) {
-        try {
-            return ImageIO.read(this.getClass().getResourceAsStream(pathToImage));
-        } catch (NullPointerException | IOException e) {
-            logger.severe("Unable to read image resource from " + pathToImage);
-        }
-        return null;
-    }
-
     @Override
     public void prepare(Game g) {
-        imageBackground = loadImage("/images/backgrounds/forest.jpg");
-        imagePlayer = loadImage("/images/sprites01.png");
+        imageBackground = ResourceManager.getImage("/images/backgrounds/forest.jpg");
+        imagePlayer = ResourceManager.getImage("/images/sprites01.png");
     }
 
     @Override

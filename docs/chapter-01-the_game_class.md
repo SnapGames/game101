@@ -38,7 +38,7 @@ frame.
 A CRT tube with its ions gun!The CRT Tube is nothing more than a big bubble light. (3) the cathode emits ions (1) and
 (2) are anodes, deflecting ion ray to screen, lighting a fluorescent dot.
 
-![A CRT diagram with ions gun and anodes deflectors](illustrations/figure-crt.jpg "A CRT diagram with ions gun and anodes deflectors (c) myself with my own hands !")
+![A CRT diagram with ions gun and anodes deflectors](illustrations/draws/figure-crt.jpg "A CRT diagram with ions gun and anodes deflectors (c) myself with my own hands !")
 
 _figure 2 - A CRT diagram with ions gun and anodes deflectors_
 
@@ -48,14 +48,14 @@ So capturing input, moving things and displaying things must be done in 16ms. An
 
 So the main process is a LOOP. that's why we talk about a Game Loop:
 
-![The basic Game loop explained with a pencil: the method to keep a fixed frame rate !](illustrations/figure-game-loop.jpg "the basic Game loop explained with a pencil: the method to keep a fixed frame rate ! (c) myself with my own hands !")
+![The basic Game loop explained with a pencil: the method to keep a fixed frame rate !](illustrations/draws/figure-game-loop.jpg "the basic Game loop explained with a pencil: the method to keep a fixed frame rate ! (c) myself with my own hands !")
 
 _figure 3 - The basic Game loop explained with a pencil: the method to keep a fixed frame rate !_
 
 There is also some advanced version of the Game Loop, where multiple update can be performed between each rendering
 phase, the timer is around the update methods only:
 
-![The advanced method to keep a fixed update rate](illustrations/figure-game-loop-fixed.jpg "The advanced method to keep a fixed update rate (c) myself with my own hands !")
+![The advanced method to keep a fixed update rate](illustrations/draws/figure-game-loop-fixed.jpg "The advanced method to keep a fixed update rate (c) myself with my own hands !")
 
 _figure 4 - The advanced method to keep a fixed update rate_
 

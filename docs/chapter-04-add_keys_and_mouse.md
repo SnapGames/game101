@@ -10,7 +10,7 @@ As we rely on the JDK, we will just implement Mouse and Key listener, but elegan
 To make it works, I am going to write an InputHandler class implementing the KeyListener and the MouseListener
 interfaces:
 
-![A class Diagram of our InputListener](http://www.plantuml.com/plantuml/png/PSs_JiOm30JmFKyHTbWOErM81G5ITyIGjeTYaTXHx0XLY7U7yWVbwpVwTxhpg1QgjPpSXKLa-982iOkqmcTOb5L_Zc1MQMu6TSI6-X8M-4TfYWTI0wDsVe_jNpNAcx_ZqkoF-gqb1TL3JBaaPB1fFtHvykpT-IjVAbwnwJ2B90H-UjxnNF9Ud4J9I7YOXDYkRt_xtwCtpKpusEgIB_bm8tXjENq2 "A class Diagram of our InputListener")
+![A class Diagram of our InputListener](http://www.plantuml.com/plantuml/png/PS-zJiKm30NWFKyHTbWOErM81G5ITyIGjWV58h6Zs16g4EyEvGUbzuxvudDaZsgXMil9NLX4XYyf4Bj8Ato6HLdrvn7CAitDe8xOK5_20lyeJV50Qc3Kpk-n_UkIWgg_uzBipppbaf31fltevQ7ktVahNofUiUamYoG4VdhUyLpo7fn4oKXuc8JOhcz_yz-bDyrC-3JL_Np9XzCeRyTD-xD7yDfo-WG0 "A class Diagram of our InputListener")
 
 InputHandler is implementing standard JDK interfaces.
 
@@ -223,7 +223,7 @@ Now, after running the App class by executing :
 $> gradle run
 ```
 
-![An empty Window but with an exit button !](illustrations/figure-inputhandler-screenshot-01.png "An empty Window but with an exit button !")
+![An empty Window but with an exit button !](../../raw/branch/develop/docs/illustrations/figure-inputhandler-screenshot-01.png "An empty Window but with an exit button !")
 
 You can exit the app demo by pressing the [ESCAPE] key.
 

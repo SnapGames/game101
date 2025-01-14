@@ -356,6 +356,10 @@ public class Entity<T> {
         return active;
     }
 
+    public double getMass() {
+        return mass;
+    }
+
     public Object getAttribute(String key, double defaultValue) {
         return this.attributes.containsKey(key) ? attributes.get(key) : defaultValue;
     }

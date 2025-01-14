@@ -26,7 +26,7 @@ public class EntityTest {
         Entity<String> p = new Entity<>();
         // Entity's level default values
         Assertions.assertTrue(p.getName().startsWith("entity_"));
-        Assertions.assertEquals(1.0, p.mass);
+        Assertions.assertEquals(1.0, p.getMass());
         Assertions.assertEquals(1, p.getLayer());
         Assertions.assertEquals(1, p.getPriority());
         Assertions.assertEquals(0, p.size.x);

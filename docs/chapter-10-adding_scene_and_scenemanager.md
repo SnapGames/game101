@@ -16,7 +16,7 @@ The following diagram propose an implementation layering on a `Scene` interface,
 provide
 internal mechanism, and a `SceneManager`.
 
-![Implementation class diagram](https://www.plantuml.com/plantuml/png/TP11RkCm34NtEeLcby5CBk15aQ85kkgcEG4Z_Te295aWgQHeqRlNhemuJT0DORx_QDhSYH9hJT7yqG49jaGAsGp1moReC7ff3QboE5I561T9n3vHWWbPmQ_aOFVWOt1Omhr3nZDbwi4sf1AHa5NEbWpZgKdBblLD3NyO-o_ae85YUCUcx-PrVxlZ6FoK54OXli6EGNf3GovLhs4jVbN_MqGg0j_viHxYQdccqzdXxWNPWy5h7gICWiqPzD27IMQQK7imdyRGGPJ9gMt7kL_Qzl-Nrvc1QT8ZqjW4l2colnepypVPxVRknwdDPVETpbhNJ-KgMkOwcQly4hhAZAncX-nhYby0)
+![Implementation class diagram](http://www.plantuml.com/plantuml/png/TP11JWCn34NtEKNO5K4lC0jK118hDd02T_APiPHa8jkX2CJTwJIZjch59hBV_rxaRTH8hAReRcn4WY-HEBkH0to2ZLFGjf2PyBOQrFMHLFqB9IpZUu-CLyeqG1ndWtnGZuP_dB_ZpCOK-HkhePllRhlFYSC-AO92SeLx0TaLvLogNS9Qmgbwxn6fA48NfhgDfrOGsXqxqhqX1mZabBEMIR4wWW7sH0b2UzG6z-jqd7RjLuiRHrireTvy4_6uhAt3gKGaP5iCBRQUaQPMm9SXXuipTsxJhzSF1zFTCEkUfmCwxrmSB66dywl_X7qLGJQtGGurnJy0)
 
 ## Scene interface
 
@@ -41,7 +41,7 @@ And finally the ending operation :
 
 ## The Scene manager
 
-![The SceneManager class implementation with its dependencies](http://www.plantuml.com/plantuml/png/VPB1Rjim44Jl_0hsvgBn3_1Gf4Y0dd9flc0jZkK5o1MnN3f5W_vx7L5GOWlDZJFpEEAAlAz6QYqdzyLEoF0b4OixSOJFiDCKQnTafdneXkg6HBNwdvInB1ycEVBOb8mdSVKqlVZd0O8d4XgXQz4csRHUfQ_ExqVA2FEd_9xEn8aE2JDKmnELYri_2efn9-7Pb6Mygs46luRpnD7vRoniJ8d_O3VEdMj2W_6P33kXZ6Nx9dp4aLgokNEtff5hcUfg_Er_QuQMkHsBGOyqBFRhfqSfYaAwiGS5sSPbASrkpLRYEthdaQXKn12dTaZlL5HwMHaDlo0H2jtCjHeZx84ob2vMNro6TNIefZIOxzVtOv5zViub8KDikLVNeKVagGFuRP1uiyszdSdlzz-l7eFxAERqwjM5OLPRwgqiZ9Hn4otjeJ-V_uH3KuMOkuV4bjC_ "The SceneManager class implementation with its dependencies")
+![The SceneManager class implementation with its dependencies](http://www.plantuml.com/plantuml/png/TP3DIaCn48NtUOgugsXVu2waek3AZJx1zEPuxq1-mip4YkAxssjAAorkGkPytu5aDcearb9qLpOZmTT8dDtC0Jx1vXAq3sGcl6q6TMCaLVz42OwpGTveX7yTaV7b_0rdDgR8drXDmo9T3--5mvvKGIMvY4S1sKNAkJOx3riD9_NM8r9LX26KjeqdAmZjZeuCByW10ZbnrbeKgsCmmHueGMWVzOlxTZgNNV_LOH6Ejcf2e_c-WFl3s1rEDI8Xc_QIwz8ZKka2FWmvdDNSyaY_Nj_rqZDbcY3kx_1B5ssOAE4C7Ng3BgV-0yScWcnkWnnQYZy0 "The SceneManager class implementation with its dependencies")
 
 ### loading configuration
 
@@ -301,3 +301,8 @@ And if required, offers the opportunity for the Scene implementation to create i
 Here we are !
 
 ![Displaying the scene name in debug mode](illustrations/figure-adding_scene_and_manager.png "Displaying the scene name in debug mode")
+
+## Conclusion
+
+With this new chapter, we implemented a `Camera` object that tracks a `GameObject` with a certain delay in the following moves.
+According to our project, you will find this corresponding code with the tag [create-camera](https://github.com/SnapGames/game101/releases/tag/create-camera) in the [Game101](https://github.com/SnapGames/game101/) GitHub repository.

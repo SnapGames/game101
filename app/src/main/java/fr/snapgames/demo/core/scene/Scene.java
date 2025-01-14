@@ -78,4 +78,10 @@ public interface Scene {
      * @return a {@link Camera} instance.
      */
     Camera getCamera();
+
+    /**
+     * Load required resources for the active Scene.
+     */
+    default void loadResource() {
+    }
 }

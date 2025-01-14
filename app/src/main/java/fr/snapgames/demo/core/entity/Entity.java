@@ -143,6 +143,11 @@ public class Entity<T> {
         return this;
     }
 
+    public Entity<T> setPosition(Vector2D p) {
+        this.position = p;
+        return this;
+    }
+
     /**
      * Define the {@link Entity} speed in a fluent API
      *
@@ -164,6 +169,16 @@ public class Entity<T> {
      */
     public Entity<T> setAcceleration(double ax, double ay) {
         this.acceleration = new Vector2D(ax, ay);
+        return this;
+    }
+
+    public Entity<T> setAcceleration(Vector2D v) {
+        this.acceleration = v;
+        return this;
+    }
+
+    public Entity<T> setVelocity(Vector2D v) {
+        this.velocity = v;
         return this;
     }
 
@@ -356,8 +371,8 @@ public class Entity<T> {
         return active;
     }
 
-    public Object getAttribute(String key, double defaultValue) {
-        return this.attributes.containsKey(key) ? attributes.get(key) : defaultValue;
+    public <Y> Y getAttribute(String key, double defaultValue) {
+        return (Y) (this.attributes.containsKey(key) ? attributes.get(key) : defaultValue);
     }
 
     public double getMass() {
@@ -367,5 +382,21 @@ public class Entity<T> {
     public Entity<T> setAttribute(String key, Object defaultValue) {
         this.attributes.put(key, defaultValue);
         return this;
+    }
+
+    public Vector2D getAcceleration() {
+        return acceleration;
+    }
+
+    public Vector2D getVelocity() {
+        return velocity;
+    }
+
+    public Vector2D getPosition() {
+        return position;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }

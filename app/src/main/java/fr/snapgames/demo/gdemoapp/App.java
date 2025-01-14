@@ -6,7 +6,6 @@ package fr.snapgames.demo.gdemoapp;
 import fr.snapgames.demo.core.Game;
 import fr.snapgames.demo.core.Utils;
 import fr.snapgames.demo.core.configuration.Configuration;
-import fr.snapgames.demo.core.entity.Camera;
 import fr.snapgames.demo.core.entity.EntityManager;
 import fr.snapgames.demo.core.gfx.Renderer;
 import fr.snapgames.demo.core.gfx.Window;
@@ -209,13 +208,6 @@ public class App implements Game {
         updateTestCounter = 0;
     }
 
-
-    @Override
-    public void loadResources() {
-        sceneMgr.getCurrent().prepare(this);
-    }
-
-
     @Override
     public void create() {
         logger.log(Level.INFO, "- create stuff for {0}", getAppName());
@@ -298,7 +290,7 @@ public class App implements Game {
 
     @Override
     public boolean isExitRequested() {
-        return (debugMode > 0 && updateTestCounter != -1 && updateTestCounter == exitValueTestCounter) || exitFlag;
+        return (getDebugMode() > 0 && getUpdateTestCounter() != -1 && getUpdateTestCounter() == getExitValueTestCounter()) || exitFlag;
     }
 
     @Override

@@ -29,6 +29,8 @@ import java.util.Objects;
  * @since 0.1.3
  */
 public class Vector2D {
+    public String ATTRIBUTE_OUTPUT_FORMAT = "%04.2f";
+    public String TO_STRING_FORMAT = "{x:" + ATTRIBUTE_OUTPUT_FORMAT + ",y:" + ATTRIBUTE_OUTPUT_FORMAT + "}";
     public double x, y;
 
     public Vector2D() {
@@ -100,16 +102,12 @@ public class Vector2D {
         return sum;
     }
 
-    public String toString() {
-        return String.format("{x:%04.2f,y:%04.2f}", x, y);
-    }
-
-    public Vector2D maximize(double maxAccel) {
-        if (Math.abs(x) > maxAccel) {
-            x = Math.signum(x) * maxAccel;
+    public Vector2D maximize(double max) {
+        if (Math.abs(x) > max) {
+            x = Math.signum(x) * max;
         }
-        if (Math.abs(y) > maxAccel) {
-            y = Math.signum(y) * maxAccel;
+        if (Math.abs(y) > max) {
+            y = Math.signum(y) * max;
         }
         return this;
     }
@@ -124,9 +122,15 @@ public class Vector2D {
         return this;
     }
 
-    public Vector2D ceil(double ceilThreshod) {
-        x = Math.copySign((Math.abs(x) < ceilThreshod ? 0.0 : x), x);
-        y = Math.copySign((Math.abs(y) < ceilThreshod ? 0.0 : y), y);
+    public Vector2D ceil(double ceilThreshold) {
+        x = Math.copySign((Math.abs(x) < ceilThreshold ? 0.0 : x), x);
+        y = Math.copySign((Math.abs(y) < ceilThreshold ? 0.0 : y), y);
+        return this;
+    }
+
+    public Vector2D ceil(double ceilThresholdX, double ceilThresholdY) {
+        x = Math.copySign((Math.abs(x) < ceilThresholdX ? 0.0 : x), x);
+        y = Math.copySign((Math.abs(y) < ceilThresholdY ? 0.0 : y), y);
         return this;
     }
 
@@ -143,4 +147,9 @@ public class Vector2D {
         Vector2D vo = (Vector2D) o;
         return Objects.equals(x, vo.x) && Objects.equals(y, vo.y);
     }
+
+    public String toString() {
+        return TO_STRING_FORMAT.formatted(x, y);
+    }
+
 }

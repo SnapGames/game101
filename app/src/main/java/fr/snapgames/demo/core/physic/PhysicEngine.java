@@ -72,30 +72,33 @@ public class PhysicEngine {
     private void updateEntity(Game game, Entity<?> entity, double elapsed) {
 
         double friction = entity.contact == 0 ? world.getMaterial().friction : entity.material.friction * world.getMaterial().friction;
-        double density = entity.material != null ? entity.material.density : world.getMaterial().density;
+        double density = entity.getMaterial() != null ? entity.getMaterial().density : world.getMaterial().density;
 
-        //
         // compute acceleration and apply gravity (negate because of AWT/Swing display coordinates origin)
-        entity.acceleration = entity.acceleration.addAll(entity.forces);
-        entity.acceleration = entity.acceleration.add(world.getGravity().negate())
-                .multiply(entity.getMass()).multiply(density);
-        entity.acceleration = entity.acceleration
-                .ceil((double) entity.getAttribute("minAcceleration", world.minAcc))
+        entity.setAcceleration(entity.getAcceleration()
+                .addAll(entity.forces)
+                .add(world.getGravity().negate())
+                .multiply(entity.getMass())
+                .multiply(density)
+                .ceil(
+                        entity.getAttribute("minAcceleration", world.minAcc))
                 .maximize(
-                        (double) entity.getAttribute("maxAccelerationX", world.maxAccX),
-                        (double) entity.getAttribute("maxAccelerationY", world.maxAccY));
+                        entity.getAttribute("maxAccelerationX", world.maxAccX),
+                        entity.getAttribute("maxAccelerationY", world.maxAccY))
+        );
 
         // compute velocity
-
-        entity.velocity = entity.velocity.add(entity.acceleration.multiply(elapsed))
+        entity.setVelocity(entity.getVelocity().add(entity.getAcceleration().multiply(elapsed))
                 .multiply(friction)
-                .ceil((double) entity.getAttribute("minSpeed", world.minSpeed))
+                .ceil(
+                        entity.getAttribute("minSpeed", world.minSpeed))
                 .maximize(
-                        (double) entity.getAttribute("maxVelocity", world.maxSpeedX),
-                        (double) entity.getAttribute("maxVelocity", world.maxSpeedY));
+                        entity.getAttribute("maxVelocity", world.maxSpeedX),
+                        entity.getAttribute("maxVelocity", world.maxSpeedY))
+        );
 
         // compute position
-        entity.position = entity.position.add(entity.velocity.multiply(elapsed));
+        entity.setPosition(entity.getPosition().add(entity.velocity.multiply(elapsed)));
 
         // Update the bounding box accordingly to last position changes
         entity.updateBox();

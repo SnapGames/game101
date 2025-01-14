@@ -76,8 +76,9 @@ public interface Game {
         double currentTime = previousTime;
         double gameTime = 0.0;
         double elapsed = 0.0;
-        Map<String, Object> renderingAttributes = new HashMap<>();
 
+        // initialize stats
+        Map<String, Object> renderingAttributes = new HashMap<>();
         renderingAttributes.put("game.time", gameTime);
         renderingAttributes.put("game.fps", fps);
         renderingAttributes.put("game.ups", ups);
@@ -108,7 +109,7 @@ public interface Game {
                 ups = upsCount;
                 upsCount = 0;
             }
-            waitUntilNextFrame(elapsed);
+            waitUntilNextFrame(((fps / 1000.0) - elapsed) > 0 ? ((fps / 1000.0) - elapsed) : 1);
             previousTime = System.nanoTime() / 1000000.0;
 
             elapsed = previousTime - currentTime;
@@ -119,7 +120,7 @@ public interface Game {
      * Load resources for the scene before {@link Game#create()}
      */
     default void loadResources() {
-
+        getSceneManager().getCurrent().prepare(this);
     }
 
 
